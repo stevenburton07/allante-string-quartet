@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import AdminNav from '@/components/admin/AdminNav';
 
@@ -13,9 +12,10 @@ export default async function AdminLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect to login if not authenticated (unless on login page)
+  // If not authenticated, render without admin nav (for login page)
+  // Middleware handles redirects
   if (!user) {
-    redirect('/admin/login');
+    return <>{children}</>;
   }
 
   return (
