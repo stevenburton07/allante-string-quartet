@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import HireQuoteForm from '@/components/forms/HireQuoteForm';
 
 export const metadata: Metadata = {
   title: 'Hire Us | Allante String Quartet',
@@ -103,18 +104,13 @@ export default function HirePage() {
           </div>
         </section>
 
-        {/* Quote Request Form Placeholder */}
+        {/* Quote Request Form */}
         <section className="mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Request a Quote
           </h2>
-          <div className="bg-gradient-to-br from-light-blue/30 to-secondary/10 p-12 rounded-lg border-2 border-dashed border-primary/30 text-center">
-            <p className="text-gray-700 mb-4 font-semibold">
-              Quote request form will be available here in Phase 2
-            </p>
-            <p className="text-gray-600 text-sm">
-              The form will collect: name, email, event type, date, location, time, and performer type
-            </p>
+          <div className="bg-white border-2 border-gray-200 rounded-lg p-8">
+            <HireQuoteForm />
           </div>
         </section>
 

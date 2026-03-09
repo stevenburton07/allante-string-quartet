@@ -1,0 +1,71 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import Button from '@/components/ui/Button';
+
+export default function AdminNav() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/admin/login');
+    router.refresh();
+  };
+
+  const navItems = [
+    { href: '/admin', label: 'Dashboard' },
+    { href: '/admin/concerts', label: 'Concerts' },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '/admin') {
+      return pathname === href;
+    }
+    return pathname?.startsWith(href);
+  };
+
+  return (
+    <nav className="bg-primary text-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center space-x-8">
+            <Link href="/admin" className="text-xl font-bold">
+              Allante Admin
+            </Link>
+            <div className="flex space-x-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive(item.href)
+                      ? 'bg-white text-primary'
+                      : 'text-gray-200 hover:bg-white/10'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link
+              href="/"
+              target="_blank"
+              className="text-sm text-gray-200 hover:text-white transition-colors"
+            >
+              View Site →
+            </Link>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}

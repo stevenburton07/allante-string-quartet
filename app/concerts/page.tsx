@@ -1,11 +1,35 @@
 import type { Metadata } from 'next';
+import { createClient } from '@/lib/supabase/server';
+import ConcertCard from '@/components/concerts/ConcertCard';
 
 export const metadata: Metadata = {
   title: 'Concerts | Allante String Quartet',
   description: 'View upcoming concerts and performances by the Allante String Quartet.',
 };
 
-export default function ConcertsPage() {
+export const revalidate = 60; // Revalidate every 60 seconds
+
+export default async function ConcertsPage() {
+  const supabase = await createClient();
+  const now = new Date().toISOString();
+
+  // Get upcoming published concerts
+  const { data: upcomingConcerts } = await supabase
+    .from('concerts')
+    .select('*')
+    .eq('is_published', true)
+    .gte('date', now)
+    .order('date', { ascending: true });
+
+  // Get past published concerts
+  const { data: pastConcerts } = await supabase
+    .from('concerts')
+    .select('*')
+    .eq('is_published', true)
+    .lt('date', now)
+    .order('date', { ascending: false })
+    .limit(6);
+
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,29 +43,39 @@ export default function ConcertsPage() {
           </p>
         </div>
 
-        {/* Concerts List - Will be populated from CMS in Phase 3 */}
-        <section className="max-w-4xl mx-auto">
-          <div className="text-center py-12 bg-light-gray rounded-lg">
-            <p className="text-gray-600 text-lg mb-4">
-              Concert schedule coming soon
-            </p>
-            <p className="text-gray-500">
-              Check back soon for our upcoming performance schedule
-            </p>
-          </div>
+        {/* Upcoming Concerts */}
+        <section className="max-w-4xl mx-auto mb-16">
+          {!upcomingConcerts || upcomingConcerts.length === 0 ? (
+            <div className="text-center py-12 bg-light-gray rounded-lg">
+              <p className="text-gray-600 text-lg mb-4">
+                No upcoming concerts scheduled at this time
+              </p>
+              <p className="text-gray-500">
+                Check back soon for our upcoming performance schedule
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {upcomingConcerts.map((concert) => (
+                <ConcertCard key={concert.id} concert={concert} />
+              ))}
+            </div>
+          )}
         </section>
 
-        {/* Past Concerts Section */}
-        <section className="mt-16 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Past Performances
-          </h2>
-          <div className="text-center py-12 bg-white border-2 border-gray-200 rounded-lg">
-            <p className="text-gray-600">
-              Past concert archive coming soon
-            </p>
-          </div>
-        </section>
+        {/* Past Concerts */}
+        {pastConcerts && pastConcerts.length > 0 && (
+          <section className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-primary mb-8 text-center">
+              Past Performances
+            </h2>
+            <div className="space-y-6">
+              {pastConcerts.map((concert) => (
+                <ConcertCard key={concert.id} concert={concert} isPast />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Call to Action */}
         <section className="mt-16 text-center">

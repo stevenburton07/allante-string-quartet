@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Allante String Quartet',
@@ -26,13 +27,8 @@ export default function ContactPage() {
               Send Us a Message
             </h2>
 
-            <div className="bg-gradient-to-br from-light-blue/20 to-secondary/10 p-8 rounded-lg border-2 border-dashed border-primary/30">
-              <p className="text-gray-700 mb-4 font-semibold text-center">
-                Contact form will be available here in Phase 2
-              </p>
-              <p className="text-gray-600 text-sm text-center">
-                Fields: Name, Email, Subject, Message
-              </p>
+            <div className="bg-white border-2 border-gray-200 rounded-lg p-6">
+              <ContactForm />
             </div>
           </div>
 
