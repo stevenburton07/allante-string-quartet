@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import DonationForm from '@/components/forms/DonationForm';
 
 export const metadata: Metadata = {
   title: 'Donate | Allante String Quartet',
@@ -36,24 +37,13 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* Donation Form Placeholder */}
+        {/* Donation Form */}
         <section className="mb-16 max-w-2xl mx-auto">
           <div className="bg-white border-2 border-primary rounded-lg p-8">
             <h2 className="text-2xl font-bold text-primary mb-6 text-center">
               Make a Donation
             </h2>
-
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center bg-light-gray">
-              <p className="text-gray-700 mb-4 font-semibold">
-                Donation form will be available here in Phase 4
-              </p>
-              <p className="text-gray-600 text-sm mb-6">
-                Secure payment processing via Stripe
-              </p>
-              <p className="text-sm text-gray-500">
-                Custom donation amounts • Tax-deductible • Instant receipt
-              </p>
-            </div>
+            <DonationForm />
           </div>
         </section>
 

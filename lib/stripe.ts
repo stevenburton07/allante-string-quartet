@@ -1,0 +1,36 @@
+import Stripe from 'stripe';
+
+// Initialize Stripe server client
+export const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-12-18.acacia',
+    })
+  : null;
+
+// Stripe publishable key for client-side
+export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+
+// Helper to check if Stripe is configured
+export function isStripeConfigured(): boolean {
+  return Boolean(stripe && STRIPE_PUBLISHABLE_KEY);
+}
+
+// Donation amounts (in cents)
+export const SUGGESTED_AMOUNTS = [
+  { label: '$25', value: 2500 },
+  { label: '$50', value: 5000 },
+  { label: '$100', value: 10000 },
+  { label: '$250', value: 25000 },
+];
+
+// Format cents to dollars
+export function formatAmount(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+// Parse dollar string to cents
+export function parseDollarsTocents(dollars: string): number {
+  const cleaned = dollars.replace(/[^0-9.]/g, '');
+  const amount = parseFloat(cleaned);
+  return Math.round(amount * 100);
+}
