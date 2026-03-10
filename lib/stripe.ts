@@ -34,3 +34,6 @@ export function parseDollarsTocents(dollars: string): number {
   const amount = parseFloat(cleaned);
   return Math.round(amount * 100);
 }
+
+// Sunset Series ticket price (in cents)
+export const TICKET_PRICE = parseInt(process.env.TICKET_PRICE || '2000', 10);
