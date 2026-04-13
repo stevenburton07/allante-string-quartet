@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import TicketPurchaseForm from '@/components/forms/TicketPurchaseForm';
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Sunset Series | Allante String Quartet',

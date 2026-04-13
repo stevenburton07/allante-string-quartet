@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'View upcoming concerts and performances by the Allante String Quartet.',
 };
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 
 export default async function ConcertsPage() {
   const supabase = await createClient();
