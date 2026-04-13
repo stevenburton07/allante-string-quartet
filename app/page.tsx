@@ -1,27 +1,47 @@
+import Image from 'next/image';
+
 export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary to-light-blue text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Allante String Quartet
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-light-gray">
-            Bringing beautiful chamber music to San Diego and beyond
+      <section>
+        {/* Hero Image */}
+        <div className="relative w-full h-96 md:h-[600px]">
+          <Image
+            src="/images/hero-background.JPG"
+            alt="Allante String Quartet"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        {/* Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-12">
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/images/logo.jpg"
+              alt="Allante String Quartet"
+              width={400}
+              height={200}
+              className="max-w-full h-auto"
+            />
+          </div>
+          <p className="text-xl md:text-2xl mb-8 text-gray-700">
+            Professional string quartet of Utah county
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/concerts"
-              className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-light-gray transition-colors"
+              href="/hire"
+              className="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all"
             >
-              View Concerts
+              Hire us
             </a>
             <a
-              href="/hire"
-              className="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              href="/concerts"
+              className="border-2 border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors"
             >
-              Hire Us
+              View concerts
             </a>
           </div>
         </div>
@@ -36,14 +56,14 @@ export default function Home() {
             </h2>
             <p className="text-lg text-gray-700 mb-8">
               The Allante String Quartet is a professional ensemble dedicated to performing
-              exceptional chamber music for audiences throughout San Diego County and beyond.
+              exceptional chamber music for audiences throughout Utah County and beyond.
               Our repertoire spans from classical masterworks to contemporary compositions.
             </p>
             <a
               href="/about"
               className="inline-block text-secondary hover:text-primary font-semibold transition-colors"
             >
-              Learn More About Us →
+              Learn more about us →
             </a>
           </div>
         </div>
@@ -53,7 +73,7 @@ export default function Home() {
       <section className="py-16 bg-light-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">
-            Upcoming Performances
+            Upcoming performances
           </h2>
           <div className="text-center">
             <p className="text-gray-600 mb-6">
@@ -63,7 +83,7 @@ export default function Home() {
               href="/concerts"
               className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity"
             >
-              View All Concerts
+              View all concerts
             </a>
           </div>
         </div>
@@ -73,16 +93,16 @@ export default function Home() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
-            Support Our Music
+            Support our music
           </h2>
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
             Your donations help us continue bringing live chamber music to the community
           </p>
           <a
             href="/donate"
-            className="inline-block bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all"
           >
-            Make a Donation
+            Make a donation
           </a>
         </div>
       </section>

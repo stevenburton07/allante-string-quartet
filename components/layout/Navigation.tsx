@@ -12,8 +12,8 @@ const navItems = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/concerts', label: 'Concerts' },
-  { href: '/sunset-series', label: 'Sunset Series' },
-  { href: '/hire', label: 'Hire Us' },
+  { href: '/sunset-series', label: 'Sunset series' },
+  { href: '/hire', label: 'Hire us' },
   { href: '/donate', label: 'Donate' },
   { href: '/contact', label: 'Contact' },
 ];

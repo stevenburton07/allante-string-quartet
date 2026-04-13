@@ -117,7 +117,7 @@ export default function ContactForm() {
         <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
           <p className="text-red-700 text-sm">
             There was an error sending your message. Please try again or email us directly at
-            info@allantequartet.com
+            allantestringquartet@gmail.com
           </p>
         </div>
       )}

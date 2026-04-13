@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import TicketPurchaseForm from '@/components/forms/TicketPurchaseForm';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export const metadata: Metadata = {
   title: 'Sunset Series | Allante String Quartet',
@@ -11,40 +12,40 @@ export const metadata: Metadata = {
 
 export default async function SunsetSeriesPage() {
   const supabase = await createClient();
+  const now = new Date().toISOString();
 
-  // Fetch published events
-  const { data: events, error } = await supabase
+  // Fetch upcoming published events only
+  const { data: upcomingEvents } = await supabase
     .from('sunset_events')
     .select('*')
     .eq('published', true)
+    .gte('event_date', now)
     .order('event_date', { ascending: true });
-
-  const upcomingEvents = events?.filter(
-    (event) => new Date(event.event_date) >= new Date()
-  ) || [];
   return (
-    <div className="py-16">
+    <div>
+      {/* Hero Image */}
+      <section className="relative w-full h-[500px] md:h-[700px] mb-16">
+        <Image
+          src="/images/sunset-hiking-music-series.jpg"
+          alt="Sunset Series"
+          fill
+          className="object-cover"
+          priority
+        />
+      </section>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
-            Sunset Series
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Chamber music meets nature in breathtaking outdoor settings
-          </p>
-        </div>
 
         {/* About the Series */}
         <section className="mb-16 max-w-3xl mx-auto">
           <div className="bg-gradient-to-br from-light-blue to-secondary/20 p-8 rounded-lg">
             <h2 className="text-3xl font-bold text-primary mb-6">
-              Experience Music in Nature
+              Experience music in nature
             </h2>
             <div className="space-y-4 text-gray-700">
               <p>
                 The Sunset Series brings live chamber music to stunning outdoor locations throughout
-                North County San Diego. Join us for an unforgettable evening as we perform at
+                Utah County. Join us for an unforgettable evening as we perform at
                 carefully selected hiking destinations, where beautiful music meets breathtaking views.
               </p>
               <p>
@@ -59,10 +60,10 @@ export default async function SunsetSeriesPage() {
         {/* Upcoming Events */}
         <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Upcoming Events
+            Upcoming events
           </h2>
 
-          {upcomingEvents.length === 0 ? (
+          {!upcomingEvents || upcomingEvents.length === 0 ? (
             <div className="bg-white border-2 border-gray-200 rounded-lg p-12 text-center">
               <p className="text-gray-600 mb-4">
                 No upcoming events at this time. Check back soon!
@@ -134,7 +135,7 @@ export default async function SunsetSeriesPage() {
                   {/* Ticket Purchase Form */}
                   <div className="border-t border-gray-200 pt-6">
                     <h4 className="text-xl font-semibold text-primary mb-4">
-                      Purchase Tickets
+                      Purchase tickets
                     </h4>
                     <TicketPurchaseForm
                       eventId={event.id}
@@ -153,7 +154,7 @@ export default async function SunsetSeriesPage() {
         {/* What to Bring */}
         <section className="mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            What to Bring
+            What to bring
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-light-gray p-6 rounded-lg">
@@ -178,9 +179,9 @@ export default async function SunsetSeriesPage() {
         </section>
 
         {/* FAQ */}
-        <section className="max-w-3xl mx-auto">
+        <section className="max-w-3xl mx-auto pb-16">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Frequently Asked Questions
+            Frequently asked questions
           </h2>
           <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -197,7 +198,7 @@ export default async function SunsetSeriesPage() {
                 What if I can't attend the rain date?
               </h3>
               <p className="text-gray-700">
-                Please contact us at info@allantequartet.com and we'll work with you on options.
+                Please contact us at allantestringquartet@gmail.com and we'll work with you on options.
               </p>
             </div>
             <div className="bg-white border border-gray-200 rounded-lg p-6">

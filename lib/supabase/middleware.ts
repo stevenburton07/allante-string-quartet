@@ -12,6 +12,12 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Only run auth checks for admin routes to avoid blocking public pages
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
+  if (!isAdminRoute) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

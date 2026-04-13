@@ -29,7 +29,7 @@ const performerTypeOptions = [
   { value: 'solo-violin', label: 'Solo Violin' },
   { value: 'solo-viola', label: 'Solo Viola' },
   { value: 'solo-cello', label: 'Solo Cello' },
-  { value: 'quartet', label: 'Quartet' },
+  { value: 'quartet', label: 'Full Quartet' },
 ];
 
 export default function HireQuoteForm() {
@@ -147,7 +147,7 @@ export default function HireQuoteForm() {
         <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
           <p className="text-red-700 text-sm">
             There was an error submitting your request. Please try again or contact us directly at
-            info@allantequartet.com
+            allantestringquartet@gmail.com
           </p>
         </div>
       )}
@@ -208,7 +208,7 @@ export default function HireQuoteForm() {
         onChange={handleChange}
         error={errors.address}
         required
-        placeholder="123 Main St, San Diego, CA 92101"
+        placeholder="123 Main St, Provo, UT 84601"
         helperText="Full address including city and state"
       />
 

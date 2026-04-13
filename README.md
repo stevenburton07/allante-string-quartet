@@ -1,6 +1,6 @@
 # Allante String Quartet Website
 
-A modern, full-featured website for the Allante String Quartet built with Next.js, TypeScript, and Tailwind CSS.
+A modern, full-featured website for the Allante String Quartet serving Utah County, built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
@@ -205,4 +205,4 @@ All rights reserved © 2026 Allante String Quartet
 
 ## Support
 
-For questions or issues, contact: info@allantequartet.com
+For questions or issues, contact: allantestringquartet@gmail.com

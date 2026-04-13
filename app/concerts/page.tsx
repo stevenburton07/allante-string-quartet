@@ -36,7 +36,7 @@ export default async function ConcertsPage() {
         {/* Page Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
-            Upcoming Concerts
+            Upcoming concerts
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Join us for an evening of beautiful chamber music
@@ -67,7 +67,7 @@ export default async function ConcertsPage() {
         {pastConcerts && pastConcerts.length > 0 && (
           <section className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-              Past Performances
+              Past performances
             </h2>
             <div className="space-y-6">
               {pastConcerts.map((concert) => (
@@ -89,7 +89,7 @@ export default async function ConcertsPage() {
             href="/contact"
             className="inline-block bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
-            Contact Us
+            Contact us
           </a>
         </section>
       </div>

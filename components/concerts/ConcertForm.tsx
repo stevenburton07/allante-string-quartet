@@ -128,7 +128,7 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
           onChange={handleChange}
           error={errors.location}
           required
-          placeholder="San Diego, CA"
+          placeholder="Provo, UT"
         />
       </div>
 

@@ -13,7 +13,7 @@ export default function DonatePage() {
         {/* Page Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
-            Support Our Music
+            Support our music
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Your generosity helps us continue bringing live chamber music to the community
@@ -24,7 +24,7 @@ export default function DonatePage() {
         <section className="mb-16 max-w-3xl mx-auto">
           <div className="bg-gradient-to-br from-secondary/20 to-light-blue/30 p-8 rounded-lg">
             <h2 className="text-3xl font-bold text-primary mb-6 text-center">
-              Your Impact
+              Your impact
             </h2>
             <p className="text-lg text-gray-700 mb-4">
               As a nonprofit ensemble, the Allante String Quartet relies on the support of music
@@ -41,7 +41,7 @@ export default function DonatePage() {
         <section className="mb-16 max-w-2xl mx-auto">
           <div className="bg-white border-2 border-primary rounded-lg p-8">
             <h2 className="text-2xl font-bold text-primary mb-6 text-center">
-              Make a Donation
+              Make a donation
             </h2>
             <DonationForm />
           </div>
@@ -50,7 +50,7 @@ export default function DonatePage() {
         {/* Ways to Give */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Other Ways to Give
+            Other ways to give
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-light-gray p-6 rounded-lg">
@@ -88,7 +88,7 @@ export default function DonatePage() {
         {/* Donor Recognition */}
         <section className="mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Donor Recognition
+            Donor recognition
           </h2>
           <div className="bg-white border-2 border-gray-200 rounded-lg p-8">
             <p className="text-gray-700 text-center mb-6">
@@ -145,7 +145,7 @@ export default function DonatePage() {
         {/* Thank You */}
         <section className="mt-16 text-center">
           <h2 className="text-3xl font-bold text-primary mb-4">
-            Thank You
+            Thank you!
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">
             Your support enables us to share the transformative power of live music with our community.

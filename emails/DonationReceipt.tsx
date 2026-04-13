@@ -125,7 +125,7 @@ export default function DonationReceipt({
           <Text style={footer}>
             Allante String Quartet
             <br />
-            Email: info@allantequartet.com
+            Email: allantestringquartet@gmail.com
             <br />
             Website: www.allantequartet.com
             <br />

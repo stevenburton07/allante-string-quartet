@@ -5,8 +5,8 @@ import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Allante String Quartet',
-  description: 'Professional string quartet bringing beautiful chamber music to San Diego and beyond',
-  keywords: ['string quartet', 'classical music', 'San Diego', 'chamber music', 'wedding music', 'private events'],
+  description: 'Professional string quartet bringing beautiful chamber music to Utah County and beyond',
+  keywords: ['string quartet', 'classical music', 'Utah County', 'chamber music', 'wedding music', 'private events'],
 };
 
 export default function RootLayout({

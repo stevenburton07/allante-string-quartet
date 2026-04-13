@@ -7,7 +7,7 @@ export const resend = process.env.RESEND_API_KEY
   : null;
 
 export const FROM_EMAIL = 'Allante String Quartet <onboarding@resend.dev>'; // Update with your verified domain
-export const TO_EMAIL = process.env.ORGANIZATION_EMAIL || 'info@allantequartet.com';
+export const TO_EMAIL = process.env.ORGANIZATION_EMAIL || 'allantestringquartet@gmail.com';
 
 interface SendEmailOptions {
   to: string | string[];
