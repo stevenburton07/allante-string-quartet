@@ -25,11 +25,12 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     venue: concert?.venue || '',
     ticket_link: concert?.ticket_link || '',
     image_url: concert?.image_url || '',
+    status: concert?.is_published ? 'published' : 'draft',
     is_published: concert?.is_published ?? false,
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -37,6 +38,8 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
+      // Automatically set is_published based on status
+      ...(name === 'status' && { is_published: value === 'published' }),
     }));
 
     if (errors[name]) {
@@ -164,30 +167,38 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
         helperText="URL to concert poster or promotional image"
       />
 
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="is_published"
-          name="is_published"
-          checked={formData.is_published}
-          onChange={handleChange}
-          className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-        />
-        <label htmlFor="is_published" className="ml-2 block text-sm text-gray-700">
-          Publish this concert (make it visible on the public website)
+      <div>
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+          Concert status *
         </label>
+        <select
+          id="status"
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+        </select>
+        <p className="mt-2 text-sm text-gray-600">
+          Setting status to "Published" will make the concert visible on the website
+        </p>
       </div>
 
       <div className="flex justify-end gap-4 pt-4">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           onClick={() => router.push('/admin/concerts')}
         >
           Cancel
         </Button>
         <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
-          {isSubmitting ? 'Saving...' : isEdit ? 'Update Concert' : 'Create Concert'}
+          {isSubmitting ? 'Saving...' : isEdit ? 'Update concert' : 'Create concert'}
         </Button>
       </div>
     </form>

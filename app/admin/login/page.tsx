@@ -45,9 +45,6 @@ export default function AdminLoginPage() {
           <h2 className="mt-6 text-center text-3xl font-bold text-white">
             Admin Login
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-200">
-            Allante String Quartet
-          </p>
         </div>
         <div className="bg-white rounded-lg shadow-xl p-8">
           <form className="space-y-6" onSubmit={handleLogin}>
@@ -63,7 +60,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="admin@allantequartet.com"
+              placeholder="Enter your email"
             />
 
             <Input

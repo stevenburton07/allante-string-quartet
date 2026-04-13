@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 
 const SUGGESTED_AMOUNTS = [
@@ -17,6 +17,16 @@ export default function DonationForm() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50); // Default $50
   const [customAmount, setCustomAmount] = useState('');
   const [isCustom, setIsCustom] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // Default to true to avoid layout shift
+
+  useEffect(() => {
+    // Detect if user is on mobile device
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod|android/.test(userAgent) || window.innerWidth < 768;
+    };
+    setIsMobile(checkMobile());
+  }, []);
 
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
@@ -85,7 +95,26 @@ export default function DonationForm() {
         </p>
       </div>
 
-      <div>
+      {!isMobile ? (
+        /* Desktop: Show QR Code */
+        <div className="text-center py-8">
+          <p className="text-gray-700 mb-6">
+            Scan the QR code with your phone to donate via Venmo
+          </p>
+          <div className="flex justify-center">
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`https://venmo.com/u/${VENMO_USERNAME}`)}`}
+              alt="Venmo QR Code"
+              width={250}
+              height={250}
+              className="border-4 border-gray-200 rounded-lg"
+            />
+          </div>
+        </div>
+      ) : (
+        /* Mobile: Show full form */
+        <>
+          <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Select Donation Amount
         </label>
@@ -138,13 +167,6 @@ export default function DonationForm() {
         <p className="mt-1.5 text-sm text-gray-500">Minimum donation: $1.00</p>
       </div>
 
-      <div className="bg-light-blue/20 rounded-lg p-4">
-        <p className="text-sm text-gray-700">
-          <strong>Tax-Deductible:</strong> The Allante String Quartet is a 501(c)(3) nonprofit
-          organization. Your donation is tax-deductible to the fullest extent allowed by law.
-        </p>
-      </div>
-
       <Button
         type="button"
         variant="primary"
@@ -168,6 +190,8 @@ export default function DonationForm() {
           <span className="text-gray-600 text-xs">for other donation options</span>
         </p>
       </div>
+        </>
+      )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ export default function ConcertListItem({ concert }: ConcertListItemProps) {
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
+    hour12: true,
   });
 
   const isPast = new Date(concert.date) < new Date();

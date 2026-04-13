@@ -44,7 +44,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     max_tickets: event?.max_tickets || 100,
     ticket_price: event?.ticket_price ? event.ticket_price / 100 : 20, // Convert cents to dollars
     status: event?.status || 'draft',
-    published: event?.published || false,
+    published: event?.status === 'published',
   });
 
   const handleChange = (
@@ -66,6 +66,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
+        // Automatically set published based on status
+        ...(name === 'status' && { published: value === 'published' }),
       }));
     }
   };
@@ -160,7 +162,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       {/* Event Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-          Event Title *
+          Event title *
         </label>
         <input
           type="text"
@@ -195,7 +197,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="event_date" className="block text-sm font-medium text-gray-700 mb-2">
-            Event Date *
+            Event date *
           </label>
           <input
             type="date"
@@ -210,7 +212,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
         <div>
           <label htmlFor="event_time" className="block text-sm font-medium text-gray-700 mb-2">
-            Event Time *
+            Event time *
           </label>
           <input
             type="time"
@@ -227,7 +229,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       {/* Rain Date */}
       <div>
         <label htmlFor="rain_date" className="block text-sm font-medium text-gray-700 mb-2">
-          Rain Date (Optional)
+          Rain date (optional)
         </label>
         <input
           type="date"
@@ -241,14 +243,14 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
       {/* Location */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Event Location</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Event location</h3>
         <p className="text-sm text-gray-600">
           This information will only be revealed to ticket purchasers
         </p>
 
         <div>
           <label htmlFor="location_address" className="block text-sm font-medium text-gray-700 mb-2">
-            Street Address *
+            Street address *
           </label>
           <input
             type="text"
@@ -297,7 +299,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
           <div>
             <label htmlFor="location_zip" className="block text-sm font-medium text-gray-700 mb-2">
-              ZIP Code *
+              ZIP code *
             </label>
             <input
               type="text"
@@ -317,7 +319,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="max_tickets" className="block text-sm font-medium text-gray-700 mb-2">
-            Maximum Tickets *
+            Maximum tickets *
           </label>
           <input
             type="number"
@@ -333,7 +335,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
         <div>
           <label htmlFor="ticket_price" className="block text-sm font-medium text-gray-700 mb-2">
-            Ticket Price ($) *
+            Ticket price ($) *
           </label>
           <input
             type="number"
@@ -350,69 +352,60 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       </div>
 
       {/* Status */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-            Event Status *
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-
-        <div className="flex items-center pt-8">
-          <input
-            type="checkbox"
-            id="published"
-            name="published"
-            checked={formData.published}
-            onChange={handleChange}
-            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-          />
-          <label htmlFor="published" className="ml-2 block text-sm text-gray-900">
-            Publish on website (make visible to public)
-          </label>
-        </div>
+      <div>
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+          Event status *
+        </label>
+        <select
+          id="status"
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+        </select>
+        <p className="mt-2 text-sm text-gray-600">
+          Setting status to "Published" will make the event visible on the website
+        </p>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-4 pt-4">
-        <Button type="submit" variant="primary" size="lg" disabled={loading}>
-          {loading ? 'Saving...' : mode === 'create' ? 'Create Event' : 'Save Changes'}
-        </Button>
+      <div className="flex justify-between gap-4 pt-4">
+        <div>
+          {mode === 'edit' && (
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={handleDelete}
+              disabled={loading}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete event
+            </Button>
+          )}
+        </div>
 
-        <Button
-          type="button"
-          variant="secondary"
-          size="lg"
-          onClick={() => router.push('/admin/sunset-series')}
-          disabled={loading}
-        >
-          Cancel
-        </Button>
-
-        {mode === 'edit' && (
+        <div className="flex gap-4">
           <Button
             type="button"
-            variant="primary"
+            variant="secondary"
             size="lg"
-            onClick={handleDelete}
+            onClick={() => router.push('/admin/sunset-series')}
             disabled={loading}
-            className="ml-auto bg-red-600 hover:bg-red-700"
           >
-            Delete Event
+            Cancel
           </Button>
-        )}
+
+          <Button type="submit" variant="primary" size="lg" disabled={loading}>
+            {loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
+          </Button>
+        </div>
       </div>
     </form>
   );

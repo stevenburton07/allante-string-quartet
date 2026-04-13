@@ -18,15 +18,15 @@ export default async function EditConcertPage({ params }: { params: { id: string
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <Link
           href="/admin/concerts"
-          className="text-sm text-primary hover:text-secondary transition-colors mb-4 inline-block"
+          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-4"
         >
-          ← Back to Concerts
+          ← Back to concerts
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Edit Concert</h1>
+        <h1 className="text-3xl font-bold text-primary">Edit concert</h1>
         <p className="text-gray-600 mt-2">{concert.title}</p>
       </div>
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import DonationForm from '@/components/forms/DonationForm';
 
 export const metadata: Metadata = {
@@ -20,8 +21,21 @@ export default function DonatePage() {
           </p>
         </div>
 
+        {/* Donate Image */}
+        <section className="mb-16 max-w-4xl mx-auto">
+          <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/donate.JPG"
+              alt="Support the Allante String Quartet"
+              fill
+              className="object-cover"
+              style={{ objectPosition: '50% 45%' }}
+            />
+          </div>
+        </section>
+
         {/* Impact Statement */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <div className="bg-gradient-to-br from-secondary/20 to-light-blue/30 p-8 rounded-lg">
             <h2 className="text-3xl font-bold text-primary mb-6 text-center">
               Your impact
@@ -44,44 +58,6 @@ export default function DonatePage() {
               Make a donation
             </h2>
             <DonationForm />
-          </div>
-        </section>
-
-        {/* Ways to Give */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-primary mb-8 text-center">
-            Other ways to give
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div className="bg-light-gray p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Check by Mail
-              </h3>
-              <p className="text-gray-700 text-sm mb-4">
-                Send a check made out to "Allante String Quartet" to:
-              </p>
-              <p className="text-gray-600 text-sm italic">
-                [Mailing address to be added]
-              </p>
-            </div>
-            <div className="bg-light-gray p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Matching Gifts
-              </h3>
-              <p className="text-gray-700 text-sm">
-                Many employers match charitable donations. Check if your company participates
-                to double your impact!
-              </p>
-            </div>
-            <div className="bg-light-gray p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-primary mb-3">
-                Planned Giving
-              </h3>
-              <p className="text-gray-700 text-sm">
-                Consider including the Allante String Quartet in your estate planning.
-                Contact us to learn more.
-              </p>
-            </div>
           </div>
         </section>
 
@@ -131,17 +107,6 @@ export default function DonatePage() {
           </div>
         </section>
 
-        {/* Tax Information */}
-        <section className="max-w-3xl mx-auto text-center">
-          <div className="bg-light-blue/20 p-6 rounded-lg">
-            <p className="text-sm text-gray-600">
-              <strong>Tax-Deductible:</strong> The Allante String Quartet is a 501(c)(3) nonprofit organization.
-              Your donation is tax-deductible to the fullest extent allowed by law.
-              Tax ID: [To be added]
-            </p>
-          </div>
-        </section>
-
         {/* Thank You */}
         <section className="mt-16 text-center">
           <h2 className="text-3xl font-bold text-primary mb-4">
@@ -151,6 +116,18 @@ export default function DonatePage() {
             Your support enables us to share the transformative power of live music with our community.
             We are deeply grateful for your generosity.
           </p>
+        </section>
+
+        {/* Thank You Image */}
+        <section className="mt-16 max-w-4xl mx-auto">
+          <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/thank-you.jpg"
+              alt="Thank you"
+              fill
+              className="object-cover"
+            />
+          </div>
         </section>
       </div>
     </div>

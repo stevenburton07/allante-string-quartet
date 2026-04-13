@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import ContactForm from '@/components/forms/ContactForm';
 
 export const metadata: Metadata = {
@@ -19,6 +20,18 @@ export default function ContactPage() {
             We'd love to hear from you
           </p>
         </div>
+
+        {/* Contact Image */}
+        <section className="mb-16 max-w-4xl mx-auto">
+          <div className="relative w-full h-96 md:h-[500px] rounded-lg overflow-hidden">
+            <Image
+              src="/images/contact-us.JPG"
+              alt="Contact Allante String Quartet"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}

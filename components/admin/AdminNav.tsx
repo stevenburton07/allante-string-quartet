@@ -19,7 +19,7 @@ export default function AdminNav() {
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/concerts', label: 'Concerts' },
-    { href: '/admin/sunset-series', label: 'Sunset Series' },
+    { href: '/admin/sunset-series', label: 'Sunset series' },
   ];
 
   const isActive = (href: string) => {
@@ -33,10 +33,7 @@ export default function AdminNav() {
     <nav className="bg-primary text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
-            <Link href="/admin" className="text-xl font-bold">
-              Allante Admin
-            </Link>
+          <div className="flex items-center">
             <div className="flex space-x-4">
               {navItems.map((item) => (
                 <Link
@@ -61,9 +58,12 @@ export default function AdminNav() {
             >
               View Site →
             </Link>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
               Logout
-            </Button>
+            </button>
           </div>
         </div>
       </div>

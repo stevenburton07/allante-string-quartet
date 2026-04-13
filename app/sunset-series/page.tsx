@@ -74,7 +74,15 @@ export default async function SunsetSeriesPage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {upcomingEvents.map((event) => (
+              {upcomingEvents.map((event) => {
+                // Convert 24-hour time to 12-hour format
+                const [hours, minutes] = event.event_time.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+
+                return (
                 <div key={event.id} className="bg-white border-2 border-primary rounded-lg p-8">
                   <div className="text-center mb-6">
                     <h3 className="text-2xl font-semibold text-secondary mb-2">
@@ -87,7 +95,7 @@ export default async function SunsetSeriesPage() {
                         month: 'long',
                         day: 'numeric',
                       })}{' '}
-                      at {event.event_time}
+                      at {formattedTime}
                     </p>
                     {event.rain_date && (
                       <p className="text-gray-600 text-sm">
@@ -146,7 +154,8 @@ export default async function SunsetSeriesPage() {
                     />
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

@@ -44,15 +44,16 @@ export default async function EventOrdersPage({ params }: { params: { id: string
   const checkedInCount = orders?.filter((order) => order.checked_in).length || 0;
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <Link
             href="/admin/sunset-series"
-            className="text-sm text-secondary hover:text-primary mb-2 inline-block"
+            className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-2"
           >
-            ← Back to Events
+            ← Back to sunset series
           </Link>
           <h1 className="text-3xl font-bold text-primary">{event.title}</h1>
           <p className="text-gray-600 mt-1">
@@ -62,41 +63,49 @@ export default async function EventOrdersPage({ params }: { params: { id: string
               day: 'numeric',
               year: 'numeric',
             })}{' '}
-            at {event.event_time}
+            at {(() => {
+              const [hours, minutes] = event.event_time.split(':');
+              const hour = parseInt(hours);
+              const ampm = hour >= 12 ? 'PM' : 'AM';
+              const displayHour = hour % 12 || 12;
+              return `${displayHour}:${minutes} ${ampm}`;
+            })()}
           </p>
         </div>
         <Link
           href={`/admin/sunset-series/${params.id}/check-in`}
-          className="bg-secondary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+          className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity"
         >
-          Check-In Scanner
+          Check-in scanner
         </Link>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Total Orders</p>
+          <p className="text-sm text-gray-600 mb-1">Total orders</p>
           <p className="text-3xl font-bold text-primary">{totalOrders}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Total Tickets</p>
+          <p className="text-sm text-gray-600 mb-1">Total tickets</p>
           <p className="text-3xl font-bold text-primary">{totalTickets}</p>
           <p className="text-xs text-gray-500 mt-1">
             {event.max_tickets - event.tickets_sold} remaining
           </p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
+          <p className="text-sm text-gray-600 mb-1">Total revenue</p>
           <p className="text-3xl font-bold text-primary">${(totalRevenue / 100).toFixed(2)}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600 mb-1">Checked In</p>
-          <p className="text-3xl font-bold text-primary">{checkedInCount}</p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mb-1">Checked in</p>
+          <p className="text-3xl font-bold text-primary">
             {totalOrders > 0
               ? `${Math.round((checkedInCount / totalOrders) * 100)}%`
               : '0%'}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {checkedInCount} checked in
           </p>
         </div>
       </div>
@@ -104,7 +113,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
       {/* Orders Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-primary">All Orders</h2>
+          <h2 className="text-xl font-semibold text-primary">All orders</h2>
         </div>
 
         {ordersError && (
@@ -122,23 +131,23 @@ export default async function EventOrdersPage({ params }: { params: { id: string
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     Tickets
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Purchase Date
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
+                    Purchase date
                   </th>
                 </tr>
               </thead>
@@ -172,7 +181,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {order.checked_in ? '✓ Checked In' : 'Not Checked In'}
+                        {order.checked_in ? '✓ Checked in' : 'Not checked in'}
                       </span>
                       {order.checked_in && order.checked_in_at && (
                         <div className="text-xs text-gray-500 mt-1">
@@ -194,6 +203,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
             </table>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

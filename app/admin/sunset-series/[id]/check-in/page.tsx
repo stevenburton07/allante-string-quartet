@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { use, useState, useEffect } from 'react';
+import Link from 'next/link';
 import QRScanner from '@/components/admin/QRScanner';
 import { parseTicketQRCode } from '@/lib/qrcode';
 
-export default function CheckInPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
+export default function CheckInPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checkInResult, setCheckInResult] = useState<{
@@ -20,7 +20,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
     // Fetch event details
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`/api/admin/sunset-series/${params.id}`);
+        const response = await fetch(`/api/admin/sunset-series/${id}`);
         if (response.ok) {
           const data = await response.json();
           setEvent(data);
@@ -33,7 +33,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
     };
 
     fetchEvent();
-  }, [params.id]);
+  }, [id]);
 
   const handleScan = async (qrData: string) => {
     setCheckInResult(null);
@@ -50,7 +50,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
     }
 
     // Verify event matches
-    if (parsed.eventId !== params.id) {
+    if (parsed.eventId !== id) {
       setCheckInResult({
         success: false,
         message: 'This ticket is for a different event.',
@@ -76,7 +76,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
       if (response.ok) {
         setCheckInResult({
           success: true,
-          message: `✓ Checked in successfully! ${result.order.customer_name} - ${result.order.ticket_quantity} ticket(s)`,
+          message: `✓ Checked in successfully! ${result.order.customer_name} - ${result.order.ticket_quantity} ticket(s).`,
           order: result.order,
         });
 
@@ -85,7 +85,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
       } else {
         setCheckInResult({
           success: false,
-          message: result.error || 'Check-in failed',
+          message: result.error || 'Check-in failed.',
         });
       }
     } catch (error) {
@@ -114,9 +114,18 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+      <div>
+        <Link
+          href={`/admin/sunset-series/${id}/orders`}
+          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-4"
+        >
+          ← Back to orders
+        </Link>
+      </div>
       <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold text-primary mb-2">Check-In: {event.title}</h1>
+        <h1 className="text-2xl font-bold text-primary mb-2">Check-in: {event.title}</h1>
         <p className="text-gray-600">
           {new Date(event.event_date).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -124,12 +133,18 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
             day: 'numeric',
             year: 'numeric',
           })}{' '}
-          at {event.event_time}
+          at {(() => {
+            const [hours, minutes] = event.event_time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+          })()}
         </p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-primary mb-4">Scan Ticket QR Code</h2>
+        <h2 className="text-xl font-semibold text-primary mb-4">Scan ticket QR code</h2>
         <QRScanner onScan={handleScan} />
       </div>
 
@@ -154,7 +169,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
       {checkInHistory.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold text-primary mb-4">
-            Recent Check-Ins ({checkInHistory.length})
+            Recent check-ins ({checkInHistory.length})
           </h2>
           <div className="space-y-3">
             {checkInHistory.map((order, index) => (
@@ -168,7 +183,11 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
                     {order.ticket_quantity} ticket{order.ticket_quantity !== 1 ? 's' : ''}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {new Date(order.checked_in_at).toLocaleTimeString()}
+                    {new Date(order.checked_in_at).toLocaleTimeString('en-US', {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
                   </p>
                 </div>
               </div>
@@ -176,6 +195,7 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

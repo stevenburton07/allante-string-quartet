@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import ConcertCard from '@/components/concerts/ConcertCard';
 
@@ -31,17 +32,34 @@ export default async function ConcertsPage() {
     .limit(6);
 
   return (
-    <div className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+    <div>
+      {/* Hero Section */}
+      <section className="relative py-16 md:py-24">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/allante.jpg"
+            alt="Allante String Quartet"
+            fill
+            className="object-cover opacity-25"
+            style={{ objectPosition: '50% 47.5%' }}
+            priority
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
             Upcoming concerts
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl max-w-3xl mx-auto text-gray-900">
             Join us for an evening of beautiful chamber music
           </p>
         </div>
+      </section>
+
+      <div className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Upcoming Concerts */}
         <section className="max-w-4xl mx-auto mb-16">
@@ -76,22 +94,7 @@ export default async function ConcertsPage() {
             </div>
           </section>
         )}
-
-        {/* Call to Action */}
-        <section className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-primary mb-4">
-            Want to be notified about upcoming concerts?
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Contact us to join our mailing list
-          </p>
-          <a
-            href="/contact"
-            className="inline-block bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-          >
-            Contact us
-          </a>
-        </section>
+        </div>
       </div>
     </div>
   );
