@@ -54,6 +54,9 @@ export default async function ConcertsListPage() {
                   Location
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
+                  Attendees
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
@@ -94,6 +97,14 @@ export default async function ConcertsListPage() {
                       <div className="text-sm text-gray-900">{concert.location}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {concert.attendees_count} / {concert.max_attendees}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {concert.ticket_price === 0 ? 'Free' : `$${(concert.ticket_price / 100).toFixed(2)}`}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           concert.is_published
@@ -107,12 +118,18 @@ export default async function ConcertsListPage() {
                         <div className="text-xs text-gray-500 mt-1">Past event</div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
                       <Link
                         href={`/admin/concerts/${concert.id}`}
                         className="inline-block text-primary bg-transparent px-3 py-1 rounded-lg text-sm font-semibold hover:bg-primary/10 transition-all"
                       >
                         Edit
+                      </Link>
+                      <Link
+                        href={`/admin/concerts/${concert.id}/orders`}
+                        className="inline-block border-2 border-primary text-primary bg-transparent px-3 py-1 rounded-lg text-sm font-semibold hover:bg-primary/10 transition-all"
+                      >
+                        Orders
                       </Link>
                     </td>
                   </tr>

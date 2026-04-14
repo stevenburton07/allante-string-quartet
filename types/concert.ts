@@ -8,6 +8,10 @@ export interface Concert {
   ticket_link: string | null;
   image_url: string | null;
   is_published: boolean;
+  ticket_price: number; // In cents
+  max_attendees: number;
+  attendees_count: number;
+  comp_code: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -21,4 +25,7 @@ export interface ConcertFormData {
   ticket_link?: string;
   image_url?: string;
   is_published: boolean;
+  ticket_price: number;
+  max_attendees: number;
+  comp_code?: string;
 }

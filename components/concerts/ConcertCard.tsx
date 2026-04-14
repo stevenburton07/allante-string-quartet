@@ -1,4 +1,5 @@
 import type { Concert } from '@/types/concert';
+import ConcertTicketPurchaseForm from '@/components/forms/ConcertTicketPurchaseForm';
 
 interface ConcertCardProps {
   concert: Concert;
@@ -86,16 +87,18 @@ export default function ConcertCard({ concert, isPast = false }: ConcertCardProp
           <p className="text-gray-700 mb-4 whitespace-pre-wrap">{concert.description}</p>
         )}
 
-        {concert.ticket_link && !isPast && (
-          <div className="mt-6">
-            <a
-              href={concert.ticket_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-            >
-              Get Tickets →
-            </a>
+        {!isPast && (
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <h4 className="text-xl font-semibold text-primary mb-4">
+              {concert.ticket_price === 0 ? 'Reserve your seat' : 'Purchase tickets'}
+            </h4>
+            <ConcertTicketPurchaseForm
+              concertId={concert.id}
+              concertTitle={concert.title}
+              ticketPrice={concert.ticket_price}
+              maxAttendees={concert.max_attendees}
+              attendeesCount={concert.attendees_count}
+            />
           </div>
         )}
       </div>

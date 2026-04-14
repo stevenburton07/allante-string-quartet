@@ -50,7 +50,7 @@ export default async function SunsetSeriesPage() {
               </p>
               <p>
                 Each concert is an intimate experience, combining the joy of live performance with
-                the serenity of nature. Bring a blanket, enjoy the sunset, and immerse yourself in
+                the serenity of nature. Enjoy the sunset and immerse yourself in
                 the magic of acoustic music under the open sky.
               </p>
             </div>
@@ -114,20 +114,32 @@ export default async function SunsetSeriesPage() {
                   </div>
 
                   <div className="bg-light-blue/20 rounded-lg p-6 mb-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-                      <div>
-                        <p className="font-semibold text-primary mb-1">Ticket Price</p>
-                        <p className="text-2xl font-bold text-secondary">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700">
+                      <div className="text-center md:text-left">
+                        <p className="font-semibold text-primary mb-2">Ticket price</p>
+                        <p className="text-2xl font-bold text-secondary mb-1">
                           ${(event.ticket_price / 100).toFixed(2)}
                         </p>
                       </div>
-                      <div>
-                        <p className="font-semibold text-primary mb-1">Location</p>
-                        <p>
+                      <div className="text-center md:text-left">
+                        <p className="font-semibold text-primary mb-2">Location</p>
+                        <p className="mb-1">
                           {event.location_city}, {event.location_state}
                         </p>
                         <p className="text-sm text-gray-600 italic">
                           Exact location revealed after purchase
+                        </p>
+                      </div>
+                      <div className="text-center md:text-left">
+                        <p className="font-semibold text-primary mb-2">Difficulty</p>
+                        <p className="capitalize mb-1">
+                          {event.difficulty || 'Easy'}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {event.difficulty === 'easy' && 'Suitable for all fitness levels'}
+                          {event.difficulty === 'moderate' && 'Some inclines, moderate fitness required'}
+                          {event.difficulty === 'difficult' && 'Steep terrain, good fitness needed'}
+                          {!event.difficulty && 'Suitable for all fitness levels'}
                         </p>
                       </div>
                     </div>
@@ -169,7 +181,7 @@ export default async function SunsetSeriesPage() {
             <div className="bg-light-gray p-6 rounded-lg">
               <h3 className="font-semibold text-primary mb-2">Essentials</h3>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Blanket or low-back chair</li>
+                <li>Flashlight or headlamp</li>
                 <li>Water bottle</li>
                 <li>Sun protection</li>
                 <li>Layers for changing temperatures</li>
@@ -178,8 +190,8 @@ export default async function SunsetSeriesPage() {
             <div className="bg-light-gray p-6 rounded-lg">
               <h3 className="font-semibold text-primary mb-2">Optional</h3>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
+                <li>Blanket or low-back chair</li>
                 <li>Picnic snacks</li>
-                <li>Flashlight or headlamp</li>
                 <li>Camera</li>
                 <li>Bug spray</li>
               </ul>
@@ -215,8 +227,8 @@ export default async function SunsetSeriesPage() {
                 Is the hike difficult?
               </h3>
               <p className="text-gray-700">
-                The location is accessible for most fitness levels. Detailed hiking instructions
-                and difficulty information are provided in your ticket confirmation email.
+                Each event has a description of difficulty. Detailed hiking instructions
+                are provided in your ticket confirmation email.
               </p>
             </div>
           </div>

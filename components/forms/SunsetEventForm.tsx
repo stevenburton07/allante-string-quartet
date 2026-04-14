@@ -11,6 +11,8 @@ interface SunsetEvent {
   event_date: string;
   event_time: string;
   rain_date: string;
+  difficulty: string;
+  comp_code: string;
   location_address: string;
   location_city: string;
   location_state: string;
@@ -37,11 +39,13 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     event_date: event?.event_date || '',
     event_time: event?.event_time || '',
     rain_date: event?.rain_date || '',
+    difficulty: event?.difficulty || 'easy',
+    comp_code: event?.comp_code || '',
     location_address: event?.location_address || '',
     location_city: event?.location_city || '',
     location_state: event?.location_state || '',
     location_zip: event?.location_zip || '',
-    max_tickets: event?.max_tickets || 100,
+    max_tickets: event?.max_tickets || 75,
     ticket_price: event?.ticket_price ? event.ticket_price / 100 : 20, // Convert cents to dollars
     status: event?.status || 'draft',
     published: event?.status === 'published',
@@ -241,6 +245,44 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         />
       </div>
 
+      {/* Difficulty */}
+      <div>
+        <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">
+          Hike difficulty *
+        </label>
+        <select
+          id="difficulty"
+          name="difficulty"
+          value={formData.difficulty}
+          onChange={handleChange}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="easy">Easy - Suitable for all fitness levels, minimal elevation gain</option>
+          <option value="moderate">Moderate - Some inclines, moderate fitness required</option>
+          <option value="difficult">Difficult - Steep terrain, good fitness level needed</option>
+        </select>
+      </div>
+
+      {/* Comp Code */}
+      <div>
+        <label htmlFor="comp_code" className="block text-sm font-medium text-gray-700 mb-2">
+          Comp code (optional)
+        </label>
+        <input
+          type="text"
+          id="comp_code"
+          name="comp_code"
+          value={formData.comp_code}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="COMP2024"
+        />
+        <p className="mt-2 text-sm text-gray-600">
+          Create a code for complimentary (free) tickets
+        </p>
+      </div>
+
       {/* Location */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Event location</h3>
@@ -318,22 +360,6 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       {/* Ticketing */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="max_tickets" className="block text-sm font-medium text-gray-700 mb-2">
-            Maximum tickets *
-          </label>
-          <input
-            type="number"
-            id="max_tickets"
-            name="max_tickets"
-            value={formData.max_tickets}
-            onChange={handleChange}
-            required
-            min="1"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
-        <div>
           <label htmlFor="ticket_price" className="block text-sm font-medium text-gray-700 mb-2">
             Ticket price ($) *
           </label>
@@ -346,6 +372,22 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             required
             min="0"
             step="0.01"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="max_tickets" className="block text-sm font-medium text-gray-700 mb-2">
+            Maximum tickets *
+          </label>
+          <input
+            type="number"
+            id="max_tickets"
+            name="max_tickets"
+            value={formData.max_tickets}
+            onChange={handleChange}
+            required
+            min="1"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>

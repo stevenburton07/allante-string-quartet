@@ -61,6 +61,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         event_date: body.event_date,
         event_time: body.event_time,
         rain_date: body.rain_date || null,
+        difficulty: body.difficulty,
+        comp_code: body.comp_code || null,
         location_address: body.location_address,
         location_city: body.location_city,
         location_state: body.location_state,

@@ -2,14 +2,14 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Purchase Successful | Sunset Series',
-  description: 'Your Sunset Series tickets have been confirmed',
+  title: 'Registration Successful | Concerts',
+  description: 'Your concert registration has been confirmed',
 };
 
-export default function SunsetSeriesSuccessPage({
+export default function ConcertSuccessPage({
   searchParams,
 }: {
-  searchParams: { session_id?: string };
+  searchParams: Promise<{ session_id?: string; concert_id?: string }>;
 }) {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -36,17 +36,17 @@ export default function SunsetSeriesSuccessPage({
 
           {/* Thank You Message */}
           <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-            Tickets Confirmed!
+            Registration Confirmed!
           </h1>
 
           <p className="text-lg text-gray-700 mb-6">
-            Your Sunset Series tickets have been purchased successfully. We're thrilled to have you
-            join us for an intimate evening of chamber music.
+            Your concert registration has been confirmed successfully. We're excited to have you
+            join us for an evening of beautiful chamber music.
           </p>
 
           {/* What's Next */}
           <div className="bg-light-blue/20 rounded-lg p-6 mb-8 text-left">
-            <h2 className="text-xl font-semibold text-primary mb-3">What Happens Next?</h2>
+            <h2 className="text-xl font-semibold text-primary mb-3">What happens next?</h2>
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-start">
                 <svg
@@ -61,7 +61,7 @@ export default function SunsetSeriesSuccessPage({
                   />
                 </svg>
                 <span>
-                  <strong>Check your email</strong> for your ticket confirmation with QR code
+                  <strong>Check your email</strong> for your confirmation with QR code
                 </span>
               </li>
               <li className="flex items-start">
@@ -77,7 +77,7 @@ export default function SunsetSeriesSuccessPage({
                   />
                 </svg>
                 <span>
-                  <strong>Event location</strong> details are included in your confirmation email
+                  <strong>Concert details</strong> including venue and time are in your confirmation email
                 </span>
               </li>
               <li className="flex items-start">
@@ -94,7 +94,7 @@ export default function SunsetSeriesSuccessPage({
                 </svg>
                 <span>
                   <strong>Bring your QR code</strong> (printed or on your phone) to check in at
-                  the event
+                  the concert
                 </span>
               </li>
               <li className="flex items-start">
@@ -126,23 +126,17 @@ export default function SunsetSeriesSuccessPage({
                 className="font-semibold hover:underline"
               >
                 allantestringquartet@gmail.com
-              </a>{' '}
-              with your order confirmation number.
+              </a>
             </p>
-            {searchParams.session_id && (
-              <p className="text-xs text-yellow-700 font-mono mt-2">
-                Order ID: {searchParams.session_id}
-              </p>
-            )}
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/sunset-series"
+              href="/concerts"
               className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity"
             >
-              View all events
+              View all concerts
             </Link>
             <Link
               href="/"
@@ -154,7 +148,7 @@ export default function SunsetSeriesSuccessPage({
 
           {/* Contact Info */}
           <div className="mt-8 pt-8 border-t border-gray-200">
-            <p className="text-sm text-gray-600 mb-2">Questions about your tickets?</p>
+            <p className="text-sm text-gray-600 mb-2">Questions about your registration?</p>
             <a
               href="mailto:allantestringquartet@gmail.com"
               className="text-primary hover:text-secondary font-semibold"

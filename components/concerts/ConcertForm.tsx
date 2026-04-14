@@ -27,6 +27,9 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     image_url: concert?.image_url || '',
     status: concert?.is_published ? 'published' : 'draft',
     is_published: concert?.is_published ?? false,
+    ticket_price: concert?.ticket_price ? concert.ticket_price / 100 : 0, // Convert cents to dollars
+    max_attendees: concert?.max_attendees || 100,
+    comp_code: concert?.comp_code || '',
   });
 
   const handleChange = (
@@ -37,7 +40,7 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) || 0 : value,
       // Automatically set is_published based on status
       ...(name === 'status' && { is_published: value === 'published' }),
     }));
@@ -56,12 +59,20 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
       const url = isEdit ? `/api/concerts/${concert?.id}` : '/api/concerts';
       const method = isEdit ? 'PUT' : 'POST';
 
+      // Convert dollar price to cents for storage
+      const dataToSubmit = {
+        ...formData,
+        ticket_price: Math.round((formData.ticket_price || 0) * 100),
+      };
+
+      console.log('Submitting data:', dataToSubmit);
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSubmit),
       });
 
       const data = await response.json();
@@ -73,7 +84,9 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
             fieldErrors[error.path[0]] = error.message;
           });
           setErrors(fieldErrors);
+          console.error('Validation errors:', data.errors);
         } else {
+          console.error('Server error:', data);
           throw new Error(data.error || 'Failed to save concert');
         }
       } else {
@@ -83,6 +96,36 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     } catch (error) {
       console.error('Form submission error:', error);
       alert('Failed to save concert. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!concert?.id) return;
+
+    const confirmed = confirm(
+      'Are you sure you want to delete this concert? This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/concerts/${concert.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete concert');
+      }
+
+      router.push('/admin/concerts');
+      router.refresh();
+    } catch (error) {
+      console.error('Error deleting concert:', error);
+      alert('Failed to delete concert. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -167,6 +210,49 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
         helperText="URL to concert poster or promotional image"
       />
 
+      {/* Ticketing Section */}
+      <div className="border-t border-gray-200 pt-6 mt-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ticketing information</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Ticket price ($)"
+            name="ticket_price"
+            type="number"
+            value={formData.ticket_price}
+            onChange={handleChange}
+            error={errors.ticket_price}
+            required
+            min="0"
+            step="0.01"
+            helperText="Set to $0 for free concerts"
+          />
+
+          <Input
+            label="Maximum attendees"
+            name="max_attendees"
+            type="number"
+            value={formData.max_attendees}
+            onChange={handleChange}
+            error={errors.max_attendees}
+            required
+            min="1"
+            helperText="Total capacity for this concert"
+          />
+        </div>
+
+        <Input
+          label="Comp code (optional)"
+          name="comp_code"
+          type="text"
+          value={formData.comp_code}
+          onChange={handleChange}
+          error={errors.comp_code}
+          placeholder="COMP2024"
+          helperText="Create a code for complimentary (free) tickets"
+        />
+      </div>
+
       <div>
         <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
           Concert status *
@@ -189,17 +275,36 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
         </p>
       </div>
 
-      <div className="flex justify-end gap-4 pt-4">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => router.push('/admin/concerts')}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
-          {isSubmitting ? 'Saving...' : isEdit ? 'Update concert' : 'Create concert'}
-        </Button>
+      <div className="flex justify-between gap-4 pt-4">
+        <div>
+          {isEdit && (
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              onClick={handleDelete}
+              disabled={isSubmitting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete concert
+            </Button>
+          )}
+        </div>
+
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => router.push('/admin/concerts')}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+
+          <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
+            {isSubmitting ? 'Saving...' : isEdit ? 'Update concert' : 'Create concert'}
+          </Button>
+        </div>
       </div>
     </form>
   );

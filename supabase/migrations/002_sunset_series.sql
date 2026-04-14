@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS sunset_events (
   location_city VARCHAR(100) NOT NULL,
   location_state VARCHAR(50) NOT NULL,
   location_zip VARCHAR(20) NOT NULL,
-  max_tickets INTEGER NOT NULL DEFAULT 100,
+  max_tickets INTEGER NOT NULL DEFAULT 75,
   tickets_sold INTEGER NOT NULL DEFAULT 0,
   ticket_price INTEGER NOT NULL DEFAULT 2000, -- In cents
   status VARCHAR(50) NOT NULL DEFAULT 'draft', -- draft, published, cancelled, completed
