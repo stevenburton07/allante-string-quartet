@@ -17,6 +17,9 @@ interface SunsetEvent {
   location_city: string;
   location_state: string;
   location_zip: string;
+  arrival_instructions: string;
+  image_url?: string;
+  image_orientation?: string;
   max_tickets: number;
   ticket_price: number;
   status: string;
@@ -32,6 +35,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url || null);
 
   const [formData, setFormData] = useState<Partial<SunsetEvent>>({
     title: event?.title || '',
@@ -45,6 +51,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     location_city: event?.location_city || '',
     location_state: event?.location_state || '',
     location_zip: event?.location_zip || '',
+    arrival_instructions: event?.arrival_instructions || '',
+    image_url: event?.image_url || '',
+    image_orientation: event?.image_orientation || 'landscape',
     max_tickets: event?.max_tickets || 75,
     ticket_price: event?.ticket_price ? event.ticket_price / 100 : 20, // Convert cents to dollars
     status: event?.status || 'draft',
@@ -76,15 +85,97 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image must be less than 5MB');
+        return;
+      }
+
+      setImageFile(file);
+      setError('');
+
+      // Create preview and detect orientation
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+
+        // Detect image orientation
+        const img = new Image();
+        img.onload = () => {
+          const orientation = img.width >= img.height ? 'landscape' : 'portrait';
+          setFormData((prev) => ({ ...prev, image_orientation: orientation }));
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (formData.image_url) {
+      // Delete from storage
+      const formDataDelete = new FormData();
+      formDataDelete.append('imageUrl', formData.image_url);
+
+      await fetch('/api/delete-image', {
+        method: 'POST',
+        body: formDataDelete,
+      });
+    }
+
+    setImageFile(null);
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, image_url: '' }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
+      let imageUrl = formData.image_url;
+
+      // Upload image if a new one was selected
+      if (imageFile) {
+        setUploadingImage(true);
+        const formDataImage = new FormData();
+        formDataImage.append('file', imageFile);
+        formDataImage.append('orientation', formData.image_orientation || 'landscape');
+
+        // Send old image URL so it can be deleted
+        if (formData.image_url) {
+          formDataImage.append('oldImageUrl', formData.image_url);
+        }
+
+        const uploadResponse = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formDataImage,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const { url, orientation } = await uploadResponse.json();
+        imageUrl = url;
+        // Update orientation from server response
+        setFormData((prev) => ({ ...prev, image_orientation: orientation }));
+        setUploadingImage(false);
+      }
+
       // Convert dollar price to cents for storage
       const dataToSubmit = {
         ...formData,
+        image_url: imageUrl,
         ticket_price: Math.round((formData.ticket_price || 0) * 100),
       };
 
@@ -283,6 +374,39 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         </p>
       </div>
 
+      {/* Image Upload */}
+      <div>
+        <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+          Event image (optional)
+        </label>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <p className="mt-1 text-sm text-gray-500">
+          PNG, JPG, GIF up to 5MB
+        </p>
+        {imagePreview && (
+          <div className="mt-4 flex items-start gap-4">
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300"
+            />
+            <button
+              type="button"
+              onClick={handleRemoveImage}
+              className="px-4 py-2 text-sm text-red-600 hover:text-red-800 font-semibold"
+            >
+              Remove image
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Location */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">Event location</h3>
@@ -355,6 +479,24 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             />
           </div>
         </div>
+
+        <div>
+          <label htmlFor="arrival_instructions" className="block text-sm font-medium text-gray-700 mb-2">
+            Arrival instructions (optional)
+          </label>
+          <textarea
+            id="arrival_instructions"
+            name="arrival_instructions"
+            value={formData.arrival_instructions}
+            onChange={handleChange}
+            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Detailed directions for reaching the event location..."
+          />
+          <p className="mt-2 text-sm text-gray-600">
+            These instructions will only be visible to ticket purchasers
+          </p>
+        </div>
       </div>
 
       {/* Ticketing */}
@@ -408,8 +550,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
-          <option value="cancelled">Cancelled</option>
           <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
         </select>
         <p className="mt-2 text-sm text-gray-600">
           Setting status to "Published" will make the event visible on the website
@@ -444,8 +586,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             Cancel
           </Button>
 
-          <Button type="submit" variant="primary" size="lg" disabled={loading}>
-            {loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
+          <Button type="submit" variant="primary" size="lg" disabled={loading || uploadingImage}>
+            {uploadingImage ? 'Uploading image...' : loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
           </Button>
         </div>
       </div>

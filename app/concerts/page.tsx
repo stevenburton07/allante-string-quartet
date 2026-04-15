@@ -14,19 +14,19 @@ export default async function ConcertsPage() {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  // Get upcoming published concerts
+  // Get upcoming published, cancelled, or completed concerts
   const { data: upcomingConcerts } = await supabase
     .from('concerts')
     .select('*')
-    .eq('is_published', true)
+    .in('status', ['published', 'cancelled', 'completed'])
     .gte('date', now)
     .order('date', { ascending: true });
 
-  // Get past published concerts
+  // Get past completed concerts
   const { data: pastConcerts } = await supabase
     .from('concerts')
     .select('*')
-    .eq('is_published', true)
+    .eq('status', 'completed')
     .lt('date', now)
     .order('date', { ascending: false })
     .limit(6);

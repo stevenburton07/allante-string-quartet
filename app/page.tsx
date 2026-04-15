@@ -8,11 +8,11 @@ export default async function Home() {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  // Fetch upcoming concerts
+  // Fetch upcoming concerts (published, cancelled, or completed)
   const { data: upcomingConcerts } = await supabase
     .from('concerts')
     .select('*')
-    .eq('is_published', true)
+    .in('status', ['published', 'cancelled', 'completed'])
     .gte('date', now)
     .order('date', { ascending: true })
     .limit(3);
@@ -34,12 +34,13 @@ export default async function Home() {
       {/* Hero Section */}
       <section>
         {/* Hero Image */}
-        <div className="relative w-full h-96 md:h-[600px]">
+        <div className="relative w-full h-[500px] md:h-[700px]">
           <Image
             src="/images/hero-background.JPG"
             alt="Allante String Quartet"
             fill
             className="object-cover"
+            style={{ objectPosition: '50% 55%' }}
             priority
           />
         </div>
@@ -132,9 +133,30 @@ export default async function Home() {
                   </div>
                   <div className="space-y-4">
                     {upcomingConcerts.map((concert) => {
-                      const concertDate = new Date(concert.date);
+                      // Parse date as local time to avoid timezone conversion issues
+                      const concertDateString = concert.date.slice(0, 16);
+                      const [datePart, timePart] = concertDateString.split('T');
+                      const [year, month, day] = datePart.split('-');
+                      const [hour, minute] = timePart.split(':');
+                      const concertDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
+                      const isCancelled = concert.status === 'cancelled';
+                      const isCompleted = concert.status === 'completed';
                       return (
-                        <div key={concert.id} className="bg-white border-2 border-primary rounded-lg p-8">
+                        <div key={concert.id} className={`bg-white border-2 rounded-lg p-8 ${isCancelled ? 'border-red-700' : 'border-primary'}`}>
+                          {isCancelled && (
+                            <div className="bg-red-50 border border-red-300 rounded-lg p-3 mb-4">
+                              <p className="text-red-900 font-semibold text-center text-sm">
+                                ⚠️ This concert has been cancelled
+                              </p>
+                            </div>
+                          )}
+                          {isCompleted && (
+                            <div className="bg-light-blue/30 border border-primary rounded-lg p-3 mb-4">
+                              <p className="text-primary font-semibold text-center text-sm">
+                                ✓ This concert has been completed
+                              </p>
+                            </div>
+                          )}
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex-1">
                               <h4 className="text-2xl font-bold text-secondary mb-4">
@@ -175,7 +197,7 @@ export default async function Home() {
                                   })}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path
                                     strokeLinecap="round"
@@ -196,51 +218,44 @@ export default async function Home() {
                                 </span>
                               </div>
                             </div>
-                            {concert.image_url && (
-                              <div className="ml-6 flex-shrink-0">
-                                <img
-                                  src={concert.image_url}
-                                  alt={concert.title}
-                                  className="w-32 h-32 object-cover rounded-lg"
-                                />
-                              </div>
-                            )}
                           </div>
                           {concert.description && (
-                            <p className="text-gray-700 whitespace-pre-wrap line-clamp-3 mb-4">
+                            <p className="text-gray-700 whitespace-pre-wrap line-clamp-3 mb-4 mt-4">
                               {concert.description}
                             </p>
                           )}
 
-                          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-                            <div>
-                              {concert.ticket_price === 0 ? (
-                                <span className="text-green-600 font-semibold">Free admission</span>
-                              ) : (
-                                <span className="text-lg font-bold text-secondary">
-                                  ${(concert.ticket_price / 100).toFixed(2)}
-                                </span>
-                              )}
-                              <p className="text-xs text-gray-500">
-                                {concert.max_attendees - concert.attendees_count} seats remaining
-                              </p>
+                          {!isCancelled && !isCompleted && (
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                              <div>
+                                {concert.ticket_price === 0 ? (
+                                  <span className="text-green-600 font-semibold">Free admission</span>
+                                ) : (
+                                  <span className="text-lg font-bold text-secondary">
+                                    ${(concert.ticket_price / 100).toFixed(2)}
+                                  </span>
+                                )}
+                                <p className="text-xs text-gray-500">
+                                  {concert.max_attendees - concert.attendees_count} seats remaining
+                                </p>
+                              </div>
+                              <Link
+                                href="/concerts"
+                                className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity text-sm"
+                              >
+                                {concert.ticket_price === 0 ? (
+                                  'Reserve seat'
+                                ) : (
+                                  <>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                    </svg>
+                                    Get tickets
+                                  </>
+                                )}
+                              </Link>
                             </div>
-                            <Link
-                              href="/concerts"
-                              className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity text-sm"
-                            >
-                              {concert.ticket_price === 0 ? (
-                                'Reserve seat'
-                              ) : (
-                                <>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                  </svg>
-                                  Get tickets
-                                </>
-                              )}
-                            </Link>
-                          </div>
+                          )}
                         </div>
                       );
                     })}

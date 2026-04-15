@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { deleteImageFromStorage } from '@/lib/storage-helpers';
 
 // Get a specific event
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -63,10 +64,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         rain_date: body.rain_date || null,
         difficulty: body.difficulty,
         comp_code: body.comp_code || null,
+        image_url: body.image_url || null,
+        image_orientation: body.image_orientation || null,
         location_address: body.location_address,
         location_city: body.location_city,
         location_state: body.location_state,
         location_zip: body.location_zip,
+        arrival_instructions: body.arrival_instructions || null,
         max_tickets: body.max_tickets,
         ticket_price: body.ticket_price,
         status: body.status,
@@ -102,12 +106,24 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get the event to find the image URL
+    const { data: event } = await supabase
+      .from('sunset_events')
+      .select('image_url')
+      .eq('id', params.id)
+      .single();
+
     // Delete the event (will cascade delete orders due to ON DELETE CASCADE)
     const { error } = await supabase.from('sunset_events').delete().eq('id', params.id);
 
     if (error) {
       console.error('Error deleting event:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Delete the associated image if it exists
+    if (event?.image_url) {
+      await deleteImageFromStorage(event.image_url);
     }
 
     return NextResponse.json({ success: true });

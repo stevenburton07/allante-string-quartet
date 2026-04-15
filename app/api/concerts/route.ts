@@ -9,8 +9,8 @@ const concertSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/, 'Invalid date format'),
   location: z.string().min(3, 'Location is required'),
   venue: z.string().optional().nullable(),
-  ticket_link: z.string().url('Invalid URL').optional().nullable().or(z.literal('')),
   image_url: z.string().url('Invalid URL').optional().nullable().or(z.literal('')),
+  image_orientation: z.enum(['landscape', 'portrait']).optional().nullable(),
   is_published: z.boolean(),
   ticket_price: z.number().min(0, 'Ticket price must be non-negative'),
   max_attendees: z.number().min(1, 'Max attendees must be at least 1'),
@@ -83,13 +83,11 @@ export async function POST(request: NextRequest) {
 
     const data = validationResult.data;
 
-    // Remove fields that shouldn't be directly inserted
-    const { status, ...insertData } = data;
-
     // Ensure attendees_count is initialized
     const concertData = {
-      ...insertData,
+      ...data,
       attendees_count: 0,
+      status: data.status || (data.is_published ? 'published' : 'draft'),
     };
 
     // Insert concert

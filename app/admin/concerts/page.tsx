@@ -66,7 +66,12 @@ export default async function ConcertsListPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {concerts?.map((concert) => {
-                const concertDate = new Date(concert.date);
+                // Parse date as local time to avoid timezone conversion issues
+                const concertDateString = concert.date.slice(0, 16);
+                const [datePart, timePart] = concertDateString.split('T');
+                const [year, month, day] = datePart.split('-');
+                const [hour, minute] = timePart.split(':');
+                const concertDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
                 const isPast = concertDate < new Date();
 
                 return (
@@ -107,12 +112,16 @@ export default async function ConcertsListPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          concert.is_published
+                          concert.status === 'published'
                             ? 'bg-green-100 text-green-800'
+                            : concert.status === 'cancelled'
+                            ? 'bg-red-100 text-red-800'
+                            : concert.status === 'completed'
+                            ? 'bg-blue-100 text-blue-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {concert.is_published ? 'Published' : 'Draft'}
+                        {concert.status ? concert.status.charAt(0).toUpperCase() + concert.status.slice(1) : 'Draft'}
                       </span>
                       {isPast && (
                         <div className="text-xs text-gray-500 mt-1">Past event</div>

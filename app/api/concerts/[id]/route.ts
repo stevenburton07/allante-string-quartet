@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { deleteImageFromStorage } from '@/lib/storage-helpers';
 
 // Validation schema
 const concertSchema = z.object({
@@ -9,8 +10,8 @@ const concertSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/, 'Invalid date format'),
   location: z.string().min(3, 'Location is required'),
   venue: z.string().optional().nullable(),
-  ticket_link: z.string().url('Invalid URL').optional().nullable().or(z.literal('')),
   image_url: z.string().url('Invalid URL').optional().nullable().or(z.literal('')),
+  image_orientation: z.enum(['landscape', 'portrait']).optional().nullable(),
   is_published: z.boolean(),
   ticket_price: z.number().min(0, 'Ticket price must be non-negative'),
   max_attendees: z.number().min(1, 'Max attendees must be at least 1'),
@@ -83,8 +84,11 @@ export async function PUT(
 
     const data = validationResult.data;
 
-    // Remove fields that shouldn't be directly updated
-    const { status, ...updateData } = data;
+    // Update concert with status
+    const updateData = {
+      ...data,
+      status: data.status || (data.is_published ? 'published' : 'draft'),
+    };
 
     // Update concert
     const { data: concert, error } = await supabase
@@ -124,9 +128,22 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get the concert to find the image URL
+    const { data: concert } = await supabase
+      .from('concerts')
+      .select('image_url')
+      .eq('id', id)
+      .single();
+
+    // Delete the concert
     const { error } = await supabase.from('concerts').delete().eq('id', id);
 
     if (error) throw error;
+
+    // Delete the associated image if it exists
+    if (concert?.image_url) {
+      await deleteImageFromStorage(concert.image_url);
+    }
 
     return NextResponse.json({ message: 'Concert deleted' }, { status: 200 });
   } catch (error) {
