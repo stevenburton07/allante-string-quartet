@@ -5,9 +5,10 @@ import { useState } from 'react';
 interface CopyEmailsButtonProps {
   emails: string[];
   label?: string;
+  variant?: 'primary' | 'secondary';
 }
 
-export default function CopyEmailsButton({ emails, label = 'Copy Emails' }: CopyEmailsButtonProps) {
+export default function CopyEmailsButton({ emails, label = 'Copy Emails', variant = 'secondary' }: CopyEmailsButtonProps) {
   const [message, setMessage] = useState<string | null>(null);
 
   const handleCopyEmails = async () => {
@@ -36,7 +37,11 @@ export default function CopyEmailsButton({ emails, label = 'Copy Emails' }: Copy
     <div className="relative">
       <button
         onClick={handleCopyEmails}
-        className="inline-flex items-center gap-2 px-4 py-2 border-2 border-primary text-primary bg-transparent rounded-lg font-semibold hover:bg-primary/10 transition-colors"
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+          variant === 'primary'
+            ? 'bg-primary text-white hover:bg-opacity-90'
+            : 'border-2 border-primary text-primary bg-transparent hover:bg-primary/10'
+        }`}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

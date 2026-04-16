@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import CopyEmailsButton from '@/components/admin/CopyEmailsButton';
 
 interface NewsletterSubscriber {
   id: string;
@@ -59,52 +59,10 @@ export default function NewsletterAdminPage() {
     }
   };
 
-  const handleToggleStatus = async (id: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'active' ? 'unsubscribed' : 'active';
-
-    try {
-      const response = await fetch(`/api/admin/newsletter/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update subscriber');
-
-      setMessage({ type: 'success', text: 'Subscriber status updated' });
-      fetchSubscribers();
-    } catch (error) {
-      console.error('Error updating subscriber:', error);
-      setMessage({ type: 'error', text: 'Failed to update subscriber' });
-    }
-  };
-
-  const handleExport = (exportFilter: 'all' | 'active') => {
-    const url = exportFilter === 'active'
-      ? '/api/admin/newsletter/export?status=active'
-      : '/api/admin/newsletter/export';
-    window.open(url, '_blank');
-  };
-
-  const handleCopyEmails = async (copyFilter: 'all' | 'active') => {
-    const emailsToCopy = subscribers
-      .filter((sub) => copyFilter === 'all' || sub.status === 'active')
-      .map((sub) => sub.email)
-      .join(', ');
-
-    try {
-      await navigator.clipboard.writeText(emailsToCopy);
-      setMessage({ type: 'success', text: `Copied ${emailsToCopy.split(', ').length} emails to clipboard!` });
-
-      // Clear message after 3 seconds
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error) {
-      console.error('Failed to copy emails:', error);
-      setMessage({ type: 'error', text: 'Failed to copy emails to clipboard' });
-    }
-  };
+  const allEmails = subscribers.map((sub) => sub.email);
+  const activeEmails = subscribers
+    .filter((sub) => sub.status === 'active')
+    .map((sub) => sub.email);
 
   const filteredSubscribers = subscribers.filter((sub) => {
     if (filter === 'all') return true;
@@ -202,22 +160,11 @@ export default function NewsletterAdminPage() {
           </div>
 
           {/* Copy Emails */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleCopyEmails('all')}
-              className="px-4 py-2 bg-white text-primary border-2 border-primary rounded-lg font-semibold hover:bg-primary/10 transition-colors"
-            >
-              Copy All Emails
-            </button>
-            <button
-              onClick={() => handleCopyEmails('active')}
-              className="px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-opacity-90 transition-opacity inline-flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              Copy Active Emails
-            </button>
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex gap-2">
+              <CopyEmailsButton emails={allEmails} label="Copy All Emails" variant="secondary" />
+              <CopyEmailsButton emails={activeEmails} label="Copy Active Emails" variant="primary" />
+            </div>
           </div>
         </div>
 
@@ -227,58 +174,54 @@ export default function NewsletterAdminPage() {
             <p className="text-gray-600">No subscribers found</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg overflow-hidden border-2 border-primary">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-primary text-white">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">Name</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">Email</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">Subscribed</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredSubscribers.map((subscriber) => (
-                    <tr key={subscriber.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-900">{subscriber.name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{subscriber.email}</td>
-                      <td className="px-6 py-4 text-sm">
-                        <span
-                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                            subscriber.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}
-                        >
-                          {subscriber.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Subscribed</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredSubscribers.map((subscriber) => (
+                  <tr key={subscriber.id}>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">{subscriber.name}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{subscriber.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          subscriber.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {subscriber.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
                         {new Date(subscriber.subscribed_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-center">
-                        <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() => handleToggleStatus(subscriber.id, subscriber.status)}
-                            className="text-primary hover:text-secondary font-medium"
-                          >
-                            {subscriber.status === 'active' ? 'Unsubscribe' : 'Reactivate'}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(subscriber.id)}
-                            className="text-red-600 hover:text-red-800 font-medium"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => handleDelete(subscriber.id)}
+                        className="text-red-600 bg-transparent hover:bg-red-50 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

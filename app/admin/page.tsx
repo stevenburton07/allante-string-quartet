@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 
 // Fun welcome messages - add more anytime!
 const welcomeMessages = [
-  "Welcome to the Allante String Quartet admin panel",
+  "The Zelda music is calling!",
   "Ready to make some beautiful music happen? 🎻",
   "Let's orchestrate something amazing today!",
   "Time to fine-tune your events! 🎵",
