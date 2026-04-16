@@ -392,8 +392,29 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* Newsletter Signup */}
       <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
+            Stay in the loop
+          </h2>
+          <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+            Subscribe to our newsletter for updates on upcoming concerts, special events, and exclusive content
+          </p>
+          <a
+            href="/newsletter"
+            className="inline-flex items-center gap-2 border-2 border-primary text-primary bg-transparent px-8 py-3 rounded-lg font-semibold hover:bg-primary/10 transition-all"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Subscribe to newsletter
+          </a>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 bg-light-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
             Support our music

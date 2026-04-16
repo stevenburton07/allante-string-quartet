@@ -1,8 +1,25 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 
+// Fun welcome messages - add more anytime!
+const welcomeMessages = [
+  "Welcome to the Allante String Quartet admin panel",
+  "Ready to make some beautiful music happen? 🎻",
+  "Let's orchestrate something amazing today!",
+  "Time to fine-tune your events! 🎵",
+  "Bringing harmony to your admin tasks ✨",
+  "Let's strike the right chord with your audience! 🎼",
+  "Managing concerts has never sounded so good!",
+  "Ready to compose your next masterpiece event?",
+  "Let's keep the music flowing! 🎶",
+  "Time to conduct some admin magic!",
+];
+
 export default async function AdminDashboard() {
   const supabase = await createClient();
+
+  // Pick a random welcome message
+  const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
   // Get concert stats
   const { count: totalConcerts } = await supabase
@@ -40,7 +57,7 @@ export default async function AdminDashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
-        <p className="text-gray-600 mt-2">Welcome to the Allante String Quartet admin panel</p>
+        <p className="text-gray-600 mt-2">{randomMessage}</p>
       </div>
 
       {/* Stats Grid */}
@@ -117,32 +134,6 @@ export default async function AdminDashboard() {
               <p className="text-sm text-gray-600">Create a new outdoor event</p>
             </div>
           </Link>
-        </div>
-      </div>
-
-      {/* Coming Soon */}
-      <div className="mt-8 bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold text-primary mb-4">Coming soon</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 border-2 border-gray-300 rounded-lg opacity-50">
-            <div className="flex-shrink-0 w-12 h-12 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mb-3">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-gray-600">Sunset series ticketing</h3>
-            <p className="text-sm text-gray-500">Manage ticket sales and check-ins</p>
-          </div>
-
-          <div className="p-4 border-2 border-gray-300 rounded-lg opacity-50">
-            <div className="flex-shrink-0 w-12 h-12 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mb-3">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-semibold text-gray-600">Donations dashboard</h3>
-            <p className="text-sm text-gray-500">Track donations and donors</p>
-          </div>
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ export default function AdminNav() {
 
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
+    { href: '/admin/newsletter', label: 'Newsletter' },
     { href: '/admin/concerts', label: 'Concerts' },
     { href: '/admin/sunset-series', label: 'Sunset series' },
   ];

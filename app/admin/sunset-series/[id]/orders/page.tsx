@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
+import CopyEmailsButton from '@/components/admin/CopyEmailsButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,8 +48,8 @@ export default async function EventOrdersPage({ params }: { params: { id: string
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
           <Link
             href="/admin/sunset-series"
             className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-2"
@@ -74,7 +75,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
         </div>
         <Link
           href={`/admin/sunset-series/${params.id}/check-in`}
-          className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity"
+          className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity flex-shrink-0"
         >
           Check-in scanner
         </Link>
@@ -108,6 +109,14 @@ export default async function EventOrdersPage({ params }: { params: { id: string
             {checkedInCount} checked in
           </p>
         </div>
+      </div>
+
+      {/* Copy Emails Button */}
+      <div className="flex justify-end">
+        <CopyEmailsButton
+          emails={orders?.map((order) => order.customer_email) || []}
+          label="Copy Attendee Emails"
+        />
       </div>
 
       {/* Orders Table */}

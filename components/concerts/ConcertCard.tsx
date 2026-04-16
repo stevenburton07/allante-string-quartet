@@ -31,7 +31,7 @@ export default function ConcertCard({ concert, isPast = false }: ConcertCardProp
   });
 
   return (
-    <div className={`bg-white border-2 rounded-lg ${isCancelled ? 'border-red-700' : 'border-primary'} ${isPast ? 'opacity-75' : ''}`}>
+    <div className={`bg-white border-2 rounded-lg ${isCancelled ? 'border-red-700' : 'border-primary'}`}>
       <div className="p-8">
         {isCancelled && (
           <div className="bg-red-50 border border-red-300 rounded-lg p-4 mb-6">
