@@ -202,7 +202,7 @@ export default function NewsletterAdminPage() {
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {subscriber.status}
+                        {subscriber.status.charAt(0).toUpperCase() + subscriber.status.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
