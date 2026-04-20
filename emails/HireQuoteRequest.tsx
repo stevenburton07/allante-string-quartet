@@ -166,7 +166,7 @@ const text = {
 };
 
 const link = {
-  color: '#BF759E',
+  color: '#D14377',
   textDecoration: 'underline',
 };
 

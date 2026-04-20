@@ -17,7 +17,7 @@ const concertSchema = z.object({
   max_attendees: z.number().min(1, 'Max attendees must be at least 1'),
   comp_code: z.string().optional().nullable().or(z.literal('')),
   status: z.string().optional(),
-}).passthrough();
+});
 
 // GET /api/concerts/[id] - Get single concert
 export async function GET(
@@ -73,7 +73,7 @@ export async function PUT(
       return NextResponse.json(
         {
           error: 'Validation failed',
-          errors: validationResult.error.errors.map((err) => ({
+          errors: validationResult.error.issues.map(err => ({
             path: err.path,
             message: err.message,
           })),

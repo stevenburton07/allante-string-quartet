@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
+import { z } from 'zod';
+
+const registrationSchema = z.object({
+  concertId: z.string().uuid(),
+  quantity: z.number().int().min(1).max(20),
+  customerName: z.string().min(1).max(200),
+  customerEmail: z.string().email().max(320),
+  customerPhone: z.string().max(30).optional().nullable(),
+  compCode: z.string().max(100).optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { concertId, quantity, customerName, customerEmail, customerPhone, compCode } = body;
+    const parsed = registrationSchema.safeParse(body);
 
-    if (!concertId || !quantity || !customerName || !customerEmail) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Invalid input', errors: parsed.error.issues.map(e => ({ path: e.path, message: e.message })) },
         { status: 400 }
       );
     }
+
+    const { concertId, quantity, customerName, customerEmail, customerPhone, compCode } = parsed.data;
 
     // Fetch concert details from Supabase
     const supabase = await createClient();
@@ -95,11 +107,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update attendees count
-    const { error: updateError } = await supabase
-      .from('concerts')
-      .update({ attendees_count: concert.attendees_count + quantity })
-      .eq('id', concertId);
+    // Atomically increment attendees count
+    const { error: updateError } = await supabase.rpc('increment_attendees', {
+      concert_id: concertId,
+      amount: quantity,
+    });
 
     if (updateError) {
       console.error('Error updating attendees count:', updateError);
@@ -112,10 +124,10 @@ export async function POST(request: NextRequest) {
       orderId: order.id,
       message: 'Registration successful! Check your email for confirmation.'
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error registering for concert:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to register for concert' },
+      { error: 'Failed to register for concert' },
       { status: 500 }
     );
   }

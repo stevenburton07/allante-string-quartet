@@ -1,25 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
+
+const checkoutSchema = z.object({
+  concertId: z.string().uuid(),
+  quantity: z.number().int().min(1).max(20),
+  customerName: z.string().min(1).max(200),
+  customerEmail: z.string().email().max(320),
+  customerPhone: z.string().max(30).optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
   try {
     if (!stripe) {
       return NextResponse.json(
-        { error: 'Stripe is not configured. Please add your Stripe API keys to .env.local' },
+        { error: 'Stripe is not configured' },
         { status: 500 }
       );
     }
 
     const body = await request.json();
-    const { concertId, quantity, customerName, customerEmail, customerPhone } = body;
+    const parsed = checkoutSchema.safeParse(body);
 
-    if (!concertId || !quantity || !customerName || !customerEmail) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Invalid input', errors: parsed.error.issues.map(e => ({ path: e.path, message: e.message })) },
         { status: 400 }
       );
     }
+
+    const { concertId, quantity, customerName, customerEmail, customerPhone } = parsed.data;
 
     // Fetch concert details from Supabase
     const supabase = await createClient();
@@ -101,10 +112,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating checkout session:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create checkout session' },
+      { error: 'Failed to create checkout session' },
       { status: 500 }
     );
   }

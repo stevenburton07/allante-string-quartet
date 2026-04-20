@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 import Button from '@/components/ui/Button';
 
 const SUGGESTED_AMOUNTS = [
@@ -17,15 +18,24 @@ export default function DonationForm() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50); // Default $50
   const [customAmount, setCustomAmount] = useState('');
   const [isCustom, setIsCustom] = useState(false);
-  const [isMobile, setIsMobile] = useState(true); // Default to true to avoid layout shift
+  const [isMobile, setIsMobile] = useState(true);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Detect if user is on mobile device
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
       return /iphone|ipad|ipod|android/.test(userAgent) || window.innerWidth < 768;
     };
-    setIsMobile(checkMobile());
+    const mobile = checkMobile();
+    setIsMobile(mobile);
+
+    if (!mobile) {
+      QRCode.toDataURL(`https://venmo.com/u/${VENMO_USERNAME}`, {
+        width: 250,
+        margin: 2,
+        color: { dark: '#002E5C', light: '#FFFFFF' },
+      }).then(setQrDataUrl).catch(console.error);
+    }
   }, []);
 
   const handleAmountSelect = (amount: number) => {
@@ -102,13 +112,15 @@ export default function DonationForm() {
             Scan the QR code with your phone to donate via Venmo
           </p>
           <div className="flex justify-center">
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`https://venmo.com/u/${VENMO_USERNAME}`)}`}
-              alt="Venmo QR Code"
-              width={250}
-              height={250}
-              className="border-4 border-gray-200 rounded-lg"
-            />
+            {qrDataUrl && (
+              <img
+                src={qrDataUrl}
+                alt="Venmo QR Code"
+                width={250}
+                height={250}
+                className="border-4 border-gray-200 rounded-lg"
+              />
+            )}
           </div>
         </div>
       ) : (

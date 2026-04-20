@@ -167,7 +167,7 @@ allante_quartet/
 ## Brand Colors
 
 - **Primary**: #002E5C (Dark Blue)
-- **Secondary**: #BF759E (Mauve/Rose)
+- **Secondary**: #D14377 (Rose/Magenta)
 - **Light Gray**: #f2f2f2
 - **Light Blue**: #93C4F5
 

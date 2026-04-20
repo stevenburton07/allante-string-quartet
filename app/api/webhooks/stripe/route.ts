@@ -3,7 +3,6 @@ import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { generateTicketQRCode } from '@/lib/qrcode';
 import { sendEmail } from '@/lib/email';
-import { render } from '@react-email/components';
 import TicketConfirmation from '@/emails/TicketConfirmation';
 import Stripe from 'stripe';
 
@@ -39,10 +38,10 @@ export async function POST(request: NextRequest) {
 
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err);
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: 'Webhook signature verification failed' },
       { status: 400 }
     );
   }
@@ -127,21 +126,21 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       throw new Error('Failed to create order');
     }
 
-    // Update tickets_sold count
-    const { error: updateError } = await supabase
-      .from('sunset_events')
-      .update({
-        tickets_sold: event.tickets_sold + quantity,
-      })
-      .eq('id', eventId);
+    // Atomically increment tickets_sold
+    const { error: updateError } = await supabase.rpc('increment_tickets_sold', {
+      event_id: eventId,
+      amount: quantity,
+    });
 
     if (updateError) {
       console.error('Error updating tickets_sold:', updateError);
     }
 
     // Send confirmation email
-    const emailHtml = render(
-      TicketConfirmation({
+    await sendEmail({
+      to: customerEmail,
+      subject: `Your Sunset Series Tickets - ${event.title}`,
+      react: TicketConfirmation({
         customerName,
         eventTitle: event.title,
         eventDate: event.event_date,
@@ -155,13 +154,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         totalAmount: session.amount_total || 0,
         orderId: session.id,
         qrCodeUrl: qrCodeDataUrl,
-      })
-    );
-
-    await sendEmail({
-      to: customerEmail,
-      subject: `Your Sunset Series Tickets - ${event.title}`,
-      html: emailHtml,
+      }),
     });
 
     console.log('Successfully processed checkout session:', session.id);

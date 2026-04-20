@@ -6,6 +6,14 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { data: subscribers, error } = await supabase
       .from('newsletter_subscribers')
       .select('*')

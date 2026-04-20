@@ -157,7 +157,7 @@ const text = {
 
 const infoBox = {
   backgroundColor: '#f6f9fc',
-  border: '2px solid #BF759E',
+  border: '2px solid #D14377',
   borderRadius: '8px',
   margin: '20px 40px',
   padding: '20px',

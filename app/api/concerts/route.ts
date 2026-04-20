@@ -16,7 +16,7 @@ const concertSchema = z.object({
   max_attendees: z.number().min(1, 'Max attendees must be at least 1'),
   comp_code: z.string().optional().nullable().or(z.literal('')),
   status: z.string().optional(),
-}).passthrough();
+});
 
 // GET /api/concerts - List all concerts
 export async function GET(request: NextRequest) {
@@ -30,8 +30,9 @@ export async function GET(request: NextRequest) {
       .select('*')
       .order('date', { ascending: false });
 
-    // Filter by published status if specified
-    if (published === 'true') {
+    // Only return all concerts if explicitly requested with published=all (admin use)
+    // Default to published-only for public access
+    if (published !== 'all') {
       query = query.eq('is_published', true);
     }
 
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Validation failed',
-          errors: validationResult.error.errors.map((err) => ({
+          errors: validationResult.error.issues.map(err => ({
             path: err.path,
             message: err.message,
           })),

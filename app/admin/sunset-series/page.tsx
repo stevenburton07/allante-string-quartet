@@ -50,7 +50,7 @@ export default async function AdminSunsetSeriesPage() {
           <p className="text-gray-600 mb-4">No sunset series events yet.</p>
           <Link
             href="/admin/sunset-series/new"
-            className="text-secondary hover:text-primary font-semibold"
+            className="inline-block text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary/10 transition-all"
           >
             Create your first event
           </Link>

@@ -3,11 +3,14 @@ import { createClient } from '@/lib/supabase/server';
 import { deleteImageFromStorage } from '@/lib/storage-helpers';
 
 // Get a specific event
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -16,11 +19,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch the event
     const { data: event, error } = await supabase
       .from('sunset_events')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error || !event) {
@@ -28,21 +30,24 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     return NextResponse.json(event);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in GET /api/admin/sunset-series/[id]:', error);
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
 // Update an existing sunset event
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -53,7 +58,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const body = await request.json();
 
-    // Update the event
     const { data, error } = await supabase
       .from('sunset_events')
       .update({
@@ -76,28 +80,31 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         status: body.status,
         published: body.published,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
     if (error) {
       console.error('Error updating event:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
     }
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in PUT /api/admin/sunset-series/[id]:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 // Delete a sunset event
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -106,29 +113,26 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get the event to find the image URL
     const { data: event } = await supabase
       .from('sunset_events')
       .select('image_url')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
-    // Delete the event (will cascade delete orders due to ON DELETE CASCADE)
-    const { error } = await supabase.from('sunset_events').delete().eq('id', params.id);
+    const { error } = await supabase.from('sunset_events').delete().eq('id', id);
 
     if (error) {
       console.error('Error deleting event:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
     }
 
-    // Delete the associated image if it exists
     if (event?.image_url) {
       await deleteImageFromStorage(event.image_url);
     }
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in DELETE /api/admin/sunset-series/[id]:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
