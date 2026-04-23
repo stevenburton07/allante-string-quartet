@@ -10,7 +10,8 @@ export const metadata = {
   title: 'Edit Sunset Series Event | Admin',
 };
 
-export default async function EditSunsetEventPage({ params }: { params: { id: string } }) {
+export default async function EditSunsetEventPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -25,7 +26,7 @@ export default async function EditSunsetEventPage({ params }: { params: { id: st
   const { data: event, error } = await supabase
     .from('sunset_events')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !event) {

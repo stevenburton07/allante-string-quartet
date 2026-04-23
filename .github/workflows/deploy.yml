@@ -1,0 +1,64 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Generate wrangler.jsonc
+        run: |
+          cat > wrangler.jsonc << 'TEMPLATE'
+          {
+            "name": "allante-quartet",
+            "compatibility_date": "2024-09-23",
+            "compatibility_flags": ["nodejs_compat"],
+            "main": ".open-next/worker.js",
+            "assets": {
+              "directory": ".open-next/assets",
+              "binding": "ASSETS"
+            },
+            "routes": [
+              { "pattern": "allantestringquartet.com/*", "zone_name": "allantestringquartet.com" },
+              { "pattern": "www.allantestringquartet.com/*", "zone_name": "allantestringquartet.com" }
+            ],
+            "vars": {
+              "NEXT_PUBLIC_SUPABASE_URL": "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}",
+              "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}",
+              "SUPABASE_SERVICE_ROLE_KEY": "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}",
+              "RESEND_API_KEY": "${{ secrets.RESEND_API_KEY }}",
+              "VENMO_USERNAME": "${{ secrets.VENMO_USERNAME }}",
+              "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}",
+              "STRIPE_SECRET_KEY": "${{ secrets.STRIPE_SECRET_KEY }}",
+              "STRIPE_WEBHOOK_SECRET": "${{ secrets.STRIPE_WEBHOOK_SECRET }}",
+              "TICKET_PRICE": "${{ secrets.TICKET_PRICE }}",
+              "NEXT_PUBLIC_APP_URL": "https://allantestringquartet.com",
+              "ORGANIZATION_EMAIL": "${{ secrets.ORGANIZATION_EMAIL }}"
+            }
+          }
+          TEMPLATE
+
+      - name: Create .env.local for build
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env.local
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env.local
+          echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" >> .env.local
+          echo "NEXT_PUBLIC_APP_URL=https://allantestringquartet.com" >> .env.local
+
+      - run: npm run build:cloudflare
+
+      - run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

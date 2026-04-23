@@ -6,11 +6,12 @@ export const metadata: Metadata = {
   description: 'Your Sunset Series tickets have been confirmed',
 };
 
-export default function SunsetSeriesSuccessPage({
+export default async function SunsetSeriesSuccessPage({
   searchParams,
 }: {
-  searchParams: { session_id?: string };
+  searchParams: Promise<{ session_id?: string }>;
 }) {
+  const { session_id } = await searchParams;
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full">
@@ -129,9 +130,9 @@ export default function SunsetSeriesSuccessPage({
               </a>{' '}
               with your order confirmation number.
             </p>
-            {searchParams.session_id && (
+            {session_id && (
               <p className="text-xs text-yellow-700 font-mono mt-2">
-                Order ID: {searchParams.session_id}
+                Order ID: {session_id}
               </p>
             )}
           </div>

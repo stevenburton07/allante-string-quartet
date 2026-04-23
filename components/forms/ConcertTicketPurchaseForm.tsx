@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
-import { loadStripe } from '@stripe/stripe-js';
+
 
 interface ConcertTicketPurchaseFormProps {
   concertId: string;
@@ -64,21 +64,12 @@ export default function ConcertTicketPurchaseForm({
           throw new Error(error.error || 'Failed to create checkout session');
         }
 
-        const { sessionId, url } = await response.json();
+        const { url } = await response.json();
 
-        // Redirect to Stripe Checkout
-        if (url) {
-          window.location.href = url;
-        } else {
-          const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-          if (!stripe) {
-            throw new Error('Failed to load Stripe');
-          }
-          const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
-          if (stripeError) {
-            throw new Error(stripeError.message);
-          }
+        if (!url) {
+          throw new Error('No checkout URL returned');
         }
+        window.location.href = url;
       } else {
         // Free concert or comp code - register directly
         const response = await fetch('/api/concerts/register', {

@@ -18,13 +18,12 @@ export async function generateTicketQRCode(orderId: string, eventId: string): Pr
   try {
     // Generate QR code as data URL
     const qrCodeDataURL = await QRCode.toDataURL(qrData, {
-      errorCorrectionLevel: 'H', // High error correction
+      errorCorrectionLevel: 'H',
       type: 'image/png',
-      quality: 1,
       margin: 2,
       width: 400,
       color: {
-        dark: '#002E5C', // Primary color
+        dark: '#002E5C',
         light: '#FFFFFF',
       },
     });

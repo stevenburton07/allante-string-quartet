@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
-import { loadStripe } from '@stripe/stripe-js';
+
 
 interface TicketPurchaseFormProps {
   eventId: string;
@@ -70,22 +70,12 @@ export default function TicketPurchaseForm({
         return;
       }
 
-      const { sessionId, url } = result;
+      const { url } = result;
 
-      // Redirect to Stripe Checkout
-      if (url) {
-        window.location.href = url;
-      } else {
-        // Fallback: use Stripe.js to redirect
-        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-        if (!stripe) {
-          throw new Error('Failed to load Stripe');
-        }
-        const { error: stripeError } = await stripe.redirectToCheckout({ sessionId });
-        if (stripeError) {
-          throw new Error(stripeError.message);
-        }
+      if (!url) {
+        throw new Error('No checkout URL returned');
       }
+      window.location.href = url;
     } catch (err: any) {
       console.error('Error purchasing tickets:', err);
       setError(err.message || 'Failed to purchase tickets. Please try again.');

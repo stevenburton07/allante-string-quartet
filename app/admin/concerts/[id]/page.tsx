@@ -4,13 +4,14 @@ import ConcertForm from '@/components/concerts/ConcertForm';
 import Link from 'next/link';
 import type { Concert } from '@/types/concert';
 
-export default async function EditConcertPage({ params }: { params: { id: string } }) {
+export default async function EditConcertPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const { data: concert, error } = await supabase
     .from('concerts')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !concert) {

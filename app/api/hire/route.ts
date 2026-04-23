@@ -8,14 +8,14 @@ const hireQuoteSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   eventType: z.enum(['wedding', 'corporate', 'party', 'other'], {
-    errorMap: () => ({ message: 'Please select an event type' }),
+    error: 'Please select an event type',
   }),
   address: z.string().min(10, 'Please provide a complete address'),
   eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
   startTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
   endTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
   performerType: z.enum(['solo-violin', 'solo-viola', 'solo-cello', 'quartet'], {
-    errorMap: () => ({ message: 'Please select a performer type' }),
+    error: 'Please select a performer type',
   }),
   additionalDetails: z.string().optional(),
 });

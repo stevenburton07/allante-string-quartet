@@ -9,7 +9,8 @@ export const metadata = {
   title: 'Event Orders | Admin',
 };
 
-export default async function EventOrdersPage({ params }: { params: { id: string } }) {
+export default async function EventOrdersPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -24,7 +25,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
   const { data: event, error: eventError } = await supabase
     .from('sunset_events')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (eventError || !event) {
@@ -35,7 +36,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
   const { data: orders, error: ordersError } = await supabase
     .from('sunset_orders')
     .select('*')
-    .eq('event_id', params.id)
+    .eq('event_id', id)
     .order('created_at', { ascending: false });
 
   const totalOrders = orders?.length || 0;
@@ -74,7 +75,7 @@ export default async function EventOrdersPage({ params }: { params: { id: string
           </p>
         </div>
         <Link
-          href={`/admin/sunset-series/${params.id}/check-in`}
+          href={`/admin/sunset-series/${id}/check-in`}
           className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-opacity flex-shrink-0"
         >
           Check-in scanner
