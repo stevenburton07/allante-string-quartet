@@ -56,7 +56,7 @@ export default async function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Dashboard</h1>
         <p className="text-gray-600 mt-2">{randomMessage}</p>
       </div>
 
@@ -65,16 +65,16 @@ export default async function AdminDashboard() {
         {/* Concert Stats */}
         <div>
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Concerts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow p-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Total concerts</h3>
               <p className="text-3xl font-bold text-primary mt-2">{totalConcerts || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedConcerts || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
               <p className="text-3xl font-bold text-primary mt-2">{upcomingConcerts || 0}</p>
             </div>
@@ -84,16 +84,16 @@ export default async function AdminDashboard() {
         {/* Sunset Series Stats */}
         <div>
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Sunset series</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow p-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Total events</h3>
               <p className="text-3xl font-bold text-primary mt-2">{totalSunsetEvents || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedSunsetEvents || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
               <p className="text-3xl font-bold text-primary mt-2">{upcomingSunsetEvents || 0}</p>
             </div>
@@ -102,8 +102,8 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold text-primary mb-4">Quick actions</h2>
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Quick actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
             href="/admin/concerts/new"

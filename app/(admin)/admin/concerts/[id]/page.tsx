@@ -27,11 +27,11 @@ export default async function EditConcertPage({ params }: { params: Promise<{ id
         >
           ← Back to concerts
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Edit concert</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Edit concert</h1>
         <p className="text-gray-600 mt-2">{concert.title}</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-8">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-8">
         <ConcertForm concert={concert as Concert} isEdit />
       </div>
     </div>

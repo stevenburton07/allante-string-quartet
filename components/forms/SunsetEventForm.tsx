@@ -266,7 +266,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           value={formData.title}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           placeholder="Sunset Series: Summer Evening"
         />
       </div>
@@ -283,7 +283,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           onChange={handleChange}
           required
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           placeholder="Describe the event..."
         />
       </div>
@@ -301,7 +301,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             value={formData.event_date}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -316,7 +316,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             value={formData.event_time}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           />
         </div>
       </div>
@@ -332,7 +332,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           name="rain_date"
           value={formData.rain_date}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         />
       </div>
 
@@ -347,7 +347,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           value={formData.difficulty}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         >
           <option value="easy">Easy - Suitable for all fitness levels, minimal elevation gain</option>
           <option value="moderate">Moderate - Some inclines, moderate fitness required</option>
@@ -366,7 +366,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           name="comp_code"
           value={formData.comp_code}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           placeholder="COMP2024"
         />
         <p className="mt-2 text-sm text-gray-600">
@@ -384,7 +384,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           id="image"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         />
         <p className="mt-1 text-sm text-gray-500">
           PNG, JPG, GIF up to 5MB
@@ -425,7 +425,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             value={formData.location_address}
             onChange={handleChange}
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
             placeholder="123 Main Street"
           />
         </div>
@@ -442,7 +442,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
               value={formData.location_city}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
               placeholder="Seattle"
             />
           </div>
@@ -458,7 +458,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
               value={formData.location_state}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
               placeholder="WA"
             />
           </div>
@@ -474,7 +474,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
               value={formData.location_zip}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
               placeholder="98101"
             />
           </div>
@@ -490,7 +490,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             value={formData.arrival_instructions}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
             placeholder="Detailed directions for reaching the event location..."
           />
           <p className="mt-2 text-sm text-gray-600">
@@ -514,7 +514,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             required
             min="0"
             step="0.01"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -530,7 +530,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             onChange={handleChange}
             required
             min="1"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
           />
         </div>
       </div>
@@ -546,7 +546,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           value={formData.status}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
@@ -559,34 +559,37 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex justify-between gap-4 pt-4">
-        <div>
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-4 pt-4">
+        <div className="w-full sm:w-auto">
           {mode === 'edit' && (
-            <Button
-              type="button"
-              variant="primary"
-              size="lg"
-              onClick={handleDelete}
-              disabled={loading}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete event
-            </Button>
+            <div className="mt-8 sm:mt-0 pt-6 sm:pt-0 border-t sm:border-t-0 border-gray-200">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                onClick={handleDelete}
+                disabled={loading}
+                className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+              >
+                Delete event
+              </Button>
+            </div>
           )}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
           <Button
             type="button"
             variant="secondary"
             size="lg"
             onClick={() => router.push('/admin/sunset-series')}
             disabled={loading}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
 
-          <Button type="submit" variant="primary" size="lg" disabled={loading || uploadingImage}>
+          <Button type="submit" variant="primary" size="lg" disabled={loading || uploadingImage} className="w-full sm:w-auto">
             {uploadingImage ? 'Uploading image...' : loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
           </Button>
         </div>

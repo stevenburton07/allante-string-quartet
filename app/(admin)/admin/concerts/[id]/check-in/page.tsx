@@ -5,9 +5,9 @@ import Link from 'next/link';
 import QRScanner from '@/components/admin/QRScanner';
 import { parseTicketQRCode } from '@/lib/qrcode';
 
-export default function CheckInPage({ params }: { params: Promise<{ id: string }> }) {
+export default function ConcertCheckInPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [event, setEvent] = useState<any>(null);
+  const [concert, setConcert] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checkInResult, setCheckInResult] = useState<{
     success: boolean;
@@ -17,22 +17,22 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
   const [checkInHistory, setCheckInHistory] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch event details
-    const fetchEvent = async () => {
+    // Fetch concert details
+    const fetchConcert = async () => {
       try {
-        const response = await fetch(`/api/admin/sunset-series/${id}`);
+        const response = await fetch(`/api/concerts/${id}`);
         if (response.ok) {
           const data = await response.json();
-          setEvent(data);
+          setConcert(data.concert);
         }
       } catch (error) {
-        console.error('Error fetching event:', error);
+        console.error('Error fetching concert:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEvent();
+    fetchConcert();
   }, [id]);
 
   const handleScan = async (qrData: string) => {
@@ -44,30 +44,30 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
     if (!parsed) {
       setCheckInResult({
         success: false,
-        message: 'Invalid QR code. This is not a valid Sunset Series ticket.',
+        message: 'Invalid QR code. This is not a valid concert ticket.',
       });
       return;
     }
 
-    // Verify event matches
+    // Verify concert matches
     if (parsed.eventId !== id) {
       setCheckInResult({
         success: false,
-        message: 'This ticket is for a different event.',
+        message: 'This ticket is for a different concert.',
       });
       return;
     }
 
     // Check in the ticket
     try {
-      const response = await fetch('/api/admin/sunset-series/check-in', {
+      const response = await fetch('/api/admin/concerts/check-in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           orderId: parsed.orderId,
-          eventId: parsed.eventId,
+          concertId: parsed.eventId,
         }),
       });
 
@@ -76,7 +76,7 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
       if (response.ok) {
         setCheckInResult({
           success: true,
-          message: `✓ Checked in successfully! ${result.order.customer_name} - ${result.order.ticket_quantity} ticket(s).`,
+          message: `✓ Checked in successfully! ${result.order.customer_name} - ${result.order.ticket_quantity} attendee(s).`,
           order: result.order,
         });
 
@@ -105,52 +105,57 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
     );
   }
 
-  if (!event) {
+  if (!concert) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-600">Event not found</p>
+        <p className="text-gray-600">Concert not found</p>
       </div>
     );
   }
+
+  const concertDateString = concert.date.slice(0, 16);
+  const [datePart, timePart] = concertDateString.split('T');
+  const [year, month, day] = datePart.split('-');
+  const [hour, minute] = timePart.split(':');
+  const concertDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
       <div>
         <Link
-          href={`/admin/sunset-series/${id}/orders`}
-          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-4"
+          href={`/admin/concerts/${id}/orders`}
+          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-2 text-sm inline-flex items-center mb-4"
         >
           ← Back to orders
         </Link>
       </div>
-      <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold text-primary mb-2">Check-in: {event.title}</h1>
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">Check-in: {concert.title}</h1>
         <p className="text-gray-600">
-          {new Date(event.event_date).toLocaleDateString('en-US', {
+          {concertDate.toLocaleDateString('en-US', {
             weekday: 'long',
             month: 'long',
             day: 'numeric',
             year: 'numeric',
           })}{' '}
-          at {(() => {
-            const [hours, minutes] = event.event_time.split(':');
-            const hour = parseInt(hours);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const displayHour = hour % 12 || 12;
-            return `${displayHour}:${minutes} ${ampm}`;
-          })()}
+          at{' '}
+          {concertDate.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+          })}
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-primary mb-4">Scan ticket QR code</h2>
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-primary mb-4">Scan ticket QR code</h2>
         <QRScanner onScan={handleScan} />
       </div>
 
       {checkInResult && (
         <div
-          className={`rounded-lg p-6 ${
+          className={`rounded-lg p-4 sm:p-6 ${
             checkInResult.success
               ? 'bg-green-50 border border-green-200'
               : 'bg-red-50 border border-red-200'
@@ -167,20 +172,20 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
       )}
 
       {checkInHistory.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-primary mb-4">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-primary mb-4">
             Recent check-ins ({checkInHistory.length})
           </h2>
           <div className="space-y-3">
             {checkInHistory.map((order, index) => (
-              <div key={index} className="flex items-center justify-between border-b pb-3">
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 border-b pb-3">
                 <div>
                   <p className="font-medium text-gray-900">{order.customer_name}</p>
                   <p className="text-sm text-gray-600">{order.customer_email}</p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right">
                   <p className="text-sm font-semibold text-primary">
-                    {order.ticket_quantity} ticket{order.ticket_quantity !== 1 ? 's' : ''}
+                    {order.ticket_quantity} attendee{order.ticket_quantity !== 1 ? 's' : ''}
                   </p>
                   <p className="text-xs text-gray-500">
                     {new Date(order.checked_in_at).toLocaleTimeString('en-US', {

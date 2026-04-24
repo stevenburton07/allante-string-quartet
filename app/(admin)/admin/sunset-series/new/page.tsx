@@ -27,13 +27,13 @@ export default async function NewSunsetEventPage() {
         >
           ← Back to sunset series
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Create new sunset series event</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Create new sunset series event</h1>
         <p className="text-gray-600 mt-2">
           Fill in the details below to create a new sunset series event
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <SunsetEventForm mode="create" />
       </div>
     </div>

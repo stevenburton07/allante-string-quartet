@@ -27,7 +27,7 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
         { facingMode: 'environment' }, // Use back camera on mobile
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
+          qrbox: { width: Math.min(250, window.innerWidth - 80), height: Math.min(250, window.innerWidth - 80) },
         },
         (decodedText) => {
           // Success callback
@@ -73,8 +73,7 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
     <div className="space-y-4">
       <div
         id={elementId}
-        className={`rounded-lg overflow-hidden ${!isScanning ? 'hidden' : ''}`}
-        style={{ maxWidth: '500px', margin: '0 auto' }}
+        className={`rounded-lg overflow-hidden max-w-[500px] mx-auto w-full ${!isScanning ? 'hidden' : ''}`}
       />
 
       {error && (
@@ -90,6 +89,7 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
             variant="primary"
             size="lg"
             onClick={startScanning}
+            className="w-full sm:w-auto"
           >
             Start Camera
           </Button>
@@ -104,6 +104,7 @@ export default function QRScanner({ onScan, onError }: QRScannerProps) {
             variant="secondary"
             size="lg"
             onClick={stopScanning}
+            className="w-full sm:w-auto"
           >
             Stop Camera
           </Button>

@@ -11,11 +11,11 @@ export default function NewConcertPage() {
         >
           ← Back to concerts
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Add new concert</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Add new concert</h1>
         <p className="text-gray-600 mt-2">Create a new concert event</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-8">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-8">
         <ConcertForm />
       </div>
     </div>

@@ -42,11 +42,11 @@ export default async function EditSunsetEventPage({ params }: { params: Promise<
         >
           ← Back to sunset series
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Edit sunset series event</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">Edit sunset series event</h1>
         <p className="text-gray-600 mt-2">Update the event details below</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <SunsetEventForm mode="edit" event={event} />
       </div>
     </div>

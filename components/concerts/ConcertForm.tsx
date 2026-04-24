@@ -283,7 +283,7 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
           id="image"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         />
         {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image}</p>}
         <p className="mt-1 text-sm text-gray-500">
@@ -360,7 +360,7 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
           value={formData.status}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
         >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
@@ -372,33 +372,36 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
         </p>
       </div>
 
-      <div className="flex justify-between gap-4 pt-4">
-        <div>
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-4 pt-4">
+        <div className="w-full sm:w-auto">
           {isEdit && (
-            <Button
-              type="button"
-              variant="primary"
-              size="lg"
-              onClick={handleDelete}
-              disabled={isSubmitting}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete concert
-            </Button>
+            <div className="mt-8 sm:mt-0 pt-6 sm:pt-0 border-t sm:border-t-0 border-gray-200">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                onClick={handleDelete}
+                disabled={isSubmitting}
+                className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+              >
+                Delete concert
+              </Button>
+            </div>
           )}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
           <Button
             type="button"
             variant="secondary"
             onClick={() => router.push('/admin/concerts')}
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
 
-          <Button type="submit" variant="primary" size="lg" loading={isSubmitting || uploadingImage} disabled={isSubmitting || uploadingImage}>
+          <Button type="submit" variant="primary" size="lg" loading={isSubmitting || uploadingImage} disabled={isSubmitting || uploadingImage} className="w-full sm:w-auto">
             {uploadingImage ? 'Uploading image...' : isSubmitting ? 'Saving...' : isEdit ? 'Update concert' : 'Create concert'}
           </Button>
         </div>
