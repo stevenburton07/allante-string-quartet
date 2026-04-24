@@ -212,17 +212,17 @@ export default function HireQuoteForm() {
         helperText="Full address including city and state"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Input
-          label="Event Date"
-          name="eventDate"
-          type="date"
-          value={formData.eventDate}
-          onChange={handleChange}
-          error={errors.eventDate}
-          required
-        />
+      <Input
+        label="Event Date"
+        name="eventDate"
+        type="date"
+        value={formData.eventDate}
+        onChange={handleChange}
+        error={errors.eventDate}
+        required
+      />
 
+      <div className="grid grid-cols-2 gap-6">
         <Input
           label="Start Time"
           name="startTime"

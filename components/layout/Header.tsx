@@ -56,9 +56,17 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile menu backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-10 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
+        <div className="relative z-20 md:hidden bg-white border-t border-gray-200">
           <nav className="px-4 pt-2 pb-3 space-y-1">
             <Navigation mobile onNavigate={() => setMobileMenuOpen(false)} />
           </nav>

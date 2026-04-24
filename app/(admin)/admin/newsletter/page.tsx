@@ -123,49 +123,44 @@ export default function NewsletterAdminPage() {
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          {/* Filter */}
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'all'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              All ({stats.total})
-            </button>
-            <button
-              onClick={() => setFilter('active')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'active'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Active ({stats.active})
-            </button>
-            <button
-              onClick={() => setFilter('unsubscribed')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'unsubscribed'
-                  ? 'bg-primary text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Unsubscribed ({stats.unsubscribed})
-            </button>
-          </div>
+        {/* Copy Emails */}
+        <div className="flex items-center justify-end gap-3 mb-6">
+          <CopyEmailsButton emails={allEmails} label="Copy All Emails" variant="secondary" />
+          <CopyEmailsButton emails={activeEmails} label="Copy Active Emails" variant="primary" />
+        </div>
 
-          {/* Copy Emails */}
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <CopyEmailsButton emails={allEmails} label="Copy All Emails" variant="secondary" />
-              <CopyEmailsButton emails={activeEmails} label="Copy Active Emails" variant="primary" />
-            </div>
-          </div>
+        {/* Filter */}
+        <div className="flex gap-2 flex-wrap mb-6">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'all'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            All ({stats.total})
+          </button>
+          <button
+            onClick={() => setFilter('active')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'active'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Active ({stats.active})
+          </button>
+          <button
+            onClick={() => setFilter('unsubscribed')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === 'unsubscribed'
+                ? 'bg-primary text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Unsubscribed ({stats.unsubscribed})
+          </button>
         </div>
 
         {/* Subscribers Table */}

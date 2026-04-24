@@ -39,7 +39,7 @@ export default function CopyEmailsButton({ emails, label = 'Copy Emails', varian
         onClick={handleCopyEmails}
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
           variant === 'primary'
-            ? 'bg-primary text-white hover:bg-opacity-90'
+            ? 'bg-primary text-white hover:bg-opacity-90 border-2 border-primary'
             : 'border-2 border-primary text-primary bg-transparent hover:bg-primary/10'
         }`}
       >

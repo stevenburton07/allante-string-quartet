@@ -8,10 +8,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, helperText, className = '', ...props }, ref) => {
+    const isDateType = props.type === 'datetime-local' || props.type === 'date' || props.type === 'time';
+
     const inputClasses = `
-      w-full max-w-full px-4 py-2.5 border-2 rounded-lg
+      w-full min-w-0 max-w-full px-4 py-2.5 border-2 rounded-lg
       focus:outline-none focus:border-primary
       disabled:bg-gray-100 disabled:cursor-not-allowed
+      bg-white text-gray-900
+      ${isDateType ? 'appearance-none' : ''}
       ${error ? 'border-red-500 focus:border-red-500' : 'border-gray-300'}
       ${className}
     `.trim();

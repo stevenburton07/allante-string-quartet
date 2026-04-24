@@ -34,13 +34,13 @@ export default async function Home() {
       {/* Hero Section */}
       <section>
         {/* Hero Image */}
-        <div className="relative w-full h-[500px] md:h-[700px]">
+        <div className="relative w-full h-[250px] sm:h-[400px] md:h-[700px]">
           <Image
             src="/images/hero-background.JPG"
             alt="Allante String Quartet"
             fill
             className="object-cover"
-            style={{ objectPosition: '50% 55%' }}
+            style={{ objectPosition: '50% 35%' }}
             priority
           />
         </div>

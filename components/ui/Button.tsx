@@ -21,7 +21,7 @@ export default function Button({
   const baseClasses = 'font-semibold rounded-lg transition-all duration-200 inline-flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-primary text-white hover:bg-opacity-90 focus:ring-2 focus:ring-primary focus:ring-offset-2',
+    primary: 'bg-primary text-white hover:bg-opacity-90 focus:ring-2 focus:ring-primary focus:ring-offset-2 border-2 border-primary',
     secondary: 'border-2 border-primary text-primary bg-transparent hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2',
     tertiary: 'text-primary bg-transparent hover:bg-primary/10 focus:ring-2 focus:ring-primary focus:ring-offset-2',
     outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-2 focus:ring-primary focus:ring-offset-2',

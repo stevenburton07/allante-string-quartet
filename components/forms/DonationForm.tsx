@@ -78,16 +78,8 @@ export default function DonationForm() {
       'Donation to Allante String Quartet'
     )}`;
 
-    // Try to open Venmo app (works on mobile)
+    // Open Venmo app (works on mobile)
     window.location.href = venmoUrl;
-
-    // Fallback: after a delay, show instructions for desktop users
-    setTimeout(() => {
-      // If still on page (Venmo app didn't open), user might be on desktop
-      alert(
-        `To complete your donation:\n\n1. Open Venmo on your phone\n2. Send $${finalAmount} to @${VENMO_USERNAME}\n3. Add note: "Donation to Allante String Quartet"\n\nThank you for your support!`
-      );
-    }, 1000);
   };
 
   return (

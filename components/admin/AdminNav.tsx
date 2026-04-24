@@ -108,9 +108,17 @@ export default function AdminNav() {
         </div>
       </div>
 
+      {/* Mobile menu backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-10 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/20">
+        <div className="relative z-20 md:hidden border-t border-white/20">
           <div className="px-4 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <Link

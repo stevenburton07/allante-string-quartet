@@ -136,7 +136,7 @@ export default function ConcertTicketPurchaseForm({
           value={quantity}
           onChange={(e) => setQuantity(parseInt(e.target.value))}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900 appearance-none"
         >
           {Array.from({ length: Math.min(availableSeats, 10) }, (_, i) => i + 1).map((num) => (
             <option key={num} value={num}>
@@ -158,7 +158,7 @@ export default function ConcertTicketPurchaseForm({
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
           placeholder="John Doe"
         />
       </div>
@@ -174,7 +174,7 @@ export default function ConcertTicketPurchaseForm({
           value={customerEmail}
           onChange={(e) => setCustomerEmail(e.target.value)}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
           placeholder="john@example.com"
         />
         <p className="mt-1.5 text-sm text-gray-500">
@@ -192,7 +192,7 @@ export default function ConcertTicketPurchaseForm({
           id="customerPhone"
           value={customerPhone}
           onChange={(e) => setCustomerPhone(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
           placeholder="(555) 123-4567"
         />
       </div>
@@ -208,7 +208,7 @@ export default function ConcertTicketPurchaseForm({
             id="compCode"
             value={compCode}
             onChange={(e) => setCompCode(e.target.value.toUpperCase())}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
             placeholder="Enter comp code"
           />
           <p className="mt-1.5 text-sm text-gray-500">

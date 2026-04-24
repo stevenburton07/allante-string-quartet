@@ -13,6 +13,28 @@ const welcomeMessages = [
   "Ready to compose your next masterpiece event?",
   "Let's keep the music flowing! 🎶",
   "Time to conduct some admin magic!",
+  "Orchestrating your day, one task at a time 🗓️",
+  "Your schedule is music to our ears 👂",
+  "Keeping everything in tune behind the scenes 🎛️",
+  "A well-composed day starts here 📝",
+  "Every great performance starts with a plan 📋",
+  "Setting the tempo for a productive day ⏱️",
+  "All the right notes, all in one place 🗂️",
+  "Making admin work feel like a symphony 🎼",
+  "Conducting business, beautifully 🪄",
+  "Your day, perfectly arranged 💐",
+  "Prelude to a great day ☀️",
+  "Let's make today a masterpiece 🎨",
+  "Ready to take it from the top? 🔝",
+  "Bow down to a productive day 🎻",
+  "Stay composed, you've got this 💪",
+  "Pulling strings behind the scenes 🕹️",
+  "No need to fret — everything's in order ✅",
+  "Cello, is it me you're looking for? 👀",
+  "Bach at it again! 🔄",
+  "Suite dashboard you've got here 😎",
+  "Viola! Your dashboard awaits 🪻",
+  "Four real, let's do this 🤘",
 ];
 
 export default async function AdminDashboard() {
@@ -67,16 +89,16 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Concerts</h2>
           <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
-              <h3 className="text-sm font-medium text-gray-500">Total concerts</h3>
-              <p className="text-3xl font-bold text-primary mt-2">{totalConcerts || 0}</p>
+              <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
+              <p className="text-3xl font-bold text-primary mt-2">{upcomingConcerts || 0}</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedConcerts || 0}</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
-              <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
-              <p className="text-3xl font-bold text-primary mt-2">{upcomingConcerts || 0}</p>
+              <h3 className="text-sm font-medium text-gray-500">Total concerts</h3>
+              <p className="text-3xl font-bold text-primary mt-2">{totalConcerts || 0}</p>
             </div>
           </div>
         </div>
@@ -86,16 +108,16 @@ export default async function AdminDashboard() {
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Sunset series</h2>
           <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
-              <h3 className="text-sm font-medium text-gray-500">Total events</h3>
-              <p className="text-3xl font-bold text-primary mt-2">{totalSunsetEvents || 0}</p>
+              <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
+              <p className="text-3xl font-bold text-primary mt-2">{upcomingSunsetEvents || 0}</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedSunsetEvents || 0}</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
-              <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
-              <p className="text-3xl font-bold text-primary mt-2">{upcomingSunsetEvents || 0}</p>
+              <h3 className="text-sm font-medium text-gray-500">Total events</h3>
+              <p className="text-3xl font-bold text-primary mt-2">{totalSunsetEvents || 0}</p>
             </div>
           </div>
         </div>
