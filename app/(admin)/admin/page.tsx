@@ -66,15 +66,15 @@ export default async function AdminDashboard() {
         <div>
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Concerts</h2>
           <div className="grid grid-cols-3 gap-3 sm:gap-6">
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Total concerts</h3>
               <p className="text-3xl font-bold text-primary mt-2">{totalConcerts || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedConcerts || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
               <p className="text-3xl font-bold text-primary mt-2">{upcomingConcerts || 0}</p>
             </div>
@@ -85,15 +85,15 @@ export default async function AdminDashboard() {
         <div>
           <h2 className="text-lg font-semibold text-gray-700 mb-3">Sunset series</h2>
           <div className="grid grid-cols-3 gap-3 sm:gap-6">
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Total events</h3>
               <p className="text-3xl font-bold text-primary mt-2">{totalSunsetEvents || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Published</h3>
               <p className="text-3xl font-bold text-primary mt-2">{publishedSunsetEvents || 0}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col justify-between min-h-[100px]">
               <h3 className="text-sm font-medium text-gray-500">Upcoming</h3>
               <p className="text-3xl font-bold text-primary mt-2">{upcomingSunsetEvents || 0}</p>
             </div>
