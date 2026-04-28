@@ -3,12 +3,13 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import TicketPurchaseForm from '@/components/forms/TicketPurchaseForm';
 import { formatSunsetRange } from '@/lib/format-time';
+import { buildSunsetEventsJsonLd } from '@/lib/structured-data';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Sunset Series | Allante String Quartet',
-  description: 'Join us for intimate outdoor concerts at beautiful hiking destinations. The Sunset Series combines chamber music with nature.',
+  title: 'Sunset Series',
+  description: 'Join us for intimate outdoor concerts at beautiful hiking destinations across Utah. The Sunset Series combines chamber music with nature.',
 };
 
 export default async function SunsetSeriesPage() {
@@ -22,8 +23,17 @@ export default async function SunsetSeriesPage() {
     .in('status', ['published', 'cancelled', 'completed'])
     .gte('event_date', now)
     .order('event_date', { ascending: true });
+
+  const eventsJsonLd = buildSunsetEventsJsonLd(upcomingEvents ?? []);
+
   return (
     <div>
+      {eventsJsonLd.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventsJsonLd) }}
+        />
+      )}
       {/* Hero Image */}
       <section className="relative w-full h-[500px] md:h-[700px] mb-16">
         <Image

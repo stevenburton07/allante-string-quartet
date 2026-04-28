@@ -84,10 +84,18 @@ export default async function Home() {
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
               Welcome
             </h2>
-            <p className="text-lg text-gray-700 mb-8">
+            <p className="text-lg text-gray-700 mb-6">
               The Allante String Quartet is a professional ensemble dedicated to performing
               exceptional chamber music for audiences throughout Utah County and beyond.
               Our repertoire spans from classical masterworks to contemporary compositions.
+            </p>
+            <p className="text-base text-gray-700 mb-8">
+              Our musicians perform with the{' '}
+              <span className="font-semibold text-primary">Orchestra at Temple Square</span>,{' '}
+              the <span className="font-semibold text-primary">Tabernacle Choir</span>,{' '}
+              the <span className="font-semibold text-primary">Timpanogos Symphony Orchestra</span>,{' '}
+              the <span className="font-semibold text-primary">Utah Metropolitan Ballet Orchestra</span>,{' '}
+              and serve on the faculty at <span className="font-semibold text-primary">Brigham Young University</span>.
             </p>
             <a
               href="/about"

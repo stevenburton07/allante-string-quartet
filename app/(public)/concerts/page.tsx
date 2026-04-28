@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import ConcertCard from '@/components/concerts/ConcertCard';
+import { buildConcertEventsJsonLd } from '@/lib/structured-data';
 
 export const metadata: Metadata = {
-  title: 'Concerts | Allante String Quartet',
-  description: 'View upcoming concerts and performances by the Allante String Quartet.',
+  title: 'Concerts',
+  description: 'View upcoming concerts and performances by the Allante String Quartet in Utah County.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -31,8 +32,16 @@ export default async function ConcertsPage() {
     .order('date', { ascending: false })
     .limit(6);
 
+  const eventsJsonLd = buildConcertEventsJsonLd(upcomingConcerts ?? []);
+
   return (
     <div>
+      {eventsJsonLd.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventsJsonLd) }}
+        />
+      )}
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
         {/* Background Image */}

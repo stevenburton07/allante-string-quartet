@@ -1,15 +1,56 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import HireQuoteForm from '@/components/forms/HireQuoteForm';
+import { buildFaqJsonLd } from '@/lib/structured-data';
 
 export const metadata: Metadata = {
-  title: 'Hire Us | Allante String Quartet',
-  description: 'Book the Allante String Quartet for your wedding, corporate event, or private gathering. Professional live music for any occasion.',
+  title: 'Hire a Wedding & Event String Quartet in Utah',
+  description:
+    'Book the Allante String Quartet for weddings, ceremonies, cocktail hours, corporate events, and private gatherings. Based in Utah County, serving the Wasatch Front and statewide events.',
 };
+
+const hireFaqs = [
+  {
+    question: 'How far in advance should we book?',
+    answer:
+      'For weddings and large events, we recommend booking 3–6 months in advance to secure your preferred date. We do our best to accommodate shorter timelines when our schedule allows, so it is always worth reaching out.',
+  },
+  {
+    question: 'Do you travel outside Utah County?',
+    answer:
+      'Yes. We are based in Utah County and regularly perform throughout the Wasatch Front — including Salt Lake County, Park City, and Heber — and travel statewide for events. Travel beyond Utah County may include a travel fee depending on the location.',
+  },
+  {
+    question: 'Can you learn a custom song for our ceremony?',
+    answer:
+      'Absolutely. Custom arrangements are one of our favorite parts of wedding work. Once we have your event details, we can talk through processional, ceremony, and recessional song choices and arrange music that may not already exist for string quartet.',
+  },
+  {
+    question: 'Quartet, trio, duo, or solo — which is right for our event?',
+    answer:
+      'A full string quartet (two violins, viola, cello) provides the fullest sound and is ideal for weddings, galas, and larger events. Trios, duos, and solo configurations work well for smaller gatherings, intimate ceremonies, and cocktail hours, and are typically more budget-friendly. We can help you choose based on your venue size, guest count, and budget.',
+  },
+  {
+    question: 'Can you perform outdoors?',
+    answer:
+      'Yes — outdoor performances are common, especially for weddings. We do ask for shade for the musicians and instruments, a backup indoor option in case of weather, and that the temperature is reasonable for string instruments. We will walk through these details with you when planning the event.',
+  },
+  {
+    question: 'What does pricing depend on?',
+    answer:
+      'Pricing is based on ensemble size (solo, duo, trio, or quartet), performance length, event type, custom arrangements, travel distance, and date. After you submit a quote request, one of the musicians will follow up within 48 hours with pricing tailored to your event.',
+  },
+];
+
+const hireFaqJsonLd = buildFaqJsonLd(hireFaqs);
 
 export default function HirePage() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(hireFaqJsonLd) }}
+      />
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
         {/* Background Image */}
@@ -44,7 +85,7 @@ export default function HirePage() {
             Allante String Quartet provides superb tone quality and blend. This sound is created from seven years of weekly rehearsals with the same musicians. We believe in consistently creating an art form on stage during a concert, and while playing background music.
           </p>
           <p className="text-lg text-gray-700 mb-4">
-            Allante operates out of Utah County, but is willing to travel throughout Utah!
+            Based in Utah County, we serve the Wasatch Front and statewide events.
           </p>
           <p className="text-lg text-gray-700">
             After we receive your information, one of the musicians will meet with you directly to discuss all the details to make your event exactly what you envision.
@@ -187,10 +228,31 @@ export default function HirePage() {
           <div className="bg-white border-2 border-gray-200 rounded-lg p-8">
             <HireQuoteForm />
           </div>
+          <div className="mt-6 bg-light-gray rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3 sm:gap-8 text-sm text-gray-700">
+            <span className="text-gray-600 text-center sm:text-left">Prefer to reach out directly?</span>
+            <a
+              href="tel:+18014720842"
+              className="flex items-center gap-2 hover:text-primary transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>(801) 472-0842</span>
+            </a>
+            <a
+              href="mailto:allantestringquartet@gmail.com"
+              className="flex items-center gap-2 hover:text-primary transition-colors break-all"
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span>allantestringquartet@gmail.com</span>
+            </a>
+          </div>
         </section>
 
         {/* What to Expect */}
-        <section className="max-w-3xl mx-auto">
+        <section className="mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             What to expect
           </h2>
@@ -239,6 +301,21 @@ export default function HirePage() {
                 </p>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-primary mb-8 text-center">
+            Booking FAQs
+          </h2>
+          <div className="space-y-6">
+            {hireFaqs.map((faq) => (
+              <div key={faq.question} className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="font-semibold text-primary mb-2">{faq.question}</h3>
+                <p className="text-gray-700">{faq.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
         </div>
