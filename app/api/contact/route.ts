@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { sendEmail, TO_EMAIL } from '@/lib/email';
+import { sendEmail, getToEmail } from '@/lib/email';
 import ContactFormEmail from '@/emails/ContactFormEmail';
 
 // Validation schema
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     // Send email
     try {
       await sendEmail({
-        to: TO_EMAIL,
+        to: getToEmail(),
         subject: `Contact Form: ${data.subject}`,
         react: ContactFormEmail(data),
         replyTo: data.email,

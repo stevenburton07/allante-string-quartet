@@ -1,25 +1,22 @@
 import { Resend } from 'resend';
 
-// Initialize Resend client
-// Will gracefully handle missing API key for development
-export const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-export const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL || 'Allante String Quartet <onboarding@resend.dev>';
-export const TO_EMAIL = process.env.ORGANIZATION_EMAIL || 'allantestringquartet@gmail.com';
-
-// Resend's onboarding@resend.dev sandbox sender can ONLY deliver to the email
-// that owns the Resend account. Warn loudly if a verified sender hasn't been
-// configured — confirmation emails to real customers will be rejected.
-if (process.env.RESEND_API_KEY && !process.env.RESEND_FROM_EMAIL) {
-  console.warn(
-    '⚠️  RESEND_FROM_EMAIL is not set. Falling back to onboarding@resend.dev, ' +
-      'which only delivers to the Resend account owner. Verify a domain at ' +
-      'https://resend.com/domains and set RESEND_FROM_EMAIL to enable customer emails.'
-  );
+// Read env vars on demand instead of capturing at module load time. In
+// Cloudflare Workers (with OpenNext), process.env is populated lazily —
+// sometimes by request time rather than at module load — so a value
+// captured to a top-level constant during a cold start can get stuck on
+// the fallback even when the variable is perfectly set in production.
+function getResendApiKey(): string | undefined {
+  return process.env.RESEND_API_KEY;
 }
+
+export function getFromEmail(): string {
+  return process.env.RESEND_FROM_EMAIL || 'Allante String Quartet <onboarding@resend.dev>';
+}
+
+export function getToEmail(): string {
+  return process.env.ORGANIZATION_EMAIL || 'allantestringquartet@gmail.com';
+}
+
 
 interface SendEmailOptions {
   to: string | string[];
@@ -28,18 +25,14 @@ interface SendEmailOptions {
   replyTo?: string;
 }
 
-/**
- * Send an email using Resend
- * Returns null if Resend is not configured (for development)
- */
 export async function sendEmail({
   to,
   subject,
   react,
   replyTo,
 }: SendEmailOptions) {
-  // If Resend is not configured, log instead of sending
-  if (!resend) {
+  const apiKey = getResendApiKey();
+  if (!apiKey) {
     console.warn('⚠️  Resend not configured. Email would be sent:', {
       to,
       subject,
@@ -49,9 +42,21 @@ export async function sendEmail({
     return { id: 'dev-mode-email', message: 'Email logged (Resend not configured)' };
   }
 
+  const from = getFromEmail();
+  if (from.includes('onboarding@resend.dev')) {
+    console.warn(
+      '⚠️  RESEND_FROM_EMAIL is not set. Falling back to onboarding@resend.dev, ' +
+        'which only delivers to the Resend account owner.'
+    );
+  }
+
+  // Construct the client per-call so the API key is read at request time,
+  // not at module load. Resend's client is cheap to instantiate.
+  const resend = new Resend(apiKey);
+
   try {
     const result = await resend.emails.send({
-      from: FROM_EMAIL,
+      from,
       to,
       subject,
       react,
@@ -62,25 +67,17 @@ export async function sendEmail({
     // Without this check, a rejected send (e.g. unverified sender) returns
     // silently and the caller never knows the email didn't go out.
     if (result.error) {
-      console.error('Resend rejected email:', {
-        to,
-        subject,
-        from: FROM_EMAIL,
-        error: result.error,
-      });
+      console.error('Resend rejected email:', { to, subject, from, error: result.error });
       throw new Error(`Resend error: ${result.error.message || 'unknown'}`);
     }
 
     return result.data;
   } catch (error) {
-    console.error('Failed to send email:', { to, subject, from: FROM_EMAIL, error });
+    console.error('Failed to send email:', { to, subject, from, error });
     throw error;
   }
 }
 
-/**
- * Send email with retry logic
- */
 export async function sendEmailWithRetry(
   options: SendEmailOptions,
   maxRetries = 3
@@ -96,7 +93,6 @@ export async function sendEmailWithRetry(
       console.error(`Email send attempt ${attempt} failed:`, error);
 
       if (attempt < maxRetries) {
-        // Wait before retrying (exponential backoff)
         const delay = Math.pow(2, attempt) * 1000;
         await new Promise((resolve) => setTimeout(resolve, delay));
       }

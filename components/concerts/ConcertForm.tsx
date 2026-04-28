@@ -385,7 +385,7 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
                 size="lg"
                 onClick={handleDelete}
                 disabled={isSubmitting}
-                className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+                className="bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700 w-full sm:w-auto"
               >
                 Delete concert
               </Button>

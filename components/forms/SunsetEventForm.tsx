@@ -595,7 +595,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
                 size="lg"
                 onClick={handleDelete}
                 disabled={loading}
-                className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
+                className="bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700 w-full sm:w-auto"
               >
                 Delete event
               </Button>
