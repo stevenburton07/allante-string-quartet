@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { formatSunsetRange } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -278,11 +279,7 @@ export default async function Home() {
                   <div className="space-y-4">
                     {upcomingSunsetEvents.map((event) => {
                       const eventDate = new Date(event.event_date);
-                      const [hours, minutes] = event.event_time.split(':');
-                      const hour = parseInt(hours);
-                      const ampm = hour >= 12 ? 'PM' : 'AM';
-                      const displayHour = hour % 12 || 12;
-                      const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+                      const formattedTime = formatSunsetRange(event.event_time, event.sunset_end_time);
 
                       return (
                         <div key={event.id} className="bg-white border-2 border-primary rounded-lg p-8">

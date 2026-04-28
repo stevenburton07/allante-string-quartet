@@ -65,6 +65,7 @@ export async function PUT(
         description: body.description,
         event_date: body.event_date,
         event_time: body.event_time,
+        sunset_end_time: body.sunset_end_time || null,
         rain_date: body.rain_date || null,
         difficulty: body.difficulty,
         comp_code: body.comp_code || null,

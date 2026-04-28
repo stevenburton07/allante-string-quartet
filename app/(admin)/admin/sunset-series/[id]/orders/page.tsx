@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import CopyEmailsButton from '@/components/admin/CopyEmailsButton';
+import { formatSunsetRange } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,13 +66,7 @@ export default async function EventOrdersPage({ params }: { params: Promise<{ id
               day: 'numeric',
               year: 'numeric',
             })}{' '}
-            at {(() => {
-              const [hours, minutes] = event.event_time.split(':');
-              const hour = parseInt(hours);
-              const ampm = hour >= 12 ? 'PM' : 'AM';
-              const displayHour = hour % 12 || 12;
-              return `${displayHour}:${minutes} ${ampm}`;
-            })()}
+            · {formatSunsetRange(event.event_time, event.sunset_end_time)}
           </p>
         </div>
         <Link

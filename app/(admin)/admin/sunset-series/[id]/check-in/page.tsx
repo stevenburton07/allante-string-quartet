@@ -4,6 +4,7 @@ import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import QRScanner from '@/components/admin/QRScanner';
 import { parseTicketQRCode } from '@/lib/qrcode';
+import { formatSunsetRange } from '@/lib/format-time';
 
 export default function CheckInPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -132,14 +133,9 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
             month: 'long',
             day: 'numeric',
             year: 'numeric',
-          })}{' '}
-          at {(() => {
-            const [hours, minutes] = event.event_time.split(':');
-            const hour = parseInt(hours);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const displayHour = hour % 12 || 12;
-            return `${displayHour}:${minutes} ${ampm}`;
-          })()}
+          })}
+          {' · '}
+          {formatSunsetRange(event.event_time, event.sunset_end_time)}
         </p>
       </div>
 

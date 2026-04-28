@@ -10,13 +10,14 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import { formatTime12h } from '@/lib/format-time';
+import { formatSunsetRange } from '@/lib/format-time';
 
 interface TicketConfirmationProps {
   customerName: string;
   eventTitle: string;
   eventDate: string;
   eventTime: string;
+  sunsetEndTime?: string;
   rainDate?: string;
   locationAddress: string;
   locationCity: string;
@@ -33,6 +34,7 @@ export default function TicketConfirmation({
   eventTitle,
   eventDate,
   eventTime,
+  sunsetEndTime,
   rainDate,
   locationAddress,
   locationCity,
@@ -91,7 +93,7 @@ export default function TicketConfirmation({
                 <strong>Date:</strong> {formattedDate}
               </Text>
               <Text style={detailItem}>
-                <strong>Time:</strong> {formatTime12h(eventTime)}
+                <strong>Time:</strong> {formatSunsetRange(eventTime, sunsetEndTime)}
               </Text>
               {formattedRainDate && (
                 <Text style={detailItem}>

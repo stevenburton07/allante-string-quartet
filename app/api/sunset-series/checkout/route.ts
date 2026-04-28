@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
-import { formatTime12h } from '@/lib/format-time';
+import { formatSunsetRange } from '@/lib/format-time';
 import { generateTicketQRCode } from '@/lib/qrcode';
 import { sendEmail } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
             eventTitle: event.title,
             eventDate: event.event_date,
             eventTime: event.event_time,
+            sunsetEndTime: event.sunset_end_time || undefined,
             rainDate: event.rain_date || undefined,
             locationAddress: event.location_address,
             locationCity: event.location_city,
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-              })} at ${formatTime12h(event.event_time)}`,
+              })} · ${formatSunsetRange(event.event_time, event.sunset_end_time)}`,
             },
             unit_amount: event.ticket_price, // in cents
           },

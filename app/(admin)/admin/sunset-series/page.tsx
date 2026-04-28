@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { formatSunsetRange } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,14 +85,9 @@ export default async function AdminSunsetSeriesPage() {
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                   <p>
-                    {new Date(event.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}{' '}
-                    at {(() => {
-                      const [hours, minutes] = event.event_time.split(':');
-                      const hour = parseInt(hours);
-                      const ampm = hour >= 12 ? 'PM' : 'AM';
-                      const displayHour = hour % 12 || 12;
-                      return `${displayHour}:${minutes} ${ampm}`;
-                    })()}
+                    {new Date(event.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {' · '}
+                    {formatSunsetRange(event.event_time, event.sunset_end_time)}
                   </p>
                   {event.rain_date && (
                     <p className="text-xs text-gray-500">
@@ -162,13 +158,7 @@ export default async function AdminSunsetSeriesPage() {
                         })}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {(() => {
-                          const [hours, minutes] = event.event_time.split(':');
-                          const hour = parseInt(hours);
-                          const ampm = hour >= 12 ? 'PM' : 'AM';
-                          const displayHour = hour % 12 || 12;
-                          return `${displayHour}:${minutes} ${ampm}`;
-                        })()}
+                        {formatSunsetRange(event.event_time, event.sunset_end_time)}
                       </div>
                       {event.rain_date && (
                         <div className="text-xs text-gray-500">
