@@ -6,8 +6,20 @@ export const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-export const FROM_EMAIL = 'Allante String Quartet <onboarding@resend.dev>'; // Update with your verified domain
+export const FROM_EMAIL =
+  process.env.RESEND_FROM_EMAIL || 'Allante String Quartet <onboarding@resend.dev>';
 export const TO_EMAIL = process.env.ORGANIZATION_EMAIL || 'allantestringquartet@gmail.com';
+
+// Resend's onboarding@resend.dev sandbox sender can ONLY deliver to the email
+// that owns the Resend account. Warn loudly if a verified sender hasn't been
+// configured — confirmation emails to real customers will be rejected.
+if (process.env.RESEND_API_KEY && !process.env.RESEND_FROM_EMAIL) {
+  console.warn(
+    '⚠️  RESEND_FROM_EMAIL is not set. Falling back to onboarding@resend.dev, ' +
+      'which only delivers to the Resend account owner. Verify a domain at ' +
+      'https://resend.com/domains and set RESEND_FROM_EMAIL to enable customer emails.'
+  );
+}
 
 interface SendEmailOptions {
   to: string | string[];
@@ -38,7 +50,7 @@ export async function sendEmail({
   }
 
   try {
-    const data = await resend.emails.send({
+    const result = await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject,
@@ -46,9 +58,22 @@ export async function sendEmail({
       replyTo,
     });
 
-    return data;
+    // Resend's SDK returns { data, error } instead of throwing on API errors.
+    // Without this check, a rejected send (e.g. unverified sender) returns
+    // silently and the caller never knows the email didn't go out.
+    if (result.error) {
+      console.error('Resend rejected email:', {
+        to,
+        subject,
+        from: FROM_EMAIL,
+        error: result.error,
+      });
+      throw new Error(`Resend error: ${result.error.message || 'unknown'}`);
+    }
+
+    return result.data;
   } catch (error) {
-    console.error('Failed to send email:', error);
+    console.error('Failed to send email:', { to, subject, from: FROM_EMAIL, error });
     throw error;
   }
 }

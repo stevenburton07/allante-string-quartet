@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { generateTicketQRCode } from '@/lib/qrcode';
-import { sendEmail } from '@/lib/email';
+import { sendEmailWithRetry } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
 import ConcertConfirmation from '@/emails/ConcertConfirmation';
 import { formatTime12h } from '@/lib/format-time';
@@ -135,26 +135,37 @@ async function handleSunsetCheckout(session: Stripe.Checkout.Session, metadata: 
     console.error('Error updating tickets_sold:', updateError);
   }
 
-  await sendEmail({
-    to: customerEmail,
-    subject: `Your Sunset Series Tickets - ${event.title}`,
-    react: TicketConfirmation({
-      customerName,
-      eventTitle: event.title,
-      eventDate: event.event_date,
-      eventTime: event.event_time,
-      sunsetEndTime: event.sunset_end_time || undefined,
-      rainDate: event.rain_date || undefined,
-      locationAddress: event.location_address,
-      locationCity: event.location_city,
-      locationState: event.location_state,
-      locationZip: event.location_zip,
-      ticketQuantity: quantity,
-      totalAmount: session.amount_total || 0,
-      orderId: session.id,
-      qrCodeUrl: qrCodeDataUrl,
-    }),
-  });
+  try {
+    await sendEmailWithRetry({
+      to: customerEmail,
+      subject: `Your Sunset Series Tickets - ${event.title}`,
+      react: TicketConfirmation({
+        customerName,
+        eventTitle: event.title,
+        eventDate: event.event_date,
+        eventTime: event.event_time,
+        sunsetEndTime: event.sunset_end_time || undefined,
+        rainDate: event.rain_date || undefined,
+        locationAddress: event.location_address,
+        locationCity: event.location_city,
+        locationState: event.location_state,
+        locationZip: event.location_zip,
+        ticketQuantity: quantity,
+        totalAmount: session.amount_total || 0,
+        orderId: session.id,
+        qrCodeUrl: qrCodeDataUrl,
+      }),
+    });
+  } catch (emailError) {
+    // Order is already saved — don't fail the webhook (Stripe would retry and
+    // create duplicates). Log so the failure is visible for manual follow-up.
+    console.error('CONFIRMATION EMAIL FAILED for sunset order', {
+      sessionId: session.id,
+      customerEmail,
+      eventId,
+      error: emailError,
+    });
+  }
 }
 
 async function handleConcertCheckout(session: Stripe.Checkout.Session, metadata: Record<string, string>) {
@@ -217,20 +228,32 @@ async function handleConcertCheckout(session: Stripe.Checkout.Session, metadata:
   const [datePart, timePart] = concertDateString.split('T');
   const formattedTime = formatTime12h(timePart);
 
-  await sendEmail({
-    to: customerEmail,
-    subject: `Your Concert Tickets - ${concert.title}`,
-    react: ConcertConfirmation({
-      customerName,
-      concertTitle: concert.title,
-      concertDate: datePart,
-      concertTime: formattedTime,
-      location: concert.location,
-      venue: concert.venue || undefined,
-      ticketQuantity: quantity,
-      totalAmount: session.amount_total || 0,
+  try {
+    await sendEmailWithRetry({
+      to: customerEmail,
+      subject: `Your Concert Tickets - ${concert.title}`,
+      react: ConcertConfirmation({
+        customerName,
+        concertTitle: concert.title,
+        concertDate: datePart,
+        concertTime: formattedTime,
+        location: concert.location,
+        venue: concert.venue || undefined,
+        ticketQuantity: quantity,
+        totalAmount: session.amount_total || 0,
+        orderId: order.id,
+        qrCodeUrl: qrCodeDataUrl,
+      }),
+    });
+  } catch (emailError) {
+    // Order is already saved — don't fail the webhook (Stripe would retry and
+    // create duplicates). Log so the failure is visible for manual follow-up.
+    console.error('CONFIRMATION EMAIL FAILED for concert order', {
       orderId: order.id,
-      qrCodeUrl: qrCodeDataUrl,
-    }),
-  });
+      sessionId: session.id,
+      customerEmail,
+      concertId,
+      error: emailError,
+    });
+  }
 }
