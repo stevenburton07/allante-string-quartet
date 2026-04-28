@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import QrCleanupButton from '@/components/admin/QrCleanupButton';
 
 // Fun welcome messages - add more anytime!
 const welcomeMessages = [
@@ -157,6 +158,15 @@ export default async function AdminDashboard() {
             </div>
           </Link>
         </div>
+      </div>
+
+      {/* Maintenance */}
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-primary mb-2">Maintenance</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Ticket QR codes are stored for 30 days after an event ends, then can be cleared to free up storage.
+        </p>
+        <QrCleanupButton />
       </div>
     </div>
   );

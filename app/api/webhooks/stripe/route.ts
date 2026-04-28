@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
-import { generateTicketQRCode } from '@/lib/qrcode';
+import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmailWithRetry } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
 import ConcertConfirmation from '@/emails/ConcertConfirmation';

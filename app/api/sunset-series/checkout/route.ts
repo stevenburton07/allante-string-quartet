@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { formatSunsetRange } from '@/lib/format-time';
-import { generateTicketQRCode } from '@/lib/qrcode';
+import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmail } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
 

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
-import { generateTicketQRCode } from '@/lib/qrcode';
-import { sendEmail } from '@/lib/email';
+import { generateTicketQRCode } from '@/lib/qrcode-server';
+import { sendEmailWithRetry } from '@/lib/email';
 import ConcertConfirmation from '@/emails/ConcertConfirmation';
 import { formatTime12h } from '@/lib/format-time';
 
@@ -128,28 +128,44 @@ export async function POST(request: NextRequest) {
     const [datePart, timePart] = concertDateString.split('T');
     const formattedTime = formatTime12h(timePart);
 
-    // Send confirmation email
-    await sendEmail({
-      to: customerEmail,
-      subject: `Your Concert Registration - ${concert.title}`,
-      react: ConcertConfirmation({
-        customerName,
-        concertTitle: concert.title,
-        concertDate: datePart,
-        concertTime: formattedTime,
-        location: concert.location,
-        venue: concert.venue || undefined,
-        ticketQuantity: quantity,
-        totalAmount: 0,
+    // Order is already committed at this point — a failed email must not
+    // fail the whole request, or the user sees an error for a registration
+    // that actually succeeded.
+    let emailSent = true;
+    try {
+      await sendEmailWithRetry({
+        to: customerEmail,
+        subject: `Your Concert Registration - ${concert.title}`,
+        react: ConcertConfirmation({
+          customerName,
+          concertTitle: concert.title,
+          concertDate: datePart,
+          concertTime: formattedTime,
+          location: concert.location,
+          venue: concert.venue || undefined,
+          ticketQuantity: quantity,
+          totalAmount: 0,
+          orderId: order.id,
+          qrCodeUrl: qrCodeDataUrl,
+        }),
+      });
+    } catch (emailError) {
+      emailSent = false;
+      console.error('CONFIRMATION EMAIL FAILED for concert registration', {
         orderId: order.id,
-        qrCodeUrl: qrCodeDataUrl,
-      }),
-    });
+        concertId,
+        customerEmail,
+        error: emailError,
+      });
+    }
 
     return NextResponse.json({
       success: true,
       orderId: order.id,
-      message: 'Registration successful! Check your email for confirmation.'
+      message: emailSent
+        ? 'Registration successful! Check your email for confirmation.'
+        : 'Registration successful! We had trouble sending your confirmation email — please contact us if you don\'t receive it.',
+      emailSent,
     });
   } catch (error) {
     console.error('Error registering for concert:', error);

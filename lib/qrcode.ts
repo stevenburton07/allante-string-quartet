@@ -1,44 +1,9 @@
-import QRCode from 'qrcode';
-
 /**
- * Generate a QR code data URL for a ticket order
- * @param orderId - The unique order ID
- * @param eventId - The event ID
- * @returns Promise resolving to the QR code data URL
- */
-export async function generateTicketQRCode(orderId: string, eventId: string): Promise<string> {
-  // Create QR code data string with order and event information
-  const qrData = JSON.stringify({
-    type: 'sunset_series_ticket',
-    orderId,
-    eventId,
-    timestamp: Date.now(),
-  });
-
-  try {
-    // Generate QR code as data URL
-    const qrCodeDataURL = await QRCode.toDataURL(qrData, {
-      errorCorrectionLevel: 'H',
-      type: 'image/png',
-      margin: 2,
-      width: 400,
-      color: {
-        dark: '#002E5C',
-        light: '#FFFFFF',
-      },
-    });
-
-    return qrCodeDataURL;
-  } catch (error) {
-    console.error('Error generating QR code:', error);
-    throw new Error('Failed to generate QR code');
-  }
-}
-
-/**
- * Validate and parse QR code data
- * @param qrData - The scanned QR code data string
- * @returns Parsed QR code data or null if invalid
+ * Validate and parse QR code data scanned at check-in.
+ *
+ * Client-safe: this module has no server-only imports so it can be bundled
+ * into the camera-scanner page in the admin panel. The QR _generator_ lives
+ * in lib/qrcode-server.ts because it uploads to Supabase Storage.
  */
 export function parseTicketQRCode(qrData: string): {
   type: string;
@@ -49,7 +14,6 @@ export function parseTicketQRCode(qrData: string): {
   try {
     const parsed = JSON.parse(qrData);
 
-    // Validate structure
     if (
       parsed.type === 'sunset_series_ticket' &&
       parsed.orderId &&
@@ -60,43 +24,7 @@ export function parseTicketQRCode(qrData: string): {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
-  }
-}
-
-/**
- * Generate QR code as buffer (for email attachments)
- * @param orderId - The unique order ID
- * @param eventId - The event ID
- * @returns Promise resolving to Buffer
- */
-export async function generateTicketQRCodeBuffer(
-  orderId: string,
-  eventId: string
-): Promise<Buffer> {
-  const qrData = JSON.stringify({
-    type: 'sunset_series_ticket',
-    orderId,
-    eventId,
-    timestamp: Date.now(),
-  });
-
-  try {
-    const buffer = await QRCode.toBuffer(qrData, {
-      errorCorrectionLevel: 'H',
-      type: 'png',
-      margin: 2,
-      width: 400,
-      color: {
-        dark: '#002E5C',
-        light: '#FFFFFF',
-      },
-    });
-
-    return buffer;
-  } catch (error) {
-    console.error('Error generating QR code buffer:', error);
-    throw new Error('Failed to generate QR code buffer');
   }
 }
