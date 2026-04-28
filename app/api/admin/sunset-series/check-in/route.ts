@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (order.checked_in) {
       return NextResponse.json(
         {
-          error: `Already checked in at ${new Date(order.checked_in_at).toLocaleTimeString()}`,
+          error: `Already checked in at ${new Date(order.checked_in_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`,
           order,
         },
         { status: 400 }

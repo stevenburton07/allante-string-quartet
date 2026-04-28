@@ -202,7 +202,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
       // Redirect to the event list or edit page
       if (mode === 'create') {
-        router.push(`/admin/sunset-series/${result.id}`);
+        router.push('/admin/sunset-series');
       } else {
         router.push('/admin/sunset-series');
       }
@@ -340,18 +340,23 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">
           Hike difficulty *
         </label>
-        <select
-          id="difficulty"
-          name="difficulty"
-          value={formData.difficulty}
-          onChange={handleChange}
-          required
-          className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900 appearance-none"
-        >
-          <option value="easy">Easy - Suitable for all fitness levels, minimal elevation gain</option>
-          <option value="moderate">Moderate - Some inclines, moderate fitness required</option>
-          <option value="difficult">Difficult - Steep terrain, good fitness level needed</option>
-        </select>
+        <div className="relative">
+          <select
+            id="difficulty"
+            name="difficulty"
+            value={formData.difficulty}
+            onChange={handleChange}
+            required
+            className="w-full min-w-0 max-w-full px-4 py-2.5 pr-10 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900 appearance-none"
+          >
+            <option value="easy">Easy - Suitable for all fitness levels, minimal elevation gain</option>
+            <option value="moderate">Moderate - Some inclines, moderate fitness required</option>
+            <option value="difficult">Difficult - Steep terrain, good fitness level needed</option>
+          </select>
+          <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </div>
 
       {/* Comp Code */}
@@ -539,19 +544,24 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
           Event status *
         </label>
-        <select
-          id="status"
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          required
-          className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900 appearance-none"
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
+        <div className="relative">
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            required
+            className="w-full min-w-0 max-w-full px-4 py-2.5 pr-10 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900 appearance-none"
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
         <p className="mt-2 text-sm text-gray-600">
           Setting status to "Published" will make the event visible on the website
         </p>

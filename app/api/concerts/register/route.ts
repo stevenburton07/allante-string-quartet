@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
+import { generateTicketQRCode } from '@/lib/qrcode';
+import { sendEmail } from '@/lib/email';
+import ConcertConfirmation from '@/emails/ConcertConfirmation';
+import { formatTime12h } from '@/lib/format-time';
 
 const registrationSchema = z.object({
   concertId: z.string().uuid(),
@@ -79,8 +83,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate QR code data
+    // Generate QR code
     const qrCode = `CONCERT:${concertId}:${nanoid(16)}`;
+    const qrCodeDataUrl = await generateTicketQRCode(qrCode, concertId);
 
     // Create order
     const { data: order, error: orderError } = await supabase
@@ -95,6 +100,7 @@ export async function POST(request: NextRequest) {
         used_comp_code: usedCompCode,
         ticket_quantity: quantity,
         qr_code: qrCode,
+        qr_code_url: qrCodeDataUrl,
       })
       .select()
       .single();
@@ -117,7 +123,28 @@ export async function POST(request: NextRequest) {
       console.error('Error updating attendees count:', updateError);
     }
 
-    // TODO: Send confirmation email with QR code
+    // Parse concert date/time for display
+    const concertDateString = concert.date.slice(0, 16);
+    const [datePart, timePart] = concertDateString.split('T');
+    const formattedTime = formatTime12h(timePart);
+
+    // Send confirmation email
+    await sendEmail({
+      to: customerEmail,
+      subject: `Your Concert Registration - ${concert.title}`,
+      react: ConcertConfirmation({
+        customerName,
+        concertTitle: concert.title,
+        concertDate: datePart,
+        concertTime: formattedTime,
+        location: concert.location,
+        venue: concert.venue || undefined,
+        ticketQuantity: quantity,
+        totalAmount: 0,
+        orderId: order.id,
+        qrCodeUrl: qrCodeDataUrl,
+      }),
+    });
 
     return NextResponse.json({
       success: true,

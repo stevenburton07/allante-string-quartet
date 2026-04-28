@@ -69,7 +69,7 @@ export default async function SunsetSeriesPage() {
                 No upcoming events at this time. Check back soon!
               </p>
               <p className="text-sm text-gray-500">
-                Subscribe to our newsletter to be notified when new events are announced.
+                Subscribe to our concert updates to be notified when new events are announced.
               </p>
             </div>
           ) : (

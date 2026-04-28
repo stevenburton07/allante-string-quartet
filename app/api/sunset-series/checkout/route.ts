@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { formatTime12h } from '@/lib/format-time';
+import { generateTicketQRCode } from '@/lib/qrcode';
+import { sendEmail } from '@/lib/email';
+import TicketConfirmation from '@/emails/TicketConfirmation';
 
 const checkoutSchema = z.object({
   eventId: z.string().uuid(),
@@ -69,6 +73,7 @@ export async function POST(request: NextRequest) {
       if (event.comp_code && event.comp_code.toUpperCase() === compCode.toUpperCase()) {
         const { nanoid } = await import('nanoid');
         const qrCode = `SUNSET:${eventId}:${nanoid(16)}`;
+        const qrCodeDataUrl = await generateTicketQRCode(qrCode, eventId);
 
         // Create order with comp code
         const { data: order, error: orderError } = await supabase
@@ -83,6 +88,7 @@ export async function POST(request: NextRequest) {
             used_comp_code: true,
             ticket_quantity: quantity,
             qr_code: qrCode,
+            qr_code_url: qrCodeDataUrl,
           })
           .select()
           .single();
@@ -99,6 +105,27 @@ export async function POST(request: NextRequest) {
         await supabase.rpc('increment_tickets_sold', {
           event_id: eventId,
           amount: quantity,
+        });
+
+        // Send confirmation email
+        await sendEmail({
+          to: customerEmail,
+          subject: `Your Sunset Series Tickets - ${event.title}`,
+          react: TicketConfirmation({
+            customerName,
+            eventTitle: event.title,
+            eventDate: event.event_date,
+            eventTime: event.event_time,
+            rainDate: event.rain_date || undefined,
+            locationAddress: event.location_address,
+            locationCity: event.location_city,
+            locationState: event.location_state,
+            locationZip: event.location_zip,
+            ticketQuantity: quantity,
+            totalAmount: 0,
+            orderId: order.id,
+            qrCodeUrl: qrCodeDataUrl,
+          }),
         });
 
         // Return success (frontend will redirect to success page)
@@ -133,7 +160,7 @@ export async function POST(request: NextRequest) {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-              })} at ${event.event_time}`,
+              })} at ${formatTime12h(event.event_time)}`,
             },
             unit_amount: event.ticket_price, // in cents
           },

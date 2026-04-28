@@ -245,7 +245,7 @@ export default async function ConcertOrdersPage({ params }: { params: Promise<{ 
                         </span>
                         {order.checked_in && order.checked_in_at && (
                           <div className="text-xs text-gray-500 mt-1">
-                            {new Date(order.checked_in_at).toLocaleString()}
+                            {new Date(order.checked_in_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
                           </div>
                         )}
                       </td>
@@ -254,7 +254,7 @@ export default async function ConcertOrdersPage({ params }: { params: Promise<{ 
                           {new Date(order.created_at).toLocaleDateString()}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {new Date(order.created_at).toLocaleTimeString()}
+                          {new Date(order.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                         </div>
                       </td>
                     </tr>

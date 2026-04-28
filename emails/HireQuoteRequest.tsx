@@ -9,6 +9,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { formatTime12h } from '@/lib/format-time';
 
 interface HireQuoteRequestProps {
   name: string;
@@ -93,7 +94,7 @@ export default function HireQuoteRequest({
               <strong>Date:</strong> {formattedEventDate}
             </Text>
             <Text style={text}>
-              <strong>Time:</strong> {startTime} - {endTime}
+              <strong>Time:</strong> {formatTime12h(startTime)} - {formatTime12h(endTime)}
             </Text>
             <Text style={text}>
               <strong>Location:</strong> {address}

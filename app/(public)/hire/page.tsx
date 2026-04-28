@@ -85,6 +85,59 @@ export default function HirePage() {
           </div>
         </section>
 
+        {/* Locations */}
+        <section className="mb-16 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-primary mb-8 text-center">
+            In locations like
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              'Alpine',
+              'American Fork',
+              'Bluffdale',
+              'Bountiful',
+              'Cedar City',
+              'Cedar Hills',
+              'Coalville',
+              'Cottonwood Heights',
+              'Draper',
+              'Eagle Mountain',
+              'Heber',
+              'Herriman',
+              'Highland',
+              'Lehi',
+              'Lindon',
+              'Logan',
+              'Ogden',
+              'Orem',
+              'Park City',
+              'Payson',
+              'Pleasant Grove',
+              'Provo',
+              'Riverton',
+              'Salt Lake',
+              'Sandy',
+              'Saratoga Springs',
+              'Springville',
+              'St. George',
+              'Taylorsville',
+              'Vineyard',
+              'West Jordan',
+              'West Valley',
+            ].map((city) => (
+              <span
+                key={city}
+                className="bg-light-gray text-gray-700 px-4 py-2 rounded-full text-sm"
+              >
+                {city}
+              </span>
+            ))}
+            <span className="bg-light-gray text-gray-700 px-4 py-2 rounded-full text-sm">
+              and more!
+            </span>
+          </div>
+        </section>
+
         {/* Performance Options */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">

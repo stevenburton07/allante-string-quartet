@@ -131,20 +131,25 @@ export default function ConcertTicketPurchaseForm({
         <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
           Number of {isFree ? 'seats' : 'tickets'} *
         </label>
-        <select
-          id="quantity"
-          value={quantity}
-          onChange={(e) => setQuantity(parseInt(e.target.value))}
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900 appearance-none"
-        >
-          {Array.from({ length: Math.min(availableSeats, 10) }, (_, i) => i + 1).map((num) => (
-            <option key={num} value={num}>
-              {num} {num === 1 ? (isFree ? 'seat' : 'ticket') : (isFree ? 'seats' : 'tickets')}
-              {!isFree && ` - $${((ticketPrice * num) / 100).toFixed(2)}`}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="quantity"
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value))}
+            required
+            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900 appearance-none"
+          >
+            {Array.from({ length: Math.min(availableSeats, 10) }, (_, i) => i + 1).map((num) => (
+              <option key={num} value={num}>
+                {num} {num === 1 ? (isFree ? 'seat' : 'ticket') : (isFree ? 'seats' : 'tickets')}
+                {!isFree && ` - $${((ticketPrice * num) / 100).toFixed(2)}`}
+              </option>
+            ))}
+          </select>
+          <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </div>
 
       {/* Customer Name */}

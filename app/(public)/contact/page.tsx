@@ -61,7 +61,7 @@ export default function ContactPage() {
                   Response time
                 </h3>
                 <p className="text-gray-700 text-sm">
-                  Monday - Friday: 9am - 5pm PST
+                  Monday - Friday: 9am - 5pm MST
                 </p>
                 <p className="text-gray-600 text-sm mt-2">
                   Messages received outside business hours will be responded to on the next business day

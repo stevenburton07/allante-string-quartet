@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import NewsletterSignupForm from '@/components/forms/NewsletterSignupForm';
 
 export const metadata: Metadata = {
-  title: 'Newsletter | Allante String Quartet',
-  description: 'Subscribe to the Allante String Quartet newsletter for concert updates, exclusive content, and more.',
+  title: 'Concert Updates | Allante String Quartet',
+  description: 'Subscribe to Allante String Quartet concert updates for upcoming performances, exclusive content, and more.',
 };
 
 export default function NewsletterPage() {
@@ -16,7 +16,7 @@ export default function NewsletterPage() {
             Stay in the loop
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Subscribe to our newsletter for updates on upcoming concerts, special events, and exclusive content
+            Subscribe for updates on upcoming concerts, special events, and exclusive content
           </p>
         </div>
 
@@ -24,7 +24,7 @@ export default function NewsletterPage() {
           {/* Newsletter Form */}
           <div>
             <h2 className="text-2xl font-bold text-primary mb-6">
-              Subscribe to our newsletter
+              Get concert updates
             </h2>
 
             <div className="bg-white border-2 border-gray-200 rounded-lg p-6">

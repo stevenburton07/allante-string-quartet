@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { formatTime12h } from '@/lib/format-time';
 
 interface TicketConfirmationProps {
   customerName: string;
@@ -90,7 +91,7 @@ export default function TicketConfirmation({
                 <strong>Date:</strong> {formattedDate}
               </Text>
               <Text style={detailItem}>
-                <strong>Time:</strong> {eventTime}
+                <strong>Time:</strong> {formatTime12h(eventTime)}
               </Text>
               {formattedRainDate && (
                 <Text style={detailItem}>
