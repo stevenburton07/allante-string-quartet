@@ -1,17 +1,15 @@
 import QRCode from 'qrcode';
-import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-/**
- * Generate a QR code for a ticket order, upload the PNG to Supabase Storage,
- * and return the public URL.
- *
- * Why upload instead of returning a base64 data URL? Gmail and most major
- * email clients refuse to render `data:` URI images, leaving customers with
- * a broken-image icon in their confirmation email. A real https URL renders
- * everywhere.
- *
- * Server-only: imports the Supabase server client which uses next/headers.
- */
+// Use the service role key for storage uploads — the anon key is blocked
+// by RLS policies on the event-images bucket, and these uploads happen in
+// server-side contexts without an authenticated user session.
+function getAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 export async function generateTicketQRCode(
   orderId: string,
   eventId: string,
@@ -46,7 +44,7 @@ export async function generateTicketQRCode(
   const safeOrderId = orderId.replace(/[^a-zA-Z0-9_-]/g, '_');
   const storagePath = `qr-codes/${eventId}/${safeOrderId}.png`;
 
-  const supabase = await createClient();
+  const supabase = getAdminClient();
   const { error: uploadError } = await supabase.storage
     .from('event-images')
     .upload(storagePath, buffer, {
