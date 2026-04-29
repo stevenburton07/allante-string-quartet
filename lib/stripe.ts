@@ -1,11 +1,15 @@
 import Stripe from 'stripe';
 
-// Initialize Stripe server client
-export const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-02-25.clover',
-    })
-  : null;
+// Lazily initialize Stripe per-request. On Cloudflare Workers (with
+// OpenNext), process.env is populated lazily — a top-level constant
+// captured during cold start can be null even when the secret is set.
+export function getStripe(): Stripe | null {
+  const key = process.env.STRIPE_SECRET_KEY;
+  return key ? new Stripe(key, { apiVersion: '2026-02-25.clover' }) : null;
+}
+
+/** @deprecated Use getStripe() — this captures the key at module load time. */
+export const stripe = getStripe();
 
 // Stripe publishable key for client-side
 export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';

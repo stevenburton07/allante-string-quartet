@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 // Validation schema
 const donationSchema = z.object({
@@ -9,7 +9,7 @@ const donationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Stripe is configured
+    const stripe = getStripe();
     if (!stripe) {
       return NextResponse.json(
         { error: 'Payment processing is not configured' },

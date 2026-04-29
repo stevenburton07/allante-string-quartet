@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmailWithRetry } from '@/lib/email';
@@ -9,6 +9,7 @@ import { formatTime12h } from '@/lib/format-time';
 import Stripe from 'stripe';
 
 export async function POST(request: NextRequest) {
+  const stripe = getStripe();
   if (!stripe) {
     return NextResponse.json(
       { error: 'Stripe is not configured' },
