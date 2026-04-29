@@ -185,7 +185,7 @@ async function handleConcertCheckout(session: Stripe.Checkout.Session, metadata:
     throw new Error('Concert not found');
   }
 
-  const qrCodeDataUrl = await generateTicketQRCode(session.id, concertId);
+  const qrCodeDataUrl = await generateTicketQRCode(session.id, concertId, 'concert_ticket');
 
   const { data: order, error: orderError } = await supabase
     .from('concert_orders')

@@ -12,9 +12,13 @@ import { createClient } from '@/lib/supabase/server';
  *
  * Server-only: imports the Supabase server client which uses next/headers.
  */
-export async function generateTicketQRCode(orderId: string, eventId: string): Promise<string> {
+export async function generateTicketQRCode(
+  orderId: string,
+  eventId: string,
+  type: 'sunset_series_ticket' | 'concert_ticket' = 'sunset_series_ticket'
+): Promise<string> {
   const qrData = JSON.stringify({
-    type: 'sunset_series_ticket',
+    type,
     orderId,
     eventId,
     timestamp: Date.now(),

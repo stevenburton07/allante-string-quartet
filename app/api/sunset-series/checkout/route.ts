@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { formatSunsetRange } from '@/lib/format-time';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
-import { sendEmail } from '@/lib/email';
+import { sendEmailWithRetry } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
 
 const checkoutSchema = z.object({
@@ -107,27 +107,37 @@ export async function POST(request: NextRequest) {
           amount: quantity,
         });
 
-        // Send confirmation email
-        await sendEmail({
-          to: customerEmail,
-          subject: `Your Sunset Series Tickets - ${event.title}`,
-          react: TicketConfirmation({
-            customerName,
-            eventTitle: event.title,
-            eventDate: event.event_date,
-            eventTime: event.event_time,
-            sunsetEndTime: event.sunset_end_time || undefined,
-            rainDate: event.rain_date || undefined,
-            locationAddress: event.location_address,
-            locationCity: event.location_city,
-            locationState: event.location_state,
-            locationZip: event.location_zip,
-            ticketQuantity: quantity,
-            totalAmount: 0,
+        // Send confirmation email — order is already committed, so a failed
+        // email must not fail the whole request.
+        try {
+          await sendEmailWithRetry({
+            to: customerEmail,
+            subject: `Your Sunset Series Tickets - ${event.title}`,
+            react: TicketConfirmation({
+              customerName,
+              eventTitle: event.title,
+              eventDate: event.event_date,
+              eventTime: event.event_time,
+              sunsetEndTime: event.sunset_end_time || undefined,
+              rainDate: event.rain_date || undefined,
+              locationAddress: event.location_address,
+              locationCity: event.location_city,
+              locationState: event.location_state,
+              locationZip: event.location_zip,
+              ticketQuantity: quantity,
+              totalAmount: 0,
+              orderId: order.id,
+              qrCodeUrl: qrCodeDataUrl,
+            }),
+          });
+        } catch (emailError) {
+          console.error('CONFIRMATION EMAIL FAILED for comp-code sunset order', {
             orderId: order.id,
-            qrCodeUrl: qrCodeDataUrl,
-          }),
-        });
+            eventId,
+            customerEmail,
+            error: emailError,
+          });
+        }
 
         // Return success (frontend will redirect to success page)
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

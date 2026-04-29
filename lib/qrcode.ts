@@ -14,13 +14,19 @@ export function parseTicketQRCode(qrData: string): {
   try {
     const parsed = JSON.parse(qrData);
 
+    const validTypes = ['sunset_series_ticket', 'concert_ticket'];
     if (
-      parsed.type === 'sunset_series_ticket' &&
+      validTypes.includes(parsed.type) &&
       parsed.orderId &&
-      parsed.eventId &&
+      (parsed.eventId || parsed.concertId) &&
       parsed.timestamp
     ) {
-      return parsed;
+      return {
+        type: parsed.type,
+        orderId: parsed.orderId,
+        eventId: parsed.eventId || parsed.concertId,
+        timestamp: parsed.timestamp,
+      };
     }
 
     return null;

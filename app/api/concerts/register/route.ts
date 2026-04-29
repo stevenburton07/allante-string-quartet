@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // Generate QR code
     const qrCode = `CONCERT:${concertId}:${nanoid(16)}`;
-    const qrCodeDataUrl = await generateTicketQRCode(qrCode, concertId);
+    const qrCodeDataUrl = await generateTicketQRCode(qrCode, concertId, 'concert_ticket');
 
     // Create order
     const { data: order, error: orderError } = await supabase
