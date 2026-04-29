@@ -44,7 +44,8 @@ jobs:
               "STRIPE_WEBHOOK_SECRET": "${{ secrets.STRIPE_WEBHOOK_SECRET }}",
               "TICKET_PRICE": "${{ secrets.TICKET_PRICE }}",
               "NEXT_PUBLIC_APP_URL": "https://allantestringquartet.com",
-              "ORGANIZATION_EMAIL": "${{ secrets.ORGANIZATION_EMAIL }}"
+              "ORGANIZATION_EMAIL": "${{ secrets.ORGANIZATION_EMAIL }}",
+              "RESEND_FROM_EMAIL": "${{ secrets.RESEND_FROM_EMAIL }}"
             }
           }
           TEMPLATE
