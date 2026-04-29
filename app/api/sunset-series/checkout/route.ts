@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { formatSunsetRange } from '@/lib/format-time';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
@@ -68,8 +68,9 @@ export async function POST(request: NextRequest) {
         const qrCode = `SUNSET:${eventId}:${nanoid(16)}`;
         const qrCodeDataUrl = await generateTicketQRCode(qrCode, eventId);
 
-        // Create order with comp code
-        const { data: order, error: orderError } = await supabase
+        // Create order with comp code (admin client to bypass RLS)
+        const admin = createAdminClient();
+        const { data: order, error: orderError } = await admin
           .from('sunset_orders')
           .insert({
             event_id: eventId,
@@ -94,8 +95,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Atomically increment tickets sold
-        await supabase.rpc('increment_tickets_sold', {
+        await admin.rpc('increment_tickets_sold', {
           event_id: eventId,
           amount: quantity,
         });

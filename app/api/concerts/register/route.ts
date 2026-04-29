@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const { concertId, quantity, customerName, customerEmail, customerPhone, compCode } = parsed.data;
 
     // Fetch concert details from Supabase
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { data: concert, error: concertError } = await supabase
       .from('concerts')
       .select('*')

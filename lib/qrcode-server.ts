@@ -1,15 +1,5 @@
 import QRCode from 'qrcode';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-
-// Use the service role key for storage uploads — the anon key is blocked
-// by RLS policies on the event-images bucket, and these uploads happen in
-// server-side contexts without an authenticated user session.
-function getAdminClient() {
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { createAdminClient } from '@/lib/supabase/server';
 export async function generateTicketQRCode(
   orderId: string,
   eventId: string,
@@ -44,7 +34,7 @@ export async function generateTicketQRCode(
   const safeOrderId = orderId.replace(/[^a-zA-Z0-9_-]/g, '_');
   const storagePath = `qr-codes/${eventId}/${safeOrderId}.png`;
 
-  const supabase = getAdminClient();
+  const supabase = createAdminClient();
   const { error: uploadError } = await supabase.storage
     .from('event-images')
     .upload(storagePath, buffer, {

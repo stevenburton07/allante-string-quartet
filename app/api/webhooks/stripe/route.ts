@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmailWithRetry } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
@@ -83,7 +83,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 }
 
 async function handleSunsetCheckout(session: Stripe.Checkout.Session, metadata: Record<string, string>) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { eventId, customerName, customerEmail, customerPhone, ticketQuantity } = metadata;
   const quantity = parseInt(ticketQuantity, 10);
@@ -170,7 +170,7 @@ async function handleSunsetCheckout(session: Stripe.Checkout.Session, metadata: 
 }
 
 async function handleConcertCheckout(session: Stripe.Checkout.Session, metadata: Record<string, string>) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { concertId, customerName, customerEmail, customerPhone, ticketQuantity } = metadata;
   const quantity = parseInt(ticketQuantity, 10);
