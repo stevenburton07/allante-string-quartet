@@ -68,6 +68,19 @@ export default async function SunsetSeriesPage() {
           </div>
         </section>
 
+        {/* Sunset Example Image */}
+        <section className="mb-16 max-w-3xl mx-auto">
+          <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden">
+            <Image
+              src="/images/sunset-example.jpg"
+              alt="Sunset Series concert"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 768px"
+            />
+          </div>
+        </section>
+
         {/* Upcoming Events */}
         <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
