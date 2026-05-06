@@ -21,7 +21,7 @@ export default function AdminNav() {
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/newsletter', label: 'Newsletter' },
     { href: '/admin/concerts', label: 'Concerts' },
-    { href: '/admin/sunset-series', label: 'Sunset series' },
+    { href: '/admin/sunset-series', label: 'Sunset Series' },
   ];
 
   const isActive = (href: string) => {
