@@ -3,9 +3,16 @@ import Stripe from 'stripe';
 // Lazily initialize Stripe per-request. On Cloudflare Workers (with
 // OpenNext), process.env is populated lazily — a top-level constant
 // captured during cold start can be null even when the secret is set.
+// Use fetch-based HTTP client because Stripe's default Node client
+// doesn't work reliably on Workers even with nodejs_compat.
 export function getStripe(): Stripe | null {
   const key = process.env.STRIPE_SECRET_KEY;
-  return key ? new Stripe(key, { apiVersion: '2026-02-25.clover' }) : null;
+  return key
+    ? new Stripe(key, {
+        apiVersion: '2026-02-25.clover',
+        httpClient: Stripe.createFetchHttpClient(),
+      })
+    : null;
 }
 
 /** @deprecated Use getStripe() — this captures the key at module load time. */
