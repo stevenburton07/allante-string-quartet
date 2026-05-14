@@ -125,7 +125,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-8">
         <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Quick actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
