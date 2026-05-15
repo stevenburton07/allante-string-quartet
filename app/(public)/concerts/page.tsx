@@ -13,22 +13,19 @@ export const dynamic = 'force-dynamic';
 
 export default async function ConcertsPage() {
   const supabase = await createClient();
-  const now = new Date().toISOString();
 
-  // Get upcoming published, cancelled, or completed concerts
+  // Upcoming concerts — visible until an admin marks them completed
   const { data: upcomingConcerts } = await supabase
     .from('concerts')
     .select('*')
-    .in('status', ['published', 'cancelled', 'completed'])
-    .gte('date', now)
+    .in('status', ['published', 'cancelled'])
     .order('date', { ascending: true });
 
-  // Get past completed concerts
+  // Past concerts — anything an admin has marked completed
   const { data: pastConcerts } = await supabase
     .from('concerts')
     .select('*')
     .eq('status', 'completed')
-    .lt('date', now)
     .order('date', { ascending: false })
     .limit(6);
 

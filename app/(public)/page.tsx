@@ -7,23 +7,20 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const supabase = await createClient();
-  const now = new Date().toISOString();
 
-  // Fetch upcoming concerts (published, cancelled, or completed)
+  // Fetch upcoming concerts — visible until an admin marks them completed
   const { data: upcomingConcerts } = await supabase
     .from('concerts')
     .select('*')
-    .in('status', ['published', 'cancelled', 'completed'])
-    .gte('date', now)
+    .in('status', ['published', 'cancelled'])
     .order('date', { ascending: true })
     .limit(3);
 
-  // Fetch upcoming sunset series events
+  // Fetch upcoming sunset series events — visible until an admin marks them completed
   const { data: upcomingSunsetEvents } = await supabase
     .from('sunset_events')
     .select('*')
-    .eq('published', true)
-    .gte('event_date', now)
+    .in('status', ['published', 'cancelled'])
     .order('event_date', { ascending: true })
     .limit(3);
 
