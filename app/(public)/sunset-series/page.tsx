@@ -14,14 +14,12 @@ export const metadata: Metadata = {
 
 export default async function SunsetSeriesPage() {
   const supabase = await createClient();
-  const now = new Date().toISOString();
 
-  // Fetch upcoming published, cancelled, or completed events
+  // Upcoming events — visible until an admin marks them completed
   const { data: upcomingEvents } = await supabase
     .from('sunset_events')
     .select('*')
-    .in('status', ['published', 'cancelled', 'completed'])
-    .gte('event_date', now)
+    .in('status', ['published', 'cancelled'])
     .order('event_date', { ascending: true });
 
   const eventsJsonLd = buildSunsetEventsJsonLd(upcomingEvents ?? []);
