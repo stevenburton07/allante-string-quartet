@@ -24,13 +24,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch the order
-    const { data: order, error: orderError } = await supabase
+    // Paid tickets encode the Stripe session id; comp/free tickets encode a
+    // "CONCERT:<id>:<nanoid>" string stored in qr_code. Look up by whichever
+    // column the scanned value belongs to.
+    const isFreeRegistration = orderId.startsWith('CONCERT:');
+    const baseQuery = supabase
       .from('concert_orders')
       .select('*')
-      .eq('id', orderId)
-      .eq('concert_id', concertId)
-      .single();
+      .eq('concert_id', concertId);
+
+    const { data: order, error: orderError } = await (isFreeRegistration
+      ? baseQuery.eq('qr_code', orderId)
+      : baseQuery.eq('stripe_session_id', orderId)
+    ).single();
 
     if (orderError || !order) {
       return NextResponse.json(
@@ -57,7 +63,7 @@ export async function POST(request: NextRequest) {
         checked_in: true,
         checked_in_at: new Date().toISOString(),
       })
-      .eq('id', orderId)
+      .eq('id', order.id)
       .select()
       .single();
 
