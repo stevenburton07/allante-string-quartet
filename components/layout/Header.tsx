@@ -13,7 +13,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-semibold text-primary">
+            <span className="font-heading text-3xl font-semibold text-primary">
               Allante String Quartet
             </span>
           </Link>

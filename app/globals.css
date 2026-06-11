@@ -15,6 +15,12 @@ body {
   background-color: white;
 }
 
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), system-ui, sans-serif;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

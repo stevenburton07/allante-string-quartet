@@ -1,5 +1,16 @@
 import type { Metadata } from 'next';
+import localFont from 'next/font/local';
 import './globals.css';
+
+const headingFont = localFont({
+  src: '../public/fonts/Bamboo.otf',
+  variable: '--font-heading',
+  display: 'swap',
+  // Bamboo has a small x-height and reads small at a given px size.
+  // size-adjust scales every heading up uniformly while keeping the
+  // existing responsive type scale (text-2xl/3xl/...) intact.
+  declarations: [{ prop: 'size-adjust', value: '125%' }],
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://allantestringquartet.com';
 
@@ -94,7 +105,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={headingFont.variable}>
       <body className="flex flex-col min-h-screen" suppressHydrationWarning>
         <script
           type="application/ld+json"

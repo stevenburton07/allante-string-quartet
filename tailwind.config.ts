@@ -14,6 +14,9 @@ const config: Config = {
         'light-gray': '#f2f2f2',
         'light-blue': '#93C4F5',
       },
+      fontFamily: {
+        heading: ['var(--font-heading)', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],
