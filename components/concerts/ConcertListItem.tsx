@@ -13,7 +13,7 @@ export default function ConcertListItem({ concert }: ConcertListItemProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const formattedDate = new Date(concert.date).toLocaleDateString('en-US', {
+  const formattedDate = new Date(concert.date).toLocaleString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -21,6 +21,7 @@ export default function ConcertListItem({ concert }: ConcertListItemProps) {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'UTC',
   });
 
   const isPast = new Date(concert.date) < new Date();

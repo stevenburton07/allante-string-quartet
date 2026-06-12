@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { formatEventDate } from '@/lib/format-time';
 
 interface ConcertConfirmationProps {
   customerName: string;
@@ -38,12 +39,7 @@ export default function ConcertConfirmation({
 }: ConcertConfirmationProps) {
   const isFree = totalAmount === 0;
   const formattedAmount = isFree ? 'Free' : `$${(totalAmount / 100).toFixed(2)}`;
-  const formattedDate = new Date(concertDate).toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = formatEventDate(concertDate);
 
   return (
     <Html>

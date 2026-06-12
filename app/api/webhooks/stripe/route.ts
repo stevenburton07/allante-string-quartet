@@ -153,6 +153,7 @@ async function handleSunsetCheckout(session: Stripe.Checkout.Session, metadata: 
         eventTime: event.event_time,
         sunsetEndTime: event.sunset_end_time || undefined,
         rainDate: event.rain_date || undefined,
+        arrivalInstructions: event.arrival_instructions || undefined,
         locationAddress: event.location_address,
         locationCity: event.location_city,
         locationState: event.location_state,

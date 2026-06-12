@@ -4,7 +4,7 @@ import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import QRScanner from '@/components/admin/QRScanner';
 import { parseTicketQRCode } from '@/lib/qrcode';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 
 export default function CheckInPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -128,7 +128,7 @@ export default function CheckInPage({ params }: { params: Promise<{ id: string }
       <div className="bg-white rounded-lg shadow p-4 sm:p-6">
         <h1 className="text-xl sm:text-2xl font-bold text-primary mb-2">Check-in: {event.title}</h1>
         <p className="text-gray-600">
-          {new Date(event.event_date).toLocaleDateString('en-US', {
+          {formatEventDate(event.event_date, {
             weekday: 'long',
             month: 'long',
             day: 'numeric',

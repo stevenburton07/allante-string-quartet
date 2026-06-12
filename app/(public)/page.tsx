@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -283,7 +283,6 @@ export default async function Home() {
                   </div>
                   <div className="space-y-4">
                     {upcomingSunsetEvents.map((event) => {
-                      const eventDate = new Date(event.event_date);
                       const formattedTime = formatSunsetRange(event.event_time, event.sunset_end_time);
 
                       return (
@@ -302,7 +301,7 @@ export default async function Home() {
                                 />
                               </svg>
                               <span>
-                                {eventDate.toLocaleDateString('en-US', {
+                                {formatEventDate(event.event_date, {
                                   weekday: 'long',
                                   month: 'long',
                                   day: 'numeric',

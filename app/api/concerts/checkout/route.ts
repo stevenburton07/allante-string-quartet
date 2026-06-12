@@ -89,10 +89,12 @@ export async function POST(request: NextRequest) {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
+                timeZone: 'UTC',
               })} at ${new Date(concert.date).toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true,
+                timeZone: 'UTC',
               })}`,
             },
             unit_amount: concert.ticket_price, // in cents

@@ -10,7 +10,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 
 interface TicketConfirmationProps {
   customerName: string;
@@ -19,6 +19,7 @@ interface TicketConfirmationProps {
   eventTime: string;
   sunsetEndTime?: string;
   rainDate?: string;
+  arrivalInstructions?: string;
   locationAddress: string;
   locationCity: string;
   locationState: string;
@@ -36,6 +37,7 @@ export default function TicketConfirmation({
   eventTime,
   sunsetEndTime,
   rainDate,
+  arrivalInstructions,
   locationAddress,
   locationCity,
   locationState,
@@ -46,21 +48,9 @@ export default function TicketConfirmation({
   qrCodeUrl,
 }: TicketConfirmationProps) {
   const formattedAmount = `$${(totalAmount / 100).toFixed(2)}`;
-  const formattedDate = new Date(eventDate).toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = formatEventDate(eventDate);
 
-  const formattedRainDate = rainDate
-    ? new Date(rainDate).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : null;
+  const formattedRainDate = rainDate ? formatEventDate(rainDate) : null;
 
   return (
     <Html>
@@ -130,9 +120,14 @@ export default function TicketConfirmation({
 
             <Text style={text}>
               Please arrive <strong>15 minutes early</strong> to allow time for parking and check-in.
-              Detailed hiking and parking instructions will be sent in a follow-up email closer to the
-              event date.
             </Text>
+
+            {arrivalInstructions && (
+              <div style={arrivalBox}>
+                <Text style={arrivalHeading}>How to Get There</Text>
+                <Text style={arrivalText}>{arrivalInstructions}</Text>
+              </div>
+            )}
           </Section>
 
           <Hr style={hr} />
@@ -300,6 +295,29 @@ const locationText = {
   lineHeight: '28px',
   margin: '0',
   fontWeight: 'bold' as const,
+};
+
+const arrivalBox = {
+  backgroundColor: '#f6f9fc',
+  border: '2px solid #93C4F5',
+  borderRadius: '8px',
+  margin: '20px 40px',
+  padding: '20px',
+};
+
+const arrivalHeading = {
+  color: '#002E5C',
+  fontSize: '16px',
+  fontWeight: 'bold' as const,
+  margin: '0 0 8px',
+};
+
+const arrivalText = {
+  color: '#333',
+  fontSize: '15px',
+  lineHeight: '24px',
+  margin: '0',
+  whiteSpace: 'pre-line' as const,
 };
 
 const qrBox = {

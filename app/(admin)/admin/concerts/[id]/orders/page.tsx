@@ -66,12 +66,14 @@ export default async function ConcertOrdersPage({ params }: { params: Promise<{ 
               month: 'long',
               day: 'numeric',
               year: 'numeric',
+              timeZone: 'UTC',
             })}{' '}
             at{' '}
             {concertDate.toLocaleTimeString('en-US', {
               hour: 'numeric',
               minute: '2-digit',
               hour12: true,
+              timeZone: 'UTC',
             })}
           </p>
         </div>

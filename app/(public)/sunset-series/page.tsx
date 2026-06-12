@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import TicketPurchaseForm from '@/components/forms/TicketPurchaseForm';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 import { buildSunsetEventsJsonLd } from '@/lib/structured-data';
 
 export const dynamic = 'force-dynamic';
@@ -159,12 +159,7 @@ export default async function SunsetSeriesPage() {
                         />
                       </svg>
                       <span>
-                        {new Date(event.event_date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        {formatEventDate(event.event_date)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">

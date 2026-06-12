@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import CopyEmailsButton from '@/components/admin/CopyEmailsButton';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,7 +60,7 @@ export default async function EventOrdersPage({ params }: { params: Promise<{ id
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold text-primary">{event.title}</h1>
           <p className="text-gray-600 mt-1">
-            {new Date(event.event_date).toLocaleDateString('en-US', {
+            {formatEventDate(event.event_date, {
               weekday: 'long',
               month: 'long',
               day: 'numeric',

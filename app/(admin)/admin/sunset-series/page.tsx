@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { formatSunsetRange } from '@/lib/format-time';
+import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,13 +85,13 @@ export default async function AdminSunsetSeriesPage() {
                 </div>
                 <div className="text-sm text-gray-600 space-y-1">
                   <p>
-                    {new Date(event.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {formatEventDate(event.event_date, { month: 'long', day: 'numeric', year: 'numeric' })}
                     {' · '}
                     {formatSunsetRange(event.event_time, event.sunset_end_time)}
                   </p>
                   {event.rain_date && (
                     <p className="text-xs text-gray-500">
-                      Rain date: {new Date(event.rain_date).toLocaleDateString()}
+                      Rain date: {formatEventDate(event.rain_date, { month: 'numeric', day: 'numeric', year: 'numeric' })}
                     </p>
                   )}
                   <p>
@@ -151,7 +151,7 @@ export default async function AdminSunsetSeriesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {new Date(event.event_date).toLocaleDateString('en-US', {
+                        {formatEventDate(event.event_date, {
                           month: 'long',
                           day: 'numeric',
                           year: 'numeric',
@@ -162,7 +162,7 @@ export default async function AdminSunsetSeriesPage() {
                       </div>
                       {event.rain_date && (
                         <div className="text-xs text-gray-500">
-                          Rain date: {new Date(event.rain_date).toLocaleDateString()}
+                          Rain date: {formatEventDate(event.rain_date, { month: 'numeric', day: 'numeric', year: 'numeric' })}
                         </div>
                       )}
                     </td>
