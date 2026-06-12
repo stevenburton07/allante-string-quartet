@@ -12,6 +12,16 @@ const headingFont = localFont({
   declarations: [{ prop: 'size-adjust', value: '125%' }],
 });
 
+// Dashboard/admin headings use smaller type sizes (stat labels, section
+// headers) than the public site, so Bamboo reads even smaller there.
+// Same size-adjust trick, scoped to the admin area via .admin-scope.
+const headingFontAdmin = localFont({
+  src: '../public/fonts/Bamboo.otf',
+  variable: '--font-heading-admin',
+  display: 'swap',
+  declarations: [{ prop: 'size-adjust', value: '145%' }],
+});
+
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://allantestringquartet.com';
 
 export const metadata: Metadata = {
@@ -105,7 +115,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={headingFont.variable}>
+    <html lang="en" className={`${headingFont.variable} ${headingFontAdmin.variable}`}>
       <body className="flex flex-col min-h-screen" suppressHydrationWarning>
         <script
           type="application/ld+json"

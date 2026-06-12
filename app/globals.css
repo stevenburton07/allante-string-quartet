@@ -19,6 +19,12 @@ body {
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading), system-ui, sans-serif;
   }
+
+  /* Admin/dashboard headings run at smaller type sizes, so use a
+     more strongly size-adjusted Bamboo variant scoped to .admin-scope. */
+  .admin-scope :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-heading-admin), system-ui, sans-serif;
+  }
 }
 
 @layer utilities {
