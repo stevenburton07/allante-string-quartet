@@ -25,6 +25,13 @@ body {
   .admin-scope :is(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-heading-admin), system-ui, sans-serif;
   }
+
+  /* Opt specific dashboard headings (e.g. the quick-action button titles)
+     back out of the Bamboo display face and into the regular UI sans stack. */
+  .admin-scope :is(h1, h2, h3, h4, h5, h6).font-body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
 }
 
 @layer utilities {

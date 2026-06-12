@@ -19,7 +19,7 @@ const headingFontAdmin = localFont({
   src: '../public/fonts/Bamboo.otf',
   variable: '--font-heading-admin',
   display: 'swap',
-  declarations: [{ prop: 'size-adjust', value: '145%' }],
+  declarations: [{ prop: 'size-adjust', value: '175%' }],
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://allantestringquartet.com';
