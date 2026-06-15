@@ -158,7 +158,7 @@ export default async function SunsetSeriesPage() {
                   <div className="mb-6">
                     <h3 className="text-3xl font-bold text-secondary mb-2">{event.title}</h3>
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -171,7 +171,7 @@ export default async function SunsetSeriesPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -182,7 +182,7 @@ export default async function SunsetSeriesPage() {
                       <span>{formattedTime}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -200,8 +200,8 @@ export default async function SunsetSeriesPage() {
                         {event.location_city}, {event.location_state}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                      <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -216,9 +216,17 @@ export default async function SunsetSeriesPage() {
                       </span>
                     </div>
                     {rainDateFormatted && (
-                      <p className="text-gray-600 text-sm ml-7">
-                        Rain Date: {rainDateFormatted}
-                      </p>
+                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                          />
+                        </svg>
+                        <span>Rain date: {rainDateFormatted}</span>
+                      </div>
                     )}
                   </div>
 
