@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
+import { resizeImage } from '@/lib/image-resize';
 import type { Concert } from '@/types/concert';
 
 interface ConcertFormProps {
@@ -53,38 +54,43 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setErrors((prev) => ({ ...prev, image: 'Please select an image file' }));
-        return;
-      }
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, image: 'Image must be less than 5MB' }));
-        return;
-      }
+    if (!file) return;
 
-      setImageFile(file);
-      setErrors((prev) => ({ ...prev, image: '' }));
-
-      // Create preview and detect orientation
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-
-        // Detect image orientation
-        const img = new Image();
-        img.onload = () => {
-          const orientation = img.width >= img.height ? 'landscape' : 'portrait';
-          setFormData((prev) => ({ ...prev, image_orientation: orientation }));
-        };
-        img.src = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setErrors((prev) => ({ ...prev, image: 'Please select an image file' }));
+      return;
     }
+
+    // Downscale + recompress in the browser before upload so big phone photos
+    // get shrunk instead of rejected, and we never store multi-megabyte originals.
+    const resized = await resizeImage(file);
+
+    // Safety net — even after resizing, reject anything still over the limit.
+    if (resized.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, image: 'Image must be less than 5MB' }));
+      return;
+    }
+
+    setImageFile(resized);
+    setErrors((prev) => ({ ...prev, image: '' }));
+
+    // Create preview and detect orientation from the resized file
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+
+      // Detect image orientation
+      const img = new Image();
+      img.onload = () => {
+        const orientation = img.width >= img.height ? 'landscape' : 'portrait';
+        setFormData((prev) => ({ ...prev, image_orientation: orientation }));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(resized);
   };
 
   const handleRemoveImage = async () => {

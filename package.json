@@ -9,7 +9,8 @@
     "preview": "npx wrangler dev",
     "deploy": "npm run build:cloudflare && npx wrangler deploy",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "images:compress": "node scripts/compress-existing-images.mjs"
   },
   "dependencies": {
     "@react-email/components": "^1.0.8",
