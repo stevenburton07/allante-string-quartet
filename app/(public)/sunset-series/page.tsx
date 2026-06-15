@@ -241,6 +241,9 @@ export default async function SunsetSeriesPage() {
                         <p className="text-2xl font-bold text-secondary mb-1">
                           ${(event.ticket_price / 100).toFixed(2)}
                         </p>
+                        <p className="text-sm text-gray-600">
+                          Includes a chair for each guest
+                        </p>
                       </div>
                       <div className="text-center md:text-left">
                         <p className="font-semibold text-primary mb-2">Location</p>
