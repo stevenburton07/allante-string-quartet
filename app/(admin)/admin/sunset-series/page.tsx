@@ -99,6 +99,12 @@ export default async function AdminSunsetSeriesPage() {
                     {' · '}
                     ${(event.ticket_price / 100).toFixed(2)} each
                   </p>
+                  {event.comp_code && (
+                    <p>
+                      <span className="text-gray-500">Comp code: </span>
+                      <span className="font-mono font-semibold text-primary">{event.comp_code}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-3 pt-2 border-t border-gray-100">
                   <Link
@@ -173,6 +179,12 @@ export default async function AdminSunsetSeriesPage() {
                       <div className="text-xs text-gray-500">
                         ${(event.ticket_price / 100).toFixed(2)} each
                       </div>
+                      {event.comp_code && (
+                        <div className="text-xs mt-1">
+                          <span className="text-gray-500">Comp code: </span>
+                          <span className="font-mono font-semibold text-primary">{event.comp_code}</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
