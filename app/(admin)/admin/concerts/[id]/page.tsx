@@ -23,12 +23,12 @@ export default async function EditConcertPage({ params }: { params: Promise<{ id
       <div className="mb-8">
         <Link
           href="/admin/concerts"
-          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-4"
+          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-6"
         >
           ← Back to concerts
         </Link>
         <h1 className="text-2xl sm:text-3xl font-bold text-primary">Edit concert</h1>
-        <p className="text-gray-600 mt-2">{concert.title}</p>
+        <p className="text-gray-600 mt-3">{concert.title}</p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-4 sm:p-8">

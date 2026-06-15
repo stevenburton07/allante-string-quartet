@@ -308,7 +308,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           value={formData.event_date}
           onChange={handleChange}
           required
-          className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+          className="w-full min-w-0 max-w-full appearance-none px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
         />
       </div>
 
@@ -325,7 +325,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             value={formData.event_time}
             onChange={handleChange}
             required
-            className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+            className="w-full min-w-0 max-w-full appearance-none px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
           />
         </div>
         <div>
@@ -338,7 +338,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             name="sunset_end_time"
             value={formData.sunset_end_time}
             onChange={handleChange}
-            className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+            className="w-full min-w-0 max-w-full appearance-none px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
           />
         </div>
       </div>
@@ -354,7 +354,7 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
           name="rain_date"
           value={formData.rain_date}
           onChange={handleChange}
-          className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+          className="w-full min-w-0 max-w-full appearance-none px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
         />
       </div>
 

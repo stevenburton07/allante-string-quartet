@@ -52,7 +52,7 @@ export default function DonatePage() {
         </section>
 
         {/* Donation Form */}
-        <section className="mb-16 max-w-2xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <div className="bg-white border-2 border-primary rounded-lg p-8">
             <h2 className="text-2xl font-bold text-primary mb-6 text-center">
               Make a donation
@@ -62,7 +62,7 @@ export default function DonatePage() {
         </section>
 
         {/* Donor Recognition */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Donor recognition
           </h2>
@@ -72,7 +72,7 @@ export default function DonatePage() {
             </p>
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-secondary mb-2 text-center">
+                <h3 className="font-sans font-semibold text-secondary mb-2 text-center">
                   Patron ($1,000+)
                 </h3>
                 <p className="text-gray-600 text-center text-sm">
@@ -80,7 +80,7 @@ export default function DonatePage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-secondary mb-2 text-center">
+                <h3 className="font-sans font-semibold text-secondary mb-2 text-center">
                   Sponsor ($500-$999)
                 </h3>
                 <p className="text-gray-600 text-center text-sm">
@@ -88,7 +88,7 @@ export default function DonatePage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-secondary mb-2 text-center">
+                <h3 className="font-sans font-semibold text-secondary mb-2 text-center">
                   Supporter ($100-$499)
                 </h3>
                 <p className="text-gray-600 text-center text-sm">
@@ -96,7 +96,7 @@ export default function DonatePage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-secondary mb-2 text-center">
+                <h3 className="font-sans font-semibold text-secondary mb-2 text-center">
                   Friend (Up to $99)
                 </h3>
                 <p className="text-gray-600 text-center text-sm">
@@ -109,7 +109,7 @@ export default function DonatePage() {
 
         {/* Thank You */}
         <section className="mt-16 text-center">
-          <h2 className="text-3xl font-bold text-primary mb-4">
+          <h2 className="font-sans text-3xl font-bold text-primary mb-4">
             Thank you!
           </h2>
           <p className="text-lg text-gray-700 max-w-2xl mx-auto">

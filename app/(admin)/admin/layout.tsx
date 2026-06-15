@@ -21,7 +21,7 @@ export default async function AdminLayout({
   return (
     <div className="admin-scope min-h-screen bg-light-gray">
       <AdminNav />
-      <main className="py-4 sm:py-8">{children}</main>
+      <main className="py-6 sm:py-8">{children}</main>
     </div>
   );
 }

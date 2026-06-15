@@ -38,12 +38,12 @@ export default async function EditSunsetEventPage({ params }: { params: Promise<
       <div className="mb-8">
         <Link
           href="/admin/sunset-series"
-          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-4"
+          className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-1.5 text-sm inline-flex items-center mb-6"
         >
           ← Back to sunset series
         </Link>
         <h1 className="text-2xl sm:text-3xl font-bold text-primary">Edit sunset series event</h1>
-        <p className="text-gray-600 mt-2">Update the event details below</p>
+        <p className="text-gray-600 mt-3">Update the event details below</p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-4 sm:p-6">

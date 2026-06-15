@@ -159,11 +159,16 @@ export default function TicketConfirmation({
               What to Bring
             </Heading>
 
+            <Text style={text}>
+              A chair is provided for each guest — you don&apos;t need to bring
+              your own seating.
+            </Text>
+
             <div style={twoColumn}>
               <div style={column}>
                 <Text style={columnHeading}>Essentials:</Text>
                 <ul style={list}>
-                  <li style={listItem}>Blanket or low-back chair</li>
+                  <li style={listItem}>Blanket</li>
                   <li style={listItem}>Water bottle</li>
                   <li style={listItem}>Sun protection</li>
                   <li style={listItem}>Layers for changing temperatures</li>

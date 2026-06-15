@@ -80,7 +80,7 @@ export default function HirePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Introduction */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <p className="text-lg text-gray-700 mb-4">
             Allante String Quartet provides superb tone quality and blend. This sound is created from seven years of weekly rehearsals with the same musicians. We believe in consistently creating an art form on stage during a concert, and while playing background music.
           </p>
@@ -99,26 +99,26 @@ export default function HirePage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white border-2 border-primary/20 p-6 rounded-lg">
-              <h3 className="font-semibold text-secondary mb-3">Weddings</h3>
+              <h3 className="font-sans font-semibold text-secondary mb-3">Weddings</h3>
               <p className="text-gray-700 text-sm">
                 Ceremony music, cocktail hour, dinner reception - we'll work with you to create
                 the perfect soundtrack for your special day.
               </p>
             </div>
             <div className="bg-white border-2 border-primary/20 p-6 rounded-lg">
-              <h3 className="font-semibold text-secondary mb-3">Corporate Events</h3>
+              <h3 className="font-sans font-semibold text-secondary mb-3">Corporate Events</h3>
               <p className="text-gray-700 text-sm">
                 Add sophistication to product launches, galas, conferences, and company celebrations.
               </p>
             </div>
             <div className="bg-white border-2 border-primary/20 p-6 rounded-lg">
-              <h3 className="font-semibold text-secondary mb-3">Private Parties</h3>
+              <h3 className="font-sans font-semibold text-secondary mb-3">Private Parties</h3>
               <p className="text-gray-700 text-sm">
                 Milestone birthdays, anniversaries, garden parties, and intimate celebrations.
               </p>
             </div>
             <div className="bg-white border-2 border-primary/20 p-6 rounded-lg">
-              <h3 className="font-semibold text-secondary mb-3">Other Events</h3>
+              <h3 className="font-sans font-semibold text-secondary mb-3">Other Events</h3>
               <p className="text-gray-700 text-sm">
                 Fundraisers, memorial services, holiday gatherings, and more.
               </p>
@@ -180,13 +180,13 @@ export default function HirePage() {
         </section>
 
         {/* Performance Options */}
-        <section className="mb-16">
+        <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Performance options
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-light-gray p-6 rounded-lg text-center">
-              <h3 className="text-xl font-semibold text-primary mb-3">
+              <h3 className="font-sans text-xl font-semibold text-primary mb-3">
                 Solo Violin
               </h3>
               <p className="text-gray-700 text-sm">
@@ -194,7 +194,7 @@ export default function HirePage() {
               </p>
             </div>
             <div className="bg-light-gray p-6 rounded-lg text-center">
-              <h3 className="text-xl font-semibold text-primary mb-3">
+              <h3 className="font-sans text-xl font-semibold text-primary mb-3">
                 Solo Viola
               </h3>
               <p className="text-gray-700 text-sm">
@@ -202,7 +202,7 @@ export default function HirePage() {
               </p>
             </div>
             <div className="bg-light-gray p-6 rounded-lg text-center">
-              <h3 className="text-xl font-semibold text-primary mb-3">
+              <h3 className="font-sans text-xl font-semibold text-primary mb-3">
                 Solo Cello
               </h3>
               <p className="text-gray-700 text-sm">
@@ -210,7 +210,7 @@ export default function HirePage() {
               </p>
             </div>
             <div className="bg-gradient-to-br from-secondary to-primary text-white p-6 rounded-lg text-center">
-              <h3 className="text-xl font-semibold mb-3">
+              <h3 className="font-sans text-xl font-semibold mb-3">
                 Full Quartet
               </h3>
               <p className="text-sm">
@@ -221,7 +221,7 @@ export default function HirePage() {
         </section>
 
         {/* Quote Request Form */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Request a quote
           </h2>
@@ -252,7 +252,7 @@ export default function HirePage() {
         </section>
 
         {/* What to Expect */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             What to expect
           </h2>
@@ -262,7 +262,7 @@ export default function HirePage() {
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-primary mb-1">Submit your request</h3>
+                <h3 className="font-sans font-semibold text-primary mb-1">Submit your request</h3>
                 <p className="text-gray-700 text-sm">
                   Fill out our quote request form with your event details
                 </p>
@@ -273,7 +273,7 @@ export default function HirePage() {
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-primary mb-1">Receive your quote</h3>
+                <h3 className="font-sans font-semibold text-primary mb-1">Receive your quote</h3>
                 <p className="text-gray-700 text-sm">
                   We'll respond within 48 hours with pricing and availability
                 </p>
@@ -284,7 +284,7 @@ export default function HirePage() {
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-primary mb-1">Plan the details</h3>
+                <h3 className="font-sans font-semibold text-primary mb-1">Plan the details</h3>
                 <p className="text-gray-700 text-sm">
                   We'll work together on repertoire, timing, and logistics
                 </p>
@@ -295,7 +295,7 @@ export default function HirePage() {
                 4
               </div>
               <div>
-                <h3 className="font-semibold text-primary mb-1">Enjoy your event</h3>
+                <h3 className="font-sans font-semibold text-primary mb-1">Enjoy your event</h3>
                 <p className="text-gray-700 text-sm">
                   Relax and let us provide beautiful music for your special occasion
                 </p>
@@ -305,14 +305,14 @@ export default function HirePage() {
         </section>
 
         {/* FAQ */}
-        <section className="max-w-3xl mx-auto">
+        <section className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Booking FAQs
           </h2>
           <div className="space-y-6">
             {hireFaqs.map((faq) => (
               <div key={faq.question} className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="font-semibold text-primary mb-2">{faq.question}</h3>
+                <h3 className="font-sans font-semibold text-primary mb-2">{faq.question}</h3>
                 <p className="text-gray-700">{faq.answer}</p>
               </div>
             ))}
