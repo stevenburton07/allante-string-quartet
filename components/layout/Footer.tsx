@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="text-center max-w-4xl mx-auto">
           {/* About */}
           <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">Allante String Quartet</h3>
+            <h3 className="text-2xl font-semibold mb-4">Allante String Quartet</h3>
             <p className="text-gray-300 text-sm mb-6">
               Bringing beautiful chamber music to Utah County and beyond.
             </p>
@@ -32,7 +32,7 @@ export default function Footer() {
           <div>
 
             {/* Social Media Links */}
-            <h4 className="text-sm font-semibold mb-3">Follow us</h4>
+            <h4 className="text-lg font-semibold mb-3">Follow us</h4>
               <div className="flex gap-4 justify-center">
                 <a
                   href="https://www.youtube.com/@allantestringquartet"

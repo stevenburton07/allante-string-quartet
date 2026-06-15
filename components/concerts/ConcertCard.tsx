@@ -66,7 +66,7 @@ export default function ConcertCard({ concert, isPast = false }: ConcertCardProp
         )}
 
         <div className="mb-6">
-          <h3 className="text-2xl font-bold text-secondary mb-2">{concert.title}</h3>
+          <h3 className="text-3xl font-bold text-secondary mb-2">{concert.title}</h3>
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -117,7 +117,7 @@ export default function ConcertCard({ concert, isPast = false }: ConcertCardProp
 
         {!isPast && !isCancelled && !isCompleted && (
           <div className="mt-6 border-t border-gray-200 pt-6">
-            <h4 className="text-xl font-semibold text-primary mb-4">
+            <h4 className="text-2xl font-semibold text-primary mb-4">
               {concert.ticket_price === 0 ? 'Reserve your seat' : 'Purchase tickets'}
             </h4>
             <ConcertTicketPurchaseForm

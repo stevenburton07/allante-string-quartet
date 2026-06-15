@@ -94,7 +94,7 @@ export default function AboutPage() {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-primary mb-1">
+                <h3 className="font-sans text-2xl font-semibold text-primary mb-1">
                   Kristi Jenkins
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">Violin</p>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-primary mb-1">
+                <h3 className="font-sans text-2xl font-semibold text-primary mb-1">
                   Bonnie Whetten
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">Violin</p>
@@ -147,7 +147,7 @@ export default function AboutPage() {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-primary mb-1">
+                <h3 className="font-sans text-2xl font-semibold text-primary mb-1">
                   Allison Taylor
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">Viola</p>
@@ -172,7 +172,7 @@ export default function AboutPage() {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-semibold text-primary mb-1">
+                <h3 className="font-sans text-2xl font-semibold text-primary mb-1">
                   Rachel Burton
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">Cello</p>

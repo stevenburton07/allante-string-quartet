@@ -46,7 +46,7 @@ export default async function SunsetSeriesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* About the Series */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <div className="bg-gradient-to-br from-light-blue to-secondary/20 p-8 rounded-lg">
             <h2 className="text-3xl font-bold text-primary mb-6">
               Experience music in nature
@@ -67,7 +67,7 @@ export default async function SunsetSeriesPage() {
         </section>
 
         {/* Sunset Example Image */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden">
             <Image
               src="/images/sunset-example.jpg"
@@ -100,6 +100,14 @@ export default async function SunsetSeriesPage() {
                 const formattedTime = formatSunsetRange(event.event_time, event.sunset_end_time);
                 const isCancelled = event.status === 'cancelled';
                 const isCompleted = event.status === 'completed';
+
+                const difficultyDescriptions: Record<string, string> = {
+                  easy: 'Suitable for all fitness levels',
+                  moderate: 'Some inclines, moderate fitness required',
+                  difficult: 'Steep terrain, good fitness needed',
+                };
+                const difficultyDescription =
+                  difficultyDescriptions[event.difficulty] || difficultyDescriptions.easy;
 
                 // Parse rain date as local date to avoid timezone issues
                 let rainDateFormatted = null;
@@ -148,7 +156,7 @@ export default async function SunsetSeriesPage() {
                   )}
 
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-secondary mb-2">{event.title}</h3>
+                    <h3 className="text-3xl font-bold text-secondary mb-2">{event.title}</h3>
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -201,8 +209,10 @@ export default async function SunsetSeriesPage() {
                           d="M13 10V3L4 14h7v7l9-11h-7z"
                         />
                       </svg>
-                      <span className="capitalize">
-                        {event.difficulty || 'Easy'} difficulty
+                      <span>
+                        <span className="capitalize">{event.difficulty || 'Easy'} difficulty</span>
+                        {' - '}
+                        {difficultyDescription}
                       </span>
                     </div>
                     {rainDateFormatted && (
@@ -217,7 +227,7 @@ export default async function SunsetSeriesPage() {
                   </div>
 
                   <div className="bg-light-blue/20 rounded-lg p-6 mb-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                       <div className="text-center md:text-left">
                         <p className="font-semibold text-primary mb-2">Ticket price</p>
                         <p className="text-2xl font-bold text-secondary mb-1">
@@ -233,18 +243,6 @@ export default async function SunsetSeriesPage() {
                           Exact location revealed after purchase
                         </p>
                       </div>
-                      <div className="text-center md:text-left">
-                        <p className="font-semibold text-primary mb-2">Difficulty</p>
-                        <p className="capitalize mb-1">
-                          {event.difficulty || 'Easy'}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {event.difficulty === 'easy' && 'Suitable for all fitness levels'}
-                          {event.difficulty === 'moderate' && 'Some inclines, moderate fitness required'}
-                          {event.difficulty === 'difficult' && 'Steep terrain, good fitness needed'}
-                          {!event.difficulty && 'Suitable for all fitness levels'}
-                        </p>
-                      </div>
                     </div>
                   </div>
 
@@ -258,7 +256,7 @@ export default async function SunsetSeriesPage() {
                   {/* Ticket Purchase Form */}
                   {!isCancelled && !isCompleted && (
                     <div className="border-t border-gray-200 pt-6">
-                      <h4 className="text-xl font-semibold text-primary mb-4">
+                      <h4 className="text-2xl font-semibold text-primary mb-4">
                         Purchase tickets
                       </h4>
                       <TicketPurchaseForm
@@ -278,13 +276,13 @@ export default async function SunsetSeriesPage() {
         </section>
 
         {/* What to Bring */}
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             What to bring
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-light-gray p-6 rounded-lg">
-              <h3 className="font-semibold text-primary mb-2">Essentials</h3>
+              <h3 className="font-sans font-semibold text-primary mb-2">Essentials</h3>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
                 <li>Flashlight or headlamp</li>
                 <li>Water bottle</li>
@@ -293,9 +291,9 @@ export default async function SunsetSeriesPage() {
               </ul>
             </div>
             <div className="bg-light-gray p-6 rounded-lg">
-              <h3 className="font-semibold text-primary mb-2">Optional</h3>
+              <h3 className="font-sans font-semibold text-primary mb-2">Optional</h3>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Blanket or low-back chair</li>
+                <li>Blanket</li>
                 <li>Picnic snacks</li>
                 <li>Camera</li>
                 <li>Bug spray</li>
@@ -305,13 +303,13 @@ export default async function SunsetSeriesPage() {
         </section>
 
         {/* FAQ */}
-        <section className="max-w-3xl mx-auto pb-16">
+        <section className="max-w-4xl mx-auto pb-16">
           <h2 className="text-3xl font-bold text-primary mb-8 text-center">
             Frequently asked questions
           </h2>
           <div className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="font-semibold text-primary mb-2">
+              <h3 className="font-sans font-semibold text-primary mb-2">
                 Why isn't the exact location shown?
               </h3>
               <p className="text-gray-700">
@@ -320,7 +318,7 @@ export default async function SunsetSeriesPage() {
               </p>
             </div>
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="font-semibold text-primary mb-2">
+              <h3 className="font-sans font-semibold text-primary mb-2">
                 What if I can't attend the rain date?
               </h3>
               <p className="text-gray-700">
@@ -328,7 +326,7 @@ export default async function SunsetSeriesPage() {
               </p>
             </div>
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="font-semibold text-primary mb-2">
+              <h3 className="font-sans font-semibold text-primary mb-2">
                 Is the hike difficult?
               </h3>
               <p className="text-gray-700">
