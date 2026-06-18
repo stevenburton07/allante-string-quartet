@@ -58,7 +58,7 @@ export default async function EventOrdersPage({ params }: { params: Promise<{ id
           >
             ← Back to sunset series
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">{event.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2 leading-loose">{event.title}</h1>
           <p className="text-gray-600">
             {formatEventDate(event.event_date, {
               weekday: 'long',

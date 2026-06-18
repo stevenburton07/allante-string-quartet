@@ -59,7 +59,7 @@ export default async function ConcertOrdersPage({ params }: { params: Promise<{ 
           >
             ← Back to concerts
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">{concert.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2 leading-loose">{concert.title}</h1>
           <p className="text-gray-600">
             {concertDate.toLocaleDateString('en-US', {
               weekday: 'long',
