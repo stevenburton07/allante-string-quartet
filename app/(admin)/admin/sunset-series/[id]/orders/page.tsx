@@ -54,12 +54,12 @@ export default async function EventOrdersPage({ params }: { params: Promise<{ id
         <div className="flex-1 min-w-0">
           <Link
             href="/admin/sunset-series"
-            className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-2 text-sm inline-flex items-center mb-2"
+            className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-2 text-sm inline-flex items-center mb-6"
           >
             ← Back to sunset series
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary">{event.title}</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">{event.title}</h1>
+          <p className="text-gray-600">
             {formatEventDate(event.event_date, {
               weekday: 'long',
               month: 'long',

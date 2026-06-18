@@ -1,8 +1,9 @@
 'use client';
 
-import { use, useState, useEffect } from 'react';
+import { use, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import QRScanner from '@/components/admin/QRScanner';
+import QRScanner, { QRScannerHandle } from '@/components/admin/QRScanner';
+import Button from '@/components/ui/Button';
 import { parseTicketQRCode } from '@/lib/qrcode';
 
 export default function ConcertCheckInPage({ params }: { params: Promise<{ id: string }> }) {
@@ -10,11 +11,12 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
   const [concert, setConcert] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checkInResult, setCheckInResult] = useState<{
-    success: boolean;
+    status: 'success' | 'already' | 'error';
     message: string;
     order?: any;
   } | null>(null);
-  const [checkInHistory, setCheckInHistory] = useState<any[]>([]);
+  const [checkInCount, setCheckInCount] = useState(0);
+  const scannerRef = useRef<QRScannerHandle>(null);
 
   useEffect(() => {
     // Fetch concert details
@@ -35,6 +37,11 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
     fetchConcert();
   }, [id]);
 
+  const handleContinue = () => {
+    setCheckInResult(null);
+    scannerRef.current?.resume();
+  };
+
   const handleScan = async (qrData: string) => {
     setCheckInResult(null);
 
@@ -43,7 +50,7 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
 
     if (!parsed) {
       setCheckInResult({
-        success: false,
+        status: 'error',
         message: 'Invalid QR code. This is not a valid concert ticket.',
       });
       return;
@@ -52,7 +59,7 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
     // Verify concert matches
     if (parsed.eventId !== id) {
       setCheckInResult({
-        success: false,
+        status: 'error',
         message: 'This ticket is for a different concert.',
       });
       return;
@@ -75,23 +82,33 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
 
       if (response.ok) {
         setCheckInResult({
-          success: true,
-          message: `✓ Checked in successfully! ${result.order.customer_name} - ${result.order.ticket_quantity} attendee(s).`,
+          status: 'success',
+          message: `${result.order.customer_name} — ${result.order.ticket_quantity} attendee(s)`,
           order: result.order,
         });
-
-        // Add to history
-        setCheckInHistory((prev) => [result.order, ...prev]);
+        setCheckInCount((prev) => prev + 1);
+      } else if (result.order?.checked_in) {
+        // Valid ticket that was already scanned — not a real problem, just a duplicate.
+        const time = new Date(result.order.checked_in_at).toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        });
+        setCheckInResult({
+          status: 'already',
+          message: `${result.order.customer_name} — first checked in at ${time}`,
+          order: result.order,
+        });
       } else {
         setCheckInResult({
-          success: false,
+          status: 'error',
           message: result.error || 'Check-in failed.',
         });
       }
     } catch (error) {
       console.error('Error checking in:', error);
       setCheckInResult({
-        success: false,
+        status: 'error',
         message: 'Network error. Please try again.',
       });
     }
@@ -149,57 +166,74 @@ export default function ConcertCheckInPage({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-semibold text-primary mb-4">Scan ticket QR code</h2>
-        <QRScanner onScan={handleScan} />
-      </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-primary">Scan ticket QR code</h2>
+          {checkInCount > 0 && (
+            <span className="text-sm font-semibold text-gray-600">
+              {checkInCount} checked in
+            </span>
+          )}
+        </div>
+        {/* Hide the live camera while a result is shown so the operator focuses on Continue */}
+        <div className={checkInResult ? 'hidden' : ''}>
+          <QRScanner ref={scannerRef} onScan={handleScan} />
+        </div>
 
-      {checkInResult && (
-        <div
-          className={`rounded-lg p-4 sm:p-6 ${
-            checkInResult.success
-              ? 'bg-green-50 border border-green-200'
-              : 'bg-red-50 border border-red-200'
-          }`}
-        >
-          <p
-            className={`text-lg font-semibold ${
-              checkInResult.success ? 'text-green-800' : 'text-red-800'
+        {checkInResult && (
+          <div
+            className={`rounded-lg p-6 text-center ${
+              checkInResult.status === 'success'
+                ? 'bg-green-50 border border-green-200'
+                : checkInResult.status === 'already'
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-red-50 border border-red-200'
             }`}
           >
-            {checkInResult.message}
-          </p>
-        </div>
-      )}
-
-      {checkInHistory.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-primary mb-4">
-            Recent check-ins ({checkInHistory.length})
-          </h2>
-          <div className="space-y-3">
-            {checkInHistory.map((order, index) => (
-              <div key={index} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 border-b pb-3">
-                <div>
-                  <p className="font-medium text-gray-900">{order.customer_name}</p>
-                  <p className="text-sm text-gray-600">{order.customer_email}</p>
-                </div>
-                <div className="sm:text-right">
-                  <p className="text-sm font-semibold text-primary">
-                    {order.ticket_quantity} attendee{order.ticket_quantity !== 1 ? 's' : ''}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(order.checked_in_at).toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <p className="text-5xl mb-3">
+              {checkInResult.status === 'success'
+                ? '✓'
+                : checkInResult.status === 'already'
+                ? '⚠️'
+                : '✕'}
+            </p>
+            <p
+              className={`text-xl font-bold mb-1 ${
+                checkInResult.status === 'success'
+                  ? 'text-green-800'
+                  : checkInResult.status === 'already'
+                  ? 'text-amber-800'
+                  : 'text-red-800'
+              }`}
+            >
+              {checkInResult.status === 'success'
+                ? 'Checked in'
+                : checkInResult.status === 'already'
+                ? 'Already checked in'
+                : 'Not checked in'}
+            </p>
+            <p
+              className={`text-base mb-6 ${
+                checkInResult.status === 'success'
+                  ? 'text-green-700'
+                  : checkInResult.status === 'already'
+                  ? 'text-amber-700'
+                  : 'text-red-700'
+              }`}
+            >
+              {checkInResult.message}
+            </p>
+            <Button
+              type="button"
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={handleContinue}
+            >
+              Continue
+            </Button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       </div>
     </div>
   );

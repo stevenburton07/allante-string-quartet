@@ -55,12 +55,12 @@ export default async function ConcertOrdersPage({ params }: { params: Promise<{ 
         <div className="flex-1 min-w-0">
           <Link
             href="/admin/concerts"
-            className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-2 text-sm inline-flex items-center mb-2"
+            className="text-primary bg-transparent hover:bg-primary/10 font-semibold rounded-lg transition-all px-3 py-2 text-sm inline-flex items-center mb-6"
           >
             ← Back to concerts
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary">{concert.title}</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">{concert.title}</h1>
+          <p className="text-gray-600">
             {concertDate.toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',
