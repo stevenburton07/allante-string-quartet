@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
               eventTime: event.event_time,
               sunsetEndTime: event.sunset_end_time || undefined,
               rainDate: event.rain_date || undefined,
+              arrivalInstructions: event.arrival_instructions || undefined,
               locationAddress: event.location_address,
               locationCity: event.location_city,
               locationState: event.location_state,
@@ -121,6 +122,7 @@ export async function POST(request: NextRequest) {
               totalAmount: 0,
               orderId: order.id,
               qrCodeUrl: qrCodeDataUrl,
+              pdfUrl: event.pdf_url || undefined,
             }),
           });
         } catch (emailError) {
