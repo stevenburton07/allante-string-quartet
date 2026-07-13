@@ -162,6 +162,7 @@ async function handleSunsetCheckout(session: Stripe.Checkout.Session, metadata: 
         totalAmount: session.amount_total || 0,
         orderId: session.id,
         qrCodeUrl: qrCodeDataUrl,
+        pdfUrl: event.pdf_url || undefined,
       }),
     });
   } catch (emailError) {

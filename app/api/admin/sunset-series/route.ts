@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
           comp_code: body.comp_code || null,
           image_url: body.image_url || null,
           image_orientation: body.image_orientation || null,
+          pdf_url: body.pdf_url || null,
+          pdf_filename: body.pdf_filename || null,
           location_address: body.location_address,
           location_city: body.location_city,
           location_state: body.location_state,

@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -28,6 +29,7 @@ interface TicketConfirmationProps {
   totalAmount: number; // in cents
   orderId: string;
   qrCodeUrl: string; // Data URL of QR code
+  pdfUrl?: string; // Hosted arrival-instructions PDF (ticket holders only)
 }
 
 export default function TicketConfirmation({
@@ -46,6 +48,7 @@ export default function TicketConfirmation({
   totalAmount,
   orderId,
   qrCodeUrl,
+  pdfUrl,
 }: TicketConfirmationProps) {
   const formattedAmount = `$${(totalAmount / 100).toFixed(2)}`;
   const formattedDate = formatEventDate(eventDate);
@@ -126,6 +129,18 @@ export default function TicketConfirmation({
               <div style={arrivalBox}>
                 <Text style={arrivalHeading}>How to Get There</Text>
                 <Text style={arrivalText}>{arrivalInstructions}</Text>
+              </div>
+            )}
+
+            {pdfUrl && (
+              <div style={pdfBox}>
+                <Text style={pdfText}>
+                  We&apos;ve put together a detailed arrival guide with photos
+                  and directions. Please review it before you head out.
+                </Text>
+                <Button href={pdfUrl} style={pdfButton}>
+                  View arrival guide (PDF)
+                </Button>
               </div>
             )}
           </Section>
@@ -323,6 +338,34 @@ const arrivalText = {
   lineHeight: '24px',
   margin: '0',
   whiteSpace: 'pre-line' as const,
+};
+
+const pdfBox = {
+  backgroundColor: '#FDF0F5',
+  border: '2px solid #D14377',
+  borderRadius: '8px',
+  margin: '20px 40px',
+  padding: '20px',
+  textAlign: 'center' as const,
+};
+
+const pdfText = {
+  color: '#002E5C',
+  fontSize: '15px',
+  lineHeight: '24px',
+  margin: '0 0 16px',
+};
+
+const pdfButton = {
+  backgroundColor: '#D14377',
+  borderRadius: '6px',
+  color: '#ffffff',
+  fontSize: '15px',
+  fontWeight: 'bold' as const,
+  textDecoration: 'none',
+  textAlign: 'center' as const,
+  display: 'inline-block',
+  padding: '12px 24px',
 };
 
 const qrBox = {

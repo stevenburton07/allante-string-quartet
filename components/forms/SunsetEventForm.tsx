@@ -22,6 +22,8 @@ interface SunsetEvent {
   arrival_instructions: string;
   image_url?: string;
   image_orientation?: string;
+  pdf_url?: string;
+  pdf_filename?: string;
   max_tickets: number;
   ticket_price: number;
   status: string;
@@ -40,6 +42,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url || null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfName, setPdfName] = useState<string | null>(event?.pdf_filename || null);
 
   const [formData, setFormData] = useState<Partial<SunsetEvent>>({
     title: event?.title || '',
@@ -57,6 +62,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     arrival_instructions: event?.arrival_instructions || '',
     image_url: event?.image_url || '',
     image_orientation: event?.image_orientation || 'landscape',
+    pdf_url: event?.pdf_url || '',
+    pdf_filename: event?.pdf_filename || '',
     max_tickets: event?.max_tickets || 75,
     ticket_price: event?.ticket_price ? event.ticket_price / 100 : 20, // Convert cents to dollars
     status: event?.status || 'draft',
@@ -144,6 +151,42 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     setFormData((prev) => ({ ...prev, image_url: '' }));
   };
 
+  const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setError('Please select a PDF file');
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      setError('PDF must be less than 50MB');
+      return;
+    }
+
+    setPdfFile(file);
+    setPdfName(file.name);
+    setError('');
+  };
+
+  const handleRemovePdf = async () => {
+    if (formData.pdf_url) {
+      // Delete from storage (event-images bucket handles PDF paths too)
+      const formDataDelete = new FormData();
+      formDataDelete.append('imageUrl', formData.pdf_url);
+
+      await fetch('/api/delete-image', {
+        method: 'POST',
+        body: formDataDelete,
+      });
+    }
+
+    setPdfFile(null);
+    setPdfName(null);
+    setFormData((prev) => ({ ...prev, pdf_url: '', pdf_filename: '' }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -180,10 +223,41 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         setUploadingImage(false);
       }
 
+      let pdfUrl = formData.pdf_url;
+      let pdfFilename = formData.pdf_filename;
+
+      // Upload PDF if a new one was selected
+      if (pdfFile) {
+        setUploadingPdf(true);
+        const formDataPdf = new FormData();
+        formDataPdf.append('file', pdfFile);
+
+        // Send old PDF URL so it can be deleted
+        if (formData.pdf_url) {
+          formDataPdf.append('oldPdfUrl', formData.pdf_url);
+        }
+
+        const uploadResponse = await fetch('/api/upload-pdf', {
+          method: 'POST',
+          body: formDataPdf,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload PDF');
+        }
+
+        const { url, filename } = await uploadResponse.json();
+        pdfUrl = url;
+        pdfFilename = filename;
+        setUploadingPdf(false);
+      }
+
       // Convert dollar price to cents for storage
       const dataToSubmit = {
         ...formData,
         image_url: imageUrl,
+        pdf_url: pdfUrl,
+        pdf_filename: pdfFilename,
         ticket_price: Math.round((formData.ticket_price || 0) * 100),
       };
 
@@ -524,6 +598,40 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             These instructions will only be visible to ticket purchasers
           </p>
         </div>
+
+        <div>
+          <label htmlFor="pdf" className="block text-sm font-medium text-gray-700 mb-2">
+            Arrival instructions PDF (optional)
+          </label>
+          <input
+            type="file"
+            id="pdf"
+            accept="application/pdf"
+            onChange={handlePdfChange}
+            className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+          />
+          <p className="mt-2 text-sm text-gray-600">
+            PDF with photos and directions. Only ticket purchasers get it — the
+            confirmation email includes a link to download it. Up to 50MB.
+          </p>
+          {pdfName && (
+            <div className="mt-4 flex items-center gap-4">
+              <div className="flex items-center gap-2 text-gray-900">
+                <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium break-all">{pdfName}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemovePdf}
+                className="px-4 py-2 text-sm text-red-600 hover:text-red-800 font-semibold whitespace-nowrap"
+              >
+                Remove PDF
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Ticketing */}
@@ -621,8 +729,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             Cancel
           </Button>
 
-          <Button type="submit" variant="primary" size="lg" disabled={loading || uploadingImage} className="w-full sm:w-auto">
-            {uploadingImage ? 'Uploading image...' : loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
+          <Button type="submit" variant="primary" size="lg" disabled={loading || uploadingImage || uploadingPdf} className="w-full sm:w-auto">
+            {uploadingImage ? 'Uploading image...' : uploadingPdf ? 'Uploading PDF...' : loading ? 'Saving...' : mode === 'create' ? 'Create event' : 'Save changes'}
           </Button>
         </div>
       </div>

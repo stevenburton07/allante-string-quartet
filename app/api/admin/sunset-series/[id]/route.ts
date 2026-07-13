@@ -71,6 +71,8 @@ export async function PUT(
         comp_code: body.comp_code || null,
         image_url: body.image_url || null,
         image_orientation: body.image_orientation || null,
+        pdf_url: body.pdf_url || null,
+        pdf_filename: body.pdf_filename || null,
         location_address: body.location_address,
         location_city: body.location_city,
         location_state: body.location_state,
@@ -116,7 +118,7 @@ export async function DELETE(
 
     const { data: event } = await supabase
       .from('sunset_events')
-      .select('image_url')
+      .select('image_url, pdf_url')
       .eq('id', id)
       .single();
 
@@ -129,6 +131,10 @@ export async function DELETE(
 
     if (event?.image_url) {
       await deleteImageFromStorage(event.image_url);
+    }
+
+    if (event?.pdf_url) {
+      await deleteImageFromStorage(event.pdf_url);
     }
 
     return NextResponse.json({ success: true });
