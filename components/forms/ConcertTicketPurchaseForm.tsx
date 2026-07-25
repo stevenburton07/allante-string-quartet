@@ -14,7 +14,6 @@ interface ConcertTicketPurchaseFormProps {
 
 export default function ConcertTicketPurchaseForm({
   concertId,
-  concertTitle,
   ticketPrice,
   maxAttendees,
   attendeesCount,
