@@ -1,7 +1,10 @@
 import ConcertForm from '@/components/concerts/ConcertForm';
 import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth';
 
-export default function NewConcertPage() {
+export default async function NewConcertPage() {
+  await requireAdmin();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">

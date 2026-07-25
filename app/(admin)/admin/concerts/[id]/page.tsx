@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import ConcertForm from '@/components/concerts/ConcertForm';
 import Link from 'next/link';
 import type { Concert } from '@/types/concert';
 
 export default async function EditConcertPage({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdmin();
   const { id } = await params;
   const supabase = await createClient();
 
