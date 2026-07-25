@@ -46,6 +46,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // A refunded or unpaid order must not open the door. Free registrations are
+    // written as 'completed' with amount_paid 0, so they are unaffected.
+    if (order.payment_status !== 'completed') {
+      return NextResponse.json(
+        {
+          error: `This ticket is not valid for entry — the order is marked "${order.payment_status}".`,
+          order,
+        },
+        { status: 400 }
+      );
+    }
+
     // Check if already checked in
     if (order.checked_in) {
       return NextResponse.json(
