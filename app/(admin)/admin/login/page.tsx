@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -32,8 +33,8 @@ export default function AdminLoginPage() {
         router.push('/admin');
         router.refresh();
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to sign in'));
     } finally {
       setIsLoading(false);
     }

@@ -74,7 +74,7 @@ const QRScanner = forwardRef<QRScannerHandle, QRScannerProps>(function QRScanner
           // Error callback (called frequently, so we don't show these)
         }
       );
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error starting scanner:', err);
       const errorMsg = 'Failed to start camera. Please check camera permissions.';
       setError(errorMsg);

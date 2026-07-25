@@ -5,15 +5,17 @@ import Link from 'next/link';
 import QRScanner, { QRScannerHandle } from '@/components/admin/QRScanner';
 import Button from '@/components/ui/Button';
 import { parseTicketQRCode } from '@/lib/qrcode';
+import type { Concert } from '@/types/concert';
+import type { CheckInOrder } from '@/types/order';
 
 export default function ConcertCheckInPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [concert, setConcert] = useState<any>(null);
+  const [concert, setConcert] = useState<Concert | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkInResult, setCheckInResult] = useState<{
     status: 'success' | 'already' | 'error';
     message: string;
-    order?: any;
+    order?: CheckInOrder;
   } | null>(null);
   const [checkInCount, setCheckInCount] = useState(0);
   const scannerRef = useRef<QRScannerHandle>(null);

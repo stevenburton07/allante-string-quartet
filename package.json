@@ -10,7 +10,8 @@
     "deploy": "npm run build:cloudflare && npx wrangler deploy",
     "start": "next start",
     "lint": "eslint .",
-    "images:compress": "node scripts/compress-existing-images.mjs"
+    "images:compress": "node scripts/compress-existing-images.mjs",
+    "images:compress-public": "node scripts/compress-public-images.mjs"
   },
   "dependencies": {
     "@react-email/components": "^1.0.8",

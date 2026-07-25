@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getErrorMessage } from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,10 +76,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true, order: updatedOrder });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking in:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to check in' },
+      { error: getErrorMessage(error, 'Failed to check in') },
       { status: 500 }
     );
   }

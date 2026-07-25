@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getErrorMessage } from '@/lib/errors';
 
 export async function GET(
   request: NextRequest,
@@ -30,10 +31,10 @@ export async function GET(
     }
 
     return NextResponse.json(orders);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching concert orders:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch orders' },
+      { error: getErrorMessage(error, 'Failed to fetch orders') },
       { status: 500 }
     );
   }

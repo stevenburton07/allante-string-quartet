@@ -1,0 +1,38 @@
+name: CI
+
+# Validation only — this workflow must never deploy. Deployment lives in
+# deploy.yml and stays restricted to pushes on main.
+# Push-only on non-main branches. Results attach to the commit, so a PR opened
+# from the branch still shows the check without paying for a second run.
+on:
+  push:
+    branches-ignore: [main] # main is already covered by deploy.yml
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20 # matches deploy.yml so CI reflects the real build
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # The build reads these at compile time, so CI needs the same values the
+      # deploy job uses or it fails for reasons unrelated to the change.
+      - name: Create .env.local for build
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env.local
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env.local
+          echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" >> .env.local
+          echo "NEXT_PUBLIC_APP_URL=https://allantestringquartet.com" >> .env.local
+
+      # `next build` also type-checks, so this covers TypeScript too.
+      - name: Build
+        run: npm run build
