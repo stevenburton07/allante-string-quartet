@@ -22,18 +22,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing orderId or eventId' }, { status: 400 });
     }
 
-    // Fetch the order
-    const { data: order, error: fetchError } = await supabase
+    // Paid tickets encode the Stripe session id; comp tickets encode a
+    // "SUNSET:<id>:<nanoid>" string stored in qr_code and have no session id.
+    // Look up by whichever column the scanned value belongs to. (Mirrors the
+    // concerts check-in route, which already handled this.)
+    const isCompTicket = orderId.startsWith('SUNSET:');
+    const baseQuery = supabase
       .from('sunset_orders')
       .select('*')
-      .eq('stripe_session_id', orderId)
-      .eq('event_id', eventId)
-      .single();
+      .eq('event_id', eventId);
+
+    const { data: order, error: fetchError } = await (isCompTicket
+      ? baseQuery.eq('qr_code', orderId)
+      : baseQuery.eq('stripe_session_id', orderId)
+    ).single();
 
     if (fetchError || !order) {
       return NextResponse.json(
         { error: 'Ticket not found or invalid' },
         { status: 404 }
+      );
+    }
+
+    // A refunded or unpaid order must not open the door. Comp tickets are
+    // written as 'completed' with amount_paid 0, so free guests are unaffected.
+    if (order.payment_status !== 'completed') {
+      return NextResponse.json(
+        {
+          error: `This ticket is not valid for entry — the order is marked "${order.payment_status}".`,
+          order,
+        },
+        { status: 400 }
       );
     }
 
