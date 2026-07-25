@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { resizeImage } from '@/lib/image-resize';
+import { getErrorMessage } from '@/lib/errors';
 
 interface SunsetEvent {
   id?: string;
@@ -287,9 +288,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         router.push('/admin/sunset-series');
       }
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error saving event:', err);
-      setError(err.message || 'Failed to save event. Please try again.');
+      setError(getErrorMessage(err, 'Failed to save event. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -318,9 +319,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
 
       router.push('/admin/sunset-series');
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting event:', err);
-      setError(err.message || 'Failed to delete event. Please try again.');
+      setError(getErrorMessage(err, 'Failed to delete event. Please try again.'));
     } finally {
       setLoading(false);
     }

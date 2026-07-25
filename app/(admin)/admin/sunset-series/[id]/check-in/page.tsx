@@ -6,15 +6,17 @@ import QRScanner, { QRScannerHandle } from '@/components/admin/QRScanner';
 import Button from '@/components/ui/Button';
 import { parseTicketQRCode } from '@/lib/qrcode';
 import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
+import type { SunsetEvent } from '@/types/sunset-event';
+import type { CheckInOrder } from '@/types/order';
 
 export default function CheckInPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<SunsetEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkInResult, setCheckInResult] = useState<{
     status: 'success' | 'already' | 'error';
     message: string;
-    order?: any;
+    order?: CheckInOrder;
   } | null>(null);
   const [checkInCount, setCheckInCount] = useState(0);
   const scannerRef = useRef<QRScannerHandle>(null);

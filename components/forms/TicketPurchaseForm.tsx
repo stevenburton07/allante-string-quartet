@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
+import { getErrorMessage } from '@/lib/errors';
 
 
 interface TicketPurchaseFormProps {
@@ -75,9 +76,9 @@ export default function TicketPurchaseForm({
         throw new Error('No checkout URL returned');
       }
       window.location.href = url;
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error purchasing tickets:', err);
-      setError(err.message || 'Failed to purchase tickets. Please try again.');
+      setError(getErrorMessage(err, 'Failed to purchase tickets. Please try again.'));
       setLoading(false);
     }
   };

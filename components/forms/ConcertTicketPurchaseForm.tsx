@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
+import { getErrorMessage } from '@/lib/errors';
 
 
 interface ConcertTicketPurchaseFormProps {
@@ -94,9 +95,9 @@ export default function ConcertTicketPurchaseForm({
         // Redirect to success page
         window.location.href = `/concerts/success?concert_id=${concertId}`;
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error registering for concert:', err);
-      setError(err.message || 'Failed to register. Please try again.');
+      setError(getErrorMessage(err, 'Failed to register. Please try again.'));
       setLoading(false);
     }
   };
