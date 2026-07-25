@@ -14,7 +14,6 @@ interface TicketPurchaseFormProps {
 
 export default function TicketPurchaseForm({
   eventId,
-  eventTitle,
   ticketPrice,
   maxTickets,
   ticketsSold,

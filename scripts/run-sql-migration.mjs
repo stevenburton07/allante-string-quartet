@@ -34,14 +34,8 @@ if (!urlMatch) {
 
 const projectRef = urlMatch[1];
 
-// Supabase connection string format
-// Note: You need to get the direct connection string from Supabase dashboard
-// Project Settings -> Database -> Connection string (Direct)
-const connectionString = `postgresql://postgres:[YOUR-PASSWORD]@db.${projectRef}.supabase.co:5432/postgres`;
-
 console.log(`📊 Connecting to Supabase project: ${projectRef}`);
-console.log(`⚠️  Please update the connection string in this script with your database password`);
-console.log(`   You can find it in: Supabase Dashboard > Project Settings > Database > Connection String`);
+console.log(`   Password is read from the command-line argument (see usage below).`);
 console.log('');
 
 // For now, let's use an alternative approach with the service role key

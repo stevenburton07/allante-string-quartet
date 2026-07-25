@@ -59,7 +59,6 @@ async function main() {
     console.log(`\n${event.title} (${event.event_date}) — ${orders?.length ?? 0} ticket holders`);
 
     for (const order of orders ?? []) {
-      const label = `  ${order.customer_email} (qty ${order.ticket_quantity})`;
       if (DRY_RUN) {
         console.log(`  would send → ${order.customer_email} (qty ${order.ticket_quantity})`);
         sent++;

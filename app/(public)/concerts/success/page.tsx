@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   description: 'Your concert registration has been confirmed',
 };
 
-export default function ConcertSuccessPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ session_id?: string; concert_id?: string }>;
-}) {
+export default function ConcertSuccessPage() {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full">

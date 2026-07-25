@@ -70,7 +70,7 @@ const QRScanner = forwardRef<QRScannerHandle, QRScannerProps>(function QRScanner
 
           onScan(decodedText);
         },
-        (errorMessage) => {
+        () => {
           // Error callback (called frequently, so we don't show these)
         }
       );

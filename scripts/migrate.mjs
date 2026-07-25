@@ -64,7 +64,7 @@ async function runMigration(migrationFile) {
 
         if (!response.ok) {
           // Last resort: try using the SQL directly via the client
-          const { error: directError } = await supabase.from('_migrations').insert({
+          await supabase.from('_migrations').insert({
             sql: statement,
             executed_at: new Date().toISOString(),
           });

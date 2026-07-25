@@ -280,8 +280,6 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         throw new Error(error.error || 'Failed to save event');
       }
 
-      const result = await response.json();
-
       // Redirect to the event list or edit page
       if (mode === 'create') {
         router.push('/admin/sunset-series');
