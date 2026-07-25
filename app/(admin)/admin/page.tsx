@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 import QrCleanupButton from '@/components/admin/QrCleanupButton';
 
 // Fun welcome messages - add more anytime!
@@ -39,6 +40,7 @@ const welcomeMessages = [
 ];
 
 export default async function AdminDashboard() {
+  await requireAdmin();
   const supabase = await createClient();
 
   // Pick a random welcome message

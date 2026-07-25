@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth';
 
 export default async function ConcertsListPage() {
+  await requireAdmin();
   const supabase = await createClient();
 
   const { data: concerts, error } = await supabase
