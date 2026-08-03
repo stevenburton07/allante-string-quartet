@@ -3,6 +3,7 @@ import { getStripe } from '@/lib/stripe';
 import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { formatSunsetRange, formatEventDate } from '@/lib/format-time';
+import { resolveCode } from '@/lib/pricing';
 import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmailWithRetry } from '@/lib/email';
 import TicketConfirmation from '@/emails/TicketConfirmation';
@@ -13,6 +14,9 @@ const checkoutSchema = z.object({
   customerName: z.string().min(1).max(200),
   customerEmail: z.string().email().max(320),
   customerPhone: z.string().max(30).optional().nullable(),
+  // One box on the form covers both comp codes (free) and discount codes
+  // (percentage off). `compCode` is still accepted for older clients.
+  code: z.string().max(100).optional().nullable(),
   compCode: z.string().max(100).optional().nullable(),
 });
 
@@ -28,7 +32,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { eventId, quantity, customerName, customerEmail, customerPhone, compCode } = parsed.data;
+    const { eventId, quantity, customerName, customerEmail, customerPhone } = parsed.data;
+    const submittedCode = parsed.data.code ?? parsed.data.compCode;
 
     // Fetch event details from Supabase
     const supabase = await createClient();
@@ -61,92 +66,97 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for comp code - if valid, create free order directly
-    if (compCode && compCode.trim()) {
-      if (event.comp_code && event.comp_code.toUpperCase() === compCode.toUpperCase()) {
-        const { nanoid } = await import('nanoid');
-        const qrCode = `SUNSET:${eventId}:${nanoid(16)}`;
-        const qrCodeDataUrl = await generateTicketQRCode(qrCode, eventId);
+    // Resolve the code here rather than trusting whatever the form quoted —
+    // this is the only check that decides what the buyer is actually charged.
+    const resolution = resolveCode(submittedCode, event);
 
-        // Create order with comp code (admin client to bypass RLS)
-        const admin = createAdminClient();
-        const { data: order, error: orderError } = await admin
-          .from('sunset_orders')
-          .insert({
-            event_id: eventId,
-            customer_name: customerName,
-            customer_email: customerEmail,
-            customer_phone: customerPhone || null,
-            amount_paid: 0,
-            payment_status: 'completed',
-            used_comp_code: true,
-            ticket_quantity: quantity,
-            qr_code: qrCode,
-            qr_code_url: qrCodeDataUrl,
-          })
-          .select()
-          .single();
+    if (resolution.kind === 'invalid') {
+      return NextResponse.json(
+        { error: 'Invalid code' },
+        { status: 400 }
+      );
+    }
 
-        if (orderError) {
-          console.error('Error creating comp order:', orderError);
-          return NextResponse.json(
-            { error: 'Failed to create order' },
-            { status: 500 }
-          );
-        }
+    // Comp codes skip Stripe entirely and issue a free ticket. A discount code
+    // still has to be paid for, so it falls through to Checkout below.
+    if (resolution.kind === 'comp') {
+      const { nanoid } = await import('nanoid');
+      const qrCode = `SUNSET:${eventId}:${nanoid(16)}`;
+      const qrCodeDataUrl = await generateTicketQRCode(qrCode, eventId);
 
-        await admin.rpc('increment_tickets_sold', {
+      // Create order with comp code (admin client to bypass RLS)
+      const admin = createAdminClient();
+      const { data: order, error: orderError } = await admin
+        .from('sunset_orders')
+        .insert({
           event_id: eventId,
-          amount: quantity,
-        });
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone || null,
+          amount_paid: 0,
+          payment_status: 'completed',
+          used_comp_code: true,
+          ticket_quantity: quantity,
+          qr_code: qrCode,
+          qr_code_url: qrCodeDataUrl,
+        })
+        .select()
+        .single();
 
-        // Send confirmation email — order is already committed, so a failed
-        // email must not fail the whole request.
-        try {
-          await sendEmailWithRetry({
-            to: customerEmail,
-            subject: `Your Sunset Series Tickets - ${event.title}`,
-            react: TicketConfirmation({
-              customerName,
-              eventTitle: event.title,
-              eventDate: event.event_date,
-              eventTime: event.event_time,
-              sunsetEndTime: event.sunset_end_time || undefined,
-              rainDate: event.rain_date || undefined,
-              arrivalInstructions: event.arrival_instructions || undefined,
-              locationAddress: event.location_address,
-              locationCity: event.location_city,
-              locationState: event.location_state,
-              locationZip: event.location_zip,
-              ticketQuantity: quantity,
-              totalAmount: 0,
-              orderId: order.id,
-              qrCodeUrl: qrCodeDataUrl,
-              pdfUrl: event.pdf_url || undefined,
-            }),
-          });
-        } catch (emailError) {
-          console.error('CONFIRMATION EMAIL FAILED for comp-code sunset order', {
-            orderId: order.id,
-            eventId,
-            customerEmail,
-            error: emailError,
-          });
-        }
-
-        // Return success (frontend will redirect to success page)
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-        return NextResponse.json({
-          success: true,
-          orderId: order.id,
-          redirectUrl: `${appUrl}/sunset-series/success?order_id=${order.id}`
-        });
-      } else {
+      if (orderError) {
+        console.error('Error creating comp order:', orderError);
         return NextResponse.json(
-          { error: 'Invalid comp code' },
-          { status: 400 }
+          { error: 'Failed to create order' },
+          { status: 500 }
         );
       }
+
+      await admin.rpc('increment_tickets_sold', {
+        event_id: eventId,
+        amount: quantity,
+      });
+
+      // Send confirmation email — order is already committed, so a failed
+      // email must not fail the whole request.
+      try {
+        await sendEmailWithRetry({
+          to: customerEmail,
+          subject: `Your Sunset Series Tickets - ${event.title}`,
+          react: TicketConfirmation({
+            customerName,
+            eventTitle: event.title,
+            eventDate: event.event_date,
+            eventTime: event.event_time,
+            sunsetEndTime: event.sunset_end_time || undefined,
+            rainDate: event.rain_date || undefined,
+            arrivalInstructions: event.arrival_instructions || undefined,
+            locationAddress: event.location_address,
+            locationCity: event.location_city,
+            locationState: event.location_state,
+            locationZip: event.location_zip,
+            ticketQuantity: quantity,
+            totalAmount: 0,
+            orderId: order.id,
+            qrCodeUrl: qrCodeDataUrl,
+            pdfUrl: event.pdf_url || undefined,
+          }),
+        });
+      } catch (emailError) {
+        console.error('CONFIRMATION EMAIL FAILED for comp-code sunset order', {
+          orderId: order.id,
+          eventId,
+          customerEmail,
+          error: emailError,
+        });
+      }
+
+      // Return success (frontend will redirect to success page)
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      return NextResponse.json({
+        success: true,
+        orderId: order.id,
+        redirectUrl: `${appUrl}/sunset-series/success?order_id=${order.id}`
+      });
     }
 
     const stripe = getStripe();
@@ -159,6 +169,10 @@ export async function POST(request: NextRequest) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+    // Full price unless a valid discount code came in with the request.
+    const unitAmount = resolution.unitPrice;
+    const isDiscounted = resolution.kind === 'discount';
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -168,10 +182,12 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${event.title} - Ticket`,
+              name: isDiscounted
+                ? `${event.title} - Ticket (${resolution.percent}% off)`
+                : `${event.title} - Ticket`,
               description: `${formatEventDate(event.event_date)} · ${formatSunsetRange(event.event_time, event.sunset_end_time)}`,
             },
-            unit_amount: event.ticket_price, // in cents
+            unit_amount: unitAmount, // in cents, discount already applied
           },
           quantity,
         },

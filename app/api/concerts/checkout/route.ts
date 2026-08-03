@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { resolveCode } from '@/lib/pricing';
 
 const checkoutSchema = z.object({
   concertId: z.string().uuid(),
@@ -9,6 +10,8 @@ const checkoutSchema = z.object({
   customerName: z.string().min(1).max(200),
   customerEmail: z.string().email().max(320),
   customerPhone: z.string().max(30).optional().nullable(),
+  // Discount codes only. Comp codes are free tickets and go to /register.
+  code: z.string().max(100).optional().nullable(),
 });
 
 export async function POST(request: NextRequest) {
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { concertId, quantity, customerName, customerEmail, customerPhone } = parsed.data;
+    const { concertId, quantity, customerName, customerEmail, customerPhone, code } = parsed.data;
 
     // Fetch concert details from Supabase
     const supabase = await createClient();
@@ -74,6 +77,27 @@ export async function POST(request: NextRequest) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+    // Resolve the code here rather than trusting whatever the form quoted —
+    // this is the only check that decides what the buyer is actually charged.
+    const resolution = resolveCode(code, concert);
+
+    if (resolution.kind === 'invalid') {
+      return NextResponse.json({ error: 'Invalid code' }, { status: 400 });
+    }
+
+    // A comp code means a free ticket, which is the registration flow's job.
+    // The purchase form checks the code first and routes there, so this only
+    // catches a request that skipped it.
+    if (resolution.kind === 'comp') {
+      return NextResponse.json(
+        { error: 'That is a complimentary ticket code — no payment is needed.' },
+        { status: 400 }
+      );
+    }
+
+    const unitAmount = resolution.unitPrice;
+    const isDiscounted = resolution.kind === 'discount';
+
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -83,7 +107,9 @@ export async function POST(request: NextRequest) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${concert.title} - Ticket`,
+              name: isDiscounted
+                ? `${concert.title} - Ticket (${resolution.percent}% off)`
+                : `${concert.title} - Ticket`,
               description: `${new Date(concert.date).toLocaleDateString('en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -97,7 +123,7 @@ export async function POST(request: NextRequest) {
                 timeZone: 'UTC',
               })}`,
             },
-            unit_amount: concert.ticket_price, // in cents
+            unit_amount: unitAmount, // in cents, discount already applied
           },
           quantity,
         },

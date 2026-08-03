@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { getErrorMessage } from '@/lib/errors';
+import { formatPrice } from '@/lib/pricing';
+import PromoCodeField, { usePromoCode } from '@/components/forms/PromoCodeField';
 
 
 interface ConcertTicketPurchaseFormProps {
   concertId: string;
   concertTitle: string;
-  ticketPrice: number; // in cents
+  ticketPrice: number; // in cents, full price before any discount
   maxAttendees: number;
   attendeesCount: number;
 }
@@ -25,10 +27,15 @@ export default function ConcertTicketPurchaseForm({
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [compCode, setCompCode] = useState('');
+  const promo = usePromoCode('concert', concertId);
 
   const availableSeats = maxAttendees - attendeesCount;
   const isFree = ticketPrice === 0;
+  // Quote whatever the applied code is worth. The checkout route re-checks the
+  // code and is what actually sets the charge — see lib/pricing.ts
+  const unitPrice = promo.applied ? promo.applied.unitPrice : ticketPrice;
+  const isDiscounted = promo.applied?.kind === 'discount';
+  const isComped = promo.applied?.kind === 'comp';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,11 +43,15 @@ export default function ConcertTicketPurchaseForm({
     setError('');
 
     try {
-      // For paid concerts without comp code, use Stripe
-      const hasCompCode = compCode.trim().length > 0;
+      // Check the code first, so someone who typed one without tapping Apply
+      // still gets it — and is stopped here if it is not valid. Which endpoint
+      // to use depends on what the code turns out to be: only a comp code (or
+      // an already-free concert) skips payment.
+      const resolution = await promo.resolve();
+      const isFreeTicket = isFree || resolution?.kind === 'comp';
 
-      if (!isFree && !hasCompCode) {
-        // Paid concert, no comp code - use Stripe
+      if (!isFreeTicket) {
+        // Paid ticket, with or without a discount code - use Stripe
         if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
           throw new Error('Stripe is not configured. Please contact support.');
         }
@@ -56,6 +67,7 @@ export default function ConcertTicketPurchaseForm({
             customerName,
             customerEmail,
             customerPhone,
+            code: promo.code.trim() || undefined,
           }),
         });
 
@@ -83,7 +95,7 @@ export default function ConcertTicketPurchaseForm({
             customerName,
             customerEmail,
             customerPhone,
-            compCode: compCode.trim() || undefined,
+            compCode: promo.code.trim() || undefined,
           }),
         });
 
@@ -142,7 +154,7 @@ export default function ConcertTicketPurchaseForm({
             {Array.from({ length: Math.min(availableSeats, 10) }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
                 {num} {num === 1 ? (isFree ? 'seat' : 'ticket') : (isFree ? 'seats' : 'tickets')}
-                {!isFree && ` - $${((ticketPrice * num) / 100).toFixed(2)}`}
+                {!isFree && ` - ${formatPrice(unitPrice * num)}`}
               </option>
             ))}
           </select>
@@ -202,38 +214,27 @@ export default function ConcertTicketPurchaseForm({
         />
       </div>
 
-      {/* Comp Code */}
-      {!isFree && (
-        <div>
-          <label htmlFor="compCode" className="block text-sm font-medium text-gray-700 mb-2">
-            Comp code (optional)
-          </label>
-          <input
-            type="text"
-            id="compCode"
-            value={compCode}
-            onChange={(e) => setCompCode(e.target.value.toUpperCase())}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
-            placeholder="Enter comp code"
-          />
-          <p className="mt-1.5 text-sm text-gray-500">
-            If you have a complimentary ticket code, enter it here for free admission
-          </p>
-        </div>
-      )}
+      {/* Promo or comp code */}
+      {!isFree && <PromoCodeField promo={promo} disabled={loading} />}
 
       {/* Total */}
       {!isFree && (
         <div className="bg-gray-50 rounded-lg p-4">
+          {(isDiscounted || isComped) && (
+            <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
+              <span>{isComped ? 'Comp code applied' : `${promo.applied?.percent}% off applied`}</span>
+              <span className="line-through">{formatPrice(ticketPrice * quantity)}</span>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold text-gray-900">Total</span>
             <span className="text-2xl font-bold text-primary">
-              ${((ticketPrice * quantity) / 100).toFixed(2)}
+              {formatPrice(unitPrice * quantity)}
             </span>
           </div>
-          {compCode.trim() && (
+          {promo.code.trim() && !promo.applied && (
             <p className="text-sm text-gray-600 mt-2 text-center">
-              Comp code will be validated at checkout
+              Your code will be checked when you continue
             </p>
           )}
         </div>
@@ -253,8 +254,8 @@ export default function ConcertTicketPurchaseForm({
           'Processing...'
         ) : isFree ? (
           'Reserve Seats'
-        ) : compCode.trim() ? (
-          'Validate Code & Register'
+        ) : isComped ? (
+          'Reserve Seats'
         ) : (
           <>
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,8 +268,8 @@ export default function ConcertTicketPurchaseForm({
 
       {!isFree && (
         <p className="text-xs text-gray-500 text-center">
-          {compCode.trim()
-            ? 'Your comp code will be validated. If invalid, payment will be required.'
+          {isComped
+            ? 'You\'ll receive your confirmation and QR code by email right away.'
             : 'Secure payment processing by Stripe. You\'ll receive your confirmation via email after payment.'
           }
         </p>

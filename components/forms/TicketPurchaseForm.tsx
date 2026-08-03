@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { getErrorMessage } from '@/lib/errors';
+import { formatPrice } from '@/lib/pricing';
+import PromoCodeField, { usePromoCode } from '@/components/forms/PromoCodeField';
 
 
 interface TicketPurchaseFormProps {
   eventId: string;
   eventTitle: string;
-  ticketPrice: number; // in cents
+  ticketPrice: number; // in cents, full price before any discount
   maxTickets: number;
   ticketsSold: number;
 }
@@ -25,10 +27,15 @@ export default function TicketPurchaseForm({
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [compCode, setCompCode] = useState('');
+  const promo = usePromoCode('sunset', eventId);
 
   const availableTickets = maxTickets - ticketsSold;
-  const totalPrice = (ticketPrice * quantity) / 100;
+  // Quote whatever the applied code is worth. The checkout route re-checks the
+  // code and is what actually sets the charge — see lib/pricing.ts
+  const unitPrice = promo.applied ? promo.applied.unitPrice : ticketPrice;
+  const isDiscounted = promo.applied?.kind === 'discount';
+  const isComped = promo.applied?.kind === 'comp';
+  const totalCents = unitPrice * quantity;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +43,12 @@ export default function TicketPurchaseForm({
     setError('');
 
     try {
-      // Validate Stripe is configured
-      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      // Check the code first, so someone who typed one without tapping Apply
+      // still gets it — and is stopped here if it is not valid.
+      const resolution = await promo.resolve();
+
+      // A comp code is the only path that skips payment.
+      if (resolution?.kind !== 'comp' && !process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
         throw new Error('Stripe is not configured. Please contact support.');
       }
 
@@ -53,7 +64,7 @@ export default function TicketPurchaseForm({
           customerName,
           customerEmail,
           customerPhone,
-          compCode: compCode.trim() || undefined,
+          code: promo.code.trim() || undefined,
         }),
       });
 
@@ -122,7 +133,7 @@ export default function TicketPurchaseForm({
           >
             {Array.from({ length: Math.min(availableTickets, 10) }, (_, i) => i + 1).map((num) => (
               <option key={num} value={num}>
-                {num} {num === 1 ? 'ticket' : 'tickets'} - ${((ticketPrice * num) / 100).toFixed(2)}
+                {num} {num === 1 ? 'ticket' : 'tickets'} - {formatPrice(unitPrice * num)}
               </option>
             ))}
           </select>
@@ -182,33 +193,24 @@ export default function TicketPurchaseForm({
         />
       </div>
 
-      {/* Comp Code */}
-      <div>
-        <label htmlFor="compCode" className="block text-sm font-medium text-gray-700 mb-2">
-          Comp Code (Optional)
-        </label>
-        <input
-          type="text"
-          id="compCode"
-          value={compCode}
-          onChange={(e) => setCompCode(e.target.value.toUpperCase())}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          placeholder="Enter comp code"
-        />
-        <p className="mt-1.5 text-sm text-gray-500">
-          If you have a complimentary ticket code, enter it here for free tickets
-        </p>
-      </div>
+      {/* Promo or comp code */}
+      <PromoCodeField promo={promo} disabled={loading} />
 
       {/* Total */}
       <div className="bg-gray-50 rounded-lg p-4">
+        {(isDiscounted || isComped) && (
+          <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
+            <span>{isComped ? 'Comp code applied' : `${promo.applied?.percent}% off applied`}</span>
+            <span className="line-through">{formatPrice(ticketPrice * quantity)}</span>
+          </div>
+        )}
         <div className="flex justify-between items-center">
           <span className="text-lg font-semibold text-gray-900">Total</span>
-          <span className="text-2xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+          <span className="text-2xl font-bold text-primary">{formatPrice(totalCents)}</span>
         </div>
-        {compCode.trim() && (
+        {promo.code.trim() && !promo.applied && (
           <p className="text-sm text-gray-600 mt-2 text-center">
-            Comp code will be validated at checkout
+            Your code will be checked when you continue
           </p>
         )}
       </div>
@@ -217,8 +219,8 @@ export default function TicketPurchaseForm({
       <Button type="submit" variant="primary" size="lg" fullWidth disabled={loading}>
         {loading ? (
           'Processing...'
-        ) : compCode.trim() ? (
-          'Validate Code & Register'
+        ) : isComped ? (
+          'Register'
         ) : (
           <>
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,8 +232,8 @@ export default function TicketPurchaseForm({
       </Button>
 
       <p className="text-xs text-gray-500 text-center">
-        {compCode.trim()
-          ? 'Your comp code will be validated. If invalid, payment will be required.'
+        {isComped
+          ? 'You\'ll receive your tickets and event location details by email right away.'
           : 'Secure payment processing by Stripe. You\'ll receive your tickets and event location details via email after payment.'
         }
       </p>

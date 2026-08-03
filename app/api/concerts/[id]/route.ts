@@ -14,6 +14,8 @@ const concertSchema = z.object({
   image_orientation: z.enum(['landscape', 'portrait']).optional().nullable(),
   is_published: z.boolean(),
   ticket_price: z.number().min(0, 'Ticket price must be non-negative'),
+  discount_code: z.string().max(50).optional().nullable().or(z.literal('')),
+  discount_percent: z.number().int().min(0).max(100, 'Discount must be between 0 and 100').optional(),
   max_attendees: z.number().min(1, 'Max attendees must be at least 1'),
   comp_code: z.string().optional().nullable().or(z.literal('')),
   status: z.string().optional(),

@@ -88,6 +88,13 @@ export default async function ConcertsListPage() {
                       {' · '}
                       {concert.ticket_price === 0 ? 'Free' : `$${(concert.ticket_price / 100).toFixed(2)}`}
                     </p>
+                    {concert.discount_code && concert.discount_percent > 0 && (
+                      <p>
+                        <span className="text-gray-500">Discount code: </span>
+                        <span className="font-mono font-semibold text-secondary">{concert.discount_code}</span>
+                        <span className="text-gray-500"> ({concert.discount_percent}% off)</span>
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-3 pt-2 border-t border-gray-100">
                     <Link
@@ -176,6 +183,12 @@ export default async function ConcertsListPage() {
                         <div className="text-xs text-gray-500">
                           {concert.ticket_price === 0 ? 'Free' : `$${(concert.ticket_price / 100).toFixed(2)}`}
                         </div>
+                        {concert.discount_code && concert.discount_percent > 0 && (
+                          <div className="text-xs mt-1">
+                            <span className="font-mono font-semibold text-secondary">{concert.discount_code}</span>
+                            <span className="text-gray-500"> ({concert.discount_percent}% off)</span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span

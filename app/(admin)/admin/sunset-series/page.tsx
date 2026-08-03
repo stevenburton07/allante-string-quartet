@@ -105,6 +105,13 @@ export default async function AdminSunsetSeriesPage() {
                       <span className="font-mono font-semibold text-primary">{event.comp_code}</span>
                     </p>
                   )}
+                  {event.discount_code && event.discount_percent > 0 && (
+                    <p>
+                      <span className="text-gray-500">Discount code: </span>
+                      <span className="font-mono font-semibold text-secondary">{event.discount_code}</span>
+                      <span className="text-gray-500"> ({event.discount_percent}% off)</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex gap-3 pt-2 border-t border-gray-100">
                   <Link
@@ -183,6 +190,12 @@ export default async function AdminSunsetSeriesPage() {
                         <div className="text-xs mt-1">
                           <span className="text-gray-500">Comp code: </span>
                           <span className="font-mono font-semibold text-primary">{event.comp_code}</span>
+                        </div>
+                      )}
+                      {event.discount_code && event.discount_percent > 0 && (
+                        <div className="text-xs mt-1">
+                          <span className="font-mono font-semibold text-secondary">{event.discount_code}</span>
+                          <span className="text-gray-500"> ({event.discount_percent}% off)</span>
                         </div>
                       )}
                     </td>

@@ -79,6 +79,8 @@ export function buildConcertEventsJsonLd(concerts: ConcertRow[]) {
       url: `${SITE_URL}/concerts`,
       offers: {
         '@type': 'Offer',
+        // The list price. Discount codes are applied at checkout, so the
+        // advertised price stays the full one.
         price: (concert.ticket_price / 100).toFixed(2),
         priceCurrency: 'USD',
         availability: offerAvailability(remaining),
@@ -118,6 +120,8 @@ export function buildSunsetEventsJsonLd(events: SunsetEventRow[]) {
       url: `${SITE_URL}/sunset-series`,
       offers: {
         '@type': 'Offer',
+        // The list price. Discount codes are applied at checkout, so the
+        // advertised price stays the full one.
         price: (event.ticket_price / 100).toFixed(2),
         priceCurrency: 'USD',
         availability: offerAvailability(remaining),

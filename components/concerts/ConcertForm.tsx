@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
+import DiscountPreview from '@/components/ui/DiscountPreview';
 import { resizeImage } from '@/lib/image-resize';
+import { DISCOUNT_OPTIONS } from '@/lib/pricing';
 import type { Concert } from '@/types/concert';
 
 interface ConcertFormProps {
@@ -32,6 +35,8 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
     status: concert?.status || (concert?.is_published ? 'published' : 'draft'),
     is_published: concert?.is_published ?? false,
     ticket_price: concert?.ticket_price ? concert.ticket_price / 100 : 0, // Convert cents to dollars
+    discount_code: concert?.discount_code || '',
+    discount_percent: concert?.discount_percent ?? 0,
     max_attendees: concert?.max_attendees || 100,
     comp_code: concert?.comp_code || '',
   });
@@ -44,7 +49,14 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) || 0 : value,
+      [name]:
+        type === 'checkbox'
+          ? checked
+          : name === 'discount_percent'
+            ? parseInt(value, 10) || 0
+            : type === 'number'
+              ? parseFloat(value) || 0
+              : value,
       // Automatically set is_published based on status
       ...(name === 'status' && { is_published: value === 'published' }),
     }));
@@ -154,6 +166,9 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
         ...formData,
         image_url: imageUrl,
         ticket_price: Math.round((formData.ticket_price || 0) * 100),
+        // Codes are matched case-insensitively; store them uppercase so the
+        // admin list and the buyer's email agree on how they look.
+        discount_code: (formData.discount_code || '').trim().toUpperCase(),
       };
 
       console.log('Submitting data:', dataToSubmit);
@@ -221,6 +236,19 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
       setIsSubmitting(false);
     }
   };
+
+  // Spell out exactly what the code will do, and flag the half-configured
+  // states where it would silently do nothing.
+  const basePriceCents = Math.round((formData.ticket_price || 0) * 100);
+  const discountCode = (formData.discount_code || '').trim();
+  const discountPercent = formData.discount_percent || 0;
+  const discountPreview = (
+    <DiscountPreview
+      basePriceCents={basePriceCents}
+      code={discountCode}
+      percent={discountPercent}
+    />
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -342,16 +370,53 @@ export default function ConcertForm({ concert, isEdit = false }: ConcertFormProp
           />
         </div>
 
-        <Input
-          label="Comp code (optional)"
-          name="comp_code"
-          type="text"
-          value={formData.comp_code}
-          onChange={handleChange}
-          error={errors.comp_code}
-          placeholder="COMP2024"
-          helperText="Create a code for complimentary (free) tickets"
-        />
+        {/* Both codes live together — buyers type either one into the same box
+            on the purchase form, so they are easier to keep straight here. */}
+        <div className="border-t border-gray-200 pt-6 mt-6">
+          <h4 className="text-base font-semibold text-gray-900 mb-1">Ticket codes</h4>
+          <p className="text-sm text-gray-500 mb-4">
+            Buyers enter either code in the same box at checkout. A discount code takes money off;
+            a comp code makes the ticket free.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Discount code"
+              name="discount_code"
+              value={formData.discount_code}
+              onChange={handleChange}
+              error={errors.discount_code}
+              placeholder="e.g. SUMMER50"
+              helperText="Leave blank for no discount."
+            />
+
+            <Select
+              label="Discount amount"
+              name="discount_percent"
+              value={formData.discount_percent}
+              onChange={handleChange}
+              options={DISCOUNT_OPTIONS.map((option) => ({
+                value: String(option.value),
+                label: option.label,
+              }))}
+              helperText="How much the code takes off each ticket."
+            />
+          </div>
+          {discountPreview}
+
+          <div className="mt-6">
+            <Input
+              label="Comp code (optional)"
+              name="comp_code"
+              type="text"
+              value={formData.comp_code}
+              onChange={handleChange}
+              error={errors.comp_code}
+              placeholder="COMP2024"
+              helperText="Gives free tickets — no payment at all."
+            />
+          </div>
+        </div>
       </div>
 
       <div>

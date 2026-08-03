@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { resizeImage } from '@/lib/image-resize';
 import { getErrorMessage } from '@/lib/errors';
+import DiscountPreview from '@/components/ui/DiscountPreview';
+import { DISCOUNT_OPTIONS } from '@/lib/pricing';
 
 interface SunsetEvent {
   id?: string;
@@ -27,6 +29,8 @@ interface SunsetEvent {
   pdf_filename?: string;
   max_tickets: number;
   ticket_price: number;
+  discount_code: string;
+  discount_percent: number;
   status: string;
   published: boolean;
 }
@@ -67,6 +71,8 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
     pdf_filename: event?.pdf_filename || '',
     max_tickets: event?.max_tickets || 75,
     ticket_price: event?.ticket_price ? event.ticket_price / 100 : 20, // Convert cents to dollars
+    discount_code: event?.discount_code || '',
+    discount_percent: event?.discount_percent ?? 0,
     status: event?.status || 'draft',
     published: event?.status === 'published',
   });
@@ -85,6 +91,12 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       setFormData((prev) => ({
         ...prev,
         [name]: parseFloat(value) || 0,
+      }));
+    } else if (name === 'discount_percent') {
+      // A <select>, so it arrives as a string — store it as the number the API expects.
+      setFormData((prev) => ({
+        ...prev,
+        discount_percent: parseInt(value, 10) || 0,
       }));
     } else {
       setFormData((prev) => ({
@@ -260,6 +272,9 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
         pdf_url: pdfUrl,
         pdf_filename: pdfFilename,
         ticket_price: Math.round((formData.ticket_price || 0) * 100),
+        // Codes are matched case-insensitively; store them uppercase so the
+        // admin list and the buyer's email agree on how they look.
+        discount_code: (formData.discount_code || '').trim().toUpperCase(),
       };
 
       const url = mode === 'create'
@@ -321,6 +336,17 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
       setLoading(false);
     }
   };
+
+  // Spell out exactly what the code will do, and flag the half-configured
+  // states where it would silently do nothing.
+  const basePriceCents = Math.round((formData.ticket_price || 0) * 100);
+  const discountPreview = (
+    <DiscountPreview
+      basePriceCents={basePriceCents}
+      code={formData.discount_code || ''}
+      percent={formData.discount_percent || 0}
+    />
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -448,25 +474,6 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
-      </div>
-
-      {/* Comp Code */}
-      <div>
-        <label htmlFor="comp_code" className="block text-sm font-medium text-gray-700 mb-2">
-          Comp code (optional)
-        </label>
-        <input
-          type="text"
-          id="comp_code"
-          name="comp_code"
-          value={formData.comp_code}
-          onChange={handleChange}
-          className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
-          placeholder="COMP2024"
-        />
-        <p className="mt-2 text-sm text-gray-600">
-          Create a code for complimentary (free) tickets
-        </p>
       </div>
 
       {/* Image Upload */}
@@ -661,6 +668,82 @@ export default function SunsetEventForm({ event, mode }: SunsetEventFormProps) {
             min="1"
             className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
           />
+        </div>
+      </div>
+
+      {/* Ticket codes — both live together, because buyers type either one into
+          the same box on the purchase form. */}
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-base font-semibold text-gray-900 mb-1">Ticket codes</h4>
+        <p className="text-sm text-gray-500 mb-4">
+          Buyers enter either code in the same box at checkout. A discount code takes money off;
+          a comp code makes the ticket free.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="discount_code" className="block text-sm font-medium text-gray-700 mb-2">
+              Discount code
+            </label>
+            <input
+              type="text"
+              id="discount_code"
+              name="discount_code"
+              value={formData.discount_code}
+              onChange={handleChange}
+              placeholder="e.g. SUMMER50"
+              className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+            />
+            <p className="mt-1.5 text-sm text-gray-500">
+              Leave blank for no discount.
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="discount_percent" className="block text-sm font-medium text-gray-700 mb-2">
+              Discount amount
+            </label>
+            <div className="relative">
+              <select
+                id="discount_percent"
+                name="discount_percent"
+                value={formData.discount_percent}
+                onChange={handleChange}
+                className="w-full min-w-0 max-w-full px-4 py-2.5 pr-10 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900 appearance-none"
+              >
+                {DISCOUNT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            <p className="mt-1.5 text-sm text-gray-500">
+              How much the code takes off each ticket.
+            </p>
+          </div>
+        </div>
+        {discountPreview}
+
+        <div className="mt-6">
+          <label htmlFor="comp_code" className="block text-sm font-medium text-gray-700 mb-2">
+            Comp code (optional)
+          </label>
+          <input
+            type="text"
+            id="comp_code"
+            name="comp_code"
+            value={formData.comp_code}
+            onChange={handleChange}
+            className="w-full min-w-0 max-w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary bg-white text-gray-900"
+            placeholder="COMP2024"
+          />
+          <p className="mt-1.5 text-sm text-gray-500">
+            Gives free tickets — no payment at all.
+          </p>
         </div>
       </div>
 

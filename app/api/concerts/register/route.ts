@@ -6,6 +6,7 @@ import { generateTicketQRCode } from '@/lib/qrcode-server';
 import { sendEmailWithRetry } from '@/lib/email';
 import ConcertConfirmation from '@/emails/ConcertConfirmation';
 import { formatTime12h } from '@/lib/format-time';
+import { resolveCode } from '@/lib/pricing';
 
 const registrationSchema = z.object({
   concertId: z.string().uuid(),
@@ -62,20 +63,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate comp code if provided
-    let usedCompCode = false;
-    if (compCode && compCode.trim()) {
-      if (concert.comp_code && concert.comp_code.toUpperCase() === compCode.toUpperCase()) {
-        usedCompCode = true;
-      } else {
-        return NextResponse.json(
-          { error: 'Invalid comp code' },
-          { status: 400 }
-        );
-      }
+    // Only comp codes belong here — this route issues free tickets. A discount
+    // code is still a paid ticket and has to go through Stripe checkout.
+    const resolution = resolveCode(compCode, concert);
+
+    if (resolution.kind === 'invalid') {
+      return NextResponse.json(
+        { error: 'Invalid code' },
+        { status: 400 }
+      );
     }
 
-    // For non-free concerts without valid comp code, reject
+    const usedCompCode = resolution.kind === 'comp';
+
+    // For non-free concerts without a valid comp code, reject
     if (concert.ticket_price > 0 && !usedCompCode) {
       return NextResponse.json(
         { error: 'This concert requires payment. Use the payment flow.' },

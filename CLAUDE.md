@@ -57,6 +57,25 @@ Do not rely on middleware alone — Next.js has shipped repeated middleware-bypa
 
 Admin sub-sections: concerts CRUD, sunset series CRUD, newsletter subscribers, orders/check-in per event.
 
+### Two kinds of ticket code
+Each event carries two independent codes, and they are **not** interchangeable:
+
+| | `comp_code` | `discount_code` + `discount_percent` |
+|---|---|---|
+| Effect | Ticket is free | `discount_percent` off the ticket |
+| Stripe | Skipped entirely | Normal Checkout, at the reduced amount |
+| Order row | `amount_paid` 0, `used_comp_code` true | `amount_paid` = what Stripe charged |
+| Concert endpoint | `api/concerts/register` | `api/concerts/checkout` |
+| Sunset endpoint | `api/sunset-series/checkout` (early return) | same route, falls through to Stripe |
+
+Buyers type either one into a **single box** on the purchase form, so the form cannot know which endpoint to use until the code is resolved. `api/validate-code` resolves it, and the form routes on the answer. That endpoint is a convenience for quoting a total — **it is not the gate**. Both checkout routes call `resolveCode()` again themselves; the client never sends a price, only a code.
+
+All code matching goes through `resolveCode()` in `lib/pricing.ts`. Do not re-implement string comparison at a call site — it normalizes case and whitespace, checks comp before discount (so if both are set to the same string, the free ticket wins), and treats a `discount_code` with `discount_percent` 0 as invalid rather than a silent no-op.
+
+`getEffectivePrice()` holds the discounted amount at Stripe's $0.50 minimum rather than emitting a charge Stripe would reject. A cheap ticket can therefore discount by less than the stated percent; `hasDiscount()` tells you whether a discount actually applied.
+
+The stored `ticket_price` is always the full public price. Discounts are never written to the event row, and public pages and `lib/structured-data.ts` deliberately advertise the full price — the discount only exists behind the code.
+
 ### Ticket check-in
 QR payloads are always JSON (`generateTicketQRCode()` wraps whatever it is given). The `orderId` inside points at a **different column depending on how the ticket was bought**:
 - Paid tickets → `stripe_session_id`
@@ -73,7 +92,7 @@ Stripe is initialized lazily — `lib/stripe.ts` exports `null` if `STRIPE_SECRE
 `lib/email.ts` exports `sendEmail()` which gracefully logs instead of sending when `RESEND_API_KEY` is not set. Templates are React Email components in `emails/`. Include `sendEmailWithRetry()` for reliability.
 
 ### Database migrations
-SQL files in `supabase/migrations/`, numbered sequentially (001–013). Run via `scripts/run-sql-migration.mjs` with direct Postgres connection. New migrations should continue the numbering sequence.
+SQL files in `supabase/migrations/`, numbered sequentially (001–014). Run via `scripts/run-sql-migration.mjs` with direct Postgres connection. New migrations should continue the numbering sequence.
 
 ### Image uploads
 Images go to Supabase Storage bucket `event-images`. Upload/delete handled via `app/api/upload-image/` and `app/api/delete-image/` routes. `lib/storage-helpers.ts` provides URL parsing and deletion utilities. New uploads are downscaled in the browser first (`lib/image-resize.ts`).

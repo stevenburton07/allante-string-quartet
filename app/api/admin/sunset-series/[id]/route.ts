@@ -80,6 +80,8 @@ export async function PUT(
         arrival_instructions: body.arrival_instructions || null,
         max_tickets: body.max_tickets,
         ticket_price: body.ticket_price,
+        discount_code: body.discount_code || null,
+        discount_percent: body.discount_percent ?? 0,
         status: body.status,
         published: body.published,
       })
