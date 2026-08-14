@@ -27,7 +27,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://allantestringquarte
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Allante String Quartet | Utah County Wedding & Event String Quartet',
+    default: 'Allante String Quartet | Professional String Quartet in Utah County',
     template: '%s | Allante String Quartet',
   },
   description:
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: 'Allante String Quartet',
-    title: 'Allante String Quartet | Utah County Wedding & Event String Quartet',
+    title: 'Allante String Quartet | Professional String Quartet in Utah County',
     description:
       'Professional string quartet based in Utah County, serving the Wasatch Front and statewide events. Live chamber music for weddings, corporate events, and private gatherings.',
     images: [
