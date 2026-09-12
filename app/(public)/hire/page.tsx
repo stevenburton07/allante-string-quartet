@@ -82,7 +82,7 @@ export default function HirePage() {
         {/* Introduction */}
         <section className="mb-16 max-w-4xl mx-auto">
           <p className="text-lg text-gray-700 mb-4">
-            Allante String Quartet provides superb tone quality and blend. This sound is created from seven years of weekly rehearsals with the same musicians. We believe in consistently creating an art form on stage during a concert, and while playing background music.
+            Allante String Quartet provides superb tone quality and blend. This sound is created from 10 years of weekly rehearsals with the same musicians. We believe in consistently creating an art form on stage during a concert, and while playing background music.
           </p>
           <p className="text-lg text-gray-700 mb-4">
             Based in Utah County, we serve the Wasatch Front and statewide events.
@@ -135,6 +135,7 @@ export default function HirePage() {
             {[
               'Alpine',
               'American Fork',
+              'American Fork Canyon',
               'Bluffdale',
               'Bountiful',
               'Cedar City',
@@ -155,6 +156,7 @@ export default function HirePage() {
               'Payson',
               'Pleasant Grove',
               'Provo',
+              'Provo Canyon',
               'Riverton',
               'Salt Lake',
               'Sandy',
